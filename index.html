@@ -4,15 +4,17 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>ABTHEPROMO — Abdul Ahad</title>
+<title>ABTHEPROMO | Abdul Ahad</title>
 
 <meta name="description"
-content="ABTHEPROMO — Abdul Ahad | Gaming • AI • Graphics • Digital Creator">
+content="ABTHEPROMO — Abdul Ahad | Gaming, Graphics, AI & Digital Creativity">
 
 <style>
 /* =========================================================
    ABTHEPROMO — PREMIUM PORTFOLIO
    ========================================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 
 *{
     margin:0;
@@ -22,120 +24,145 @@ content="ABTHEPROMO — Abdul Ahad | Gaming • AI • Graphics • Digital Crea
 }
 
 :root{
-    --bg:#05060a;
-    --bg2:#0b0e16;
+    --bg:#050816;
+    --bg2:#090d20;
     --card:rgba(255,255,255,.055);
-    --border:rgba(255,255,255,.10);
+    --border:rgba(255,255,255,.12);
     --text:#f5f7ff;
-    --muted:#9299ad;
+    --muted:#9ca8c7;
     --cyan:#00eaff;
     --purple:#8b5cf6;
     --pink:#ff3cac;
+    --blue:#2563eb;
+    --orange:#ff7a18;
     --green:#00ff9d;
 }
 
 body{
-    font-family:Arial,Helvetica,sans-serif;
+    font-family:'Inter',sans-serif;
     background:
-        radial-gradient(circle at 15% 20%,rgba(0,234,255,.08),transparent 30%),
-        radial-gradient(circle at 85% 10%,rgba(139,92,246,.10),transparent 30%),
-        radial-gradient(circle at 50% 90%,rgba(255,60,172,.07),transparent 30%),
+        radial-gradient(circle at 10% 10%,rgba(0,234,255,.12),transparent 30%),
+        radial-gradient(circle at 90% 20%,rgba(139,92,246,.16),transparent 30%),
+        radial-gradient(circle at 50% 90%,rgba(255,60,172,.09),transparent 35%),
         var(--bg);
     color:var(--text);
     overflow-x:hidden;
 }
 
-a{
-    text-decoration:none;
-    color:inherit;
-}
+/* BACKGROUND */
 
-button{
-    font-family:inherit;
-}
-
-.container{
-    width:min(1180px,92%);
-    margin:auto;
-}
-
-section{
-    padding:120px 0;
-    position:relative;
-}
-
-/* ================= BACKGROUND ================= */
-
-.grid-bg{
+body::before{
+    content:"";
     position:fixed;
     inset:0;
     pointer-events:none;
-    opacity:.18;
-    z-index:-3;
+    z-index:-2;
+    opacity:.3;
     background-image:
-        linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),
-        linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);
+        linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),
+        linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);
     background-size:50px 50px;
 }
 
-.orb{
+body::after{
+    content:"";
     position:fixed;
-    width:350px;
-    height:350px;
+    width:400px;
+    height:400px;
     border-radius:50%;
+    background:rgba(0,234,255,.08);
     filter:blur(100px);
-    opacity:.12;
-    pointer-events:none;
-    z-index:-2;
-}
-
-.orb.one{
-    background:var(--cyan);
-    top:10%;
+    top:20%;
     left:-150px;
+    z-index:-1;
 }
 
-.orb.two{
-    background:var(--purple);
-    right:-150px;
-    top:40%;
+/* LOADER */
+
+#loader{
+    position:fixed;
+    inset:0;
+    background:#03040c;
+    z-index:9999;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    flex-direction:column;
+    transition:.7s;
 }
 
-.orb.three{
-    background:var(--pink);
-    bottom:-150px;
-    left:40%;
+.loader-logo{
+    font-size:42px;
+    font-weight:900;
+    letter-spacing:4px;
+    background:linear-gradient(90deg,var(--cyan),var(--purple),var(--pink));
+    -webkit-background-clip:text;
+    color:transparent;
+    animation:pulse 1.5s infinite;
 }
 
-/* ================= NAVBAR ================= */
+.loader-line{
+    width:220px;
+    height:3px;
+    background:#222;
+    margin-top:20px;
+    overflow:hidden;
+    border-radius:20px;
+}
 
-.navbar{
+.loader-line span{
+    display:block;
+    height:100%;
+    width:40%;
+    background:linear-gradient(90deg,var(--cyan),var(--pink));
+    animation:loading 1.2s infinite;
+}
+
+@keyframes loading{
+    from{transform:translateX(-100%)}
+    to{transform:translateX(350%)}
+}
+
+@keyframes pulse{
+    50%{transform:scale(1.04);opacity:.7}
+}
+
+/* NAVBAR */
+
+header{
     position:fixed;
     top:0;
     left:0;
     width:100%;
     z-index:1000;
-    padding:20px 0;
-    background:rgba(5,6,10,.65);
-    backdrop-filter:blur(20px);
-    border-bottom:1px solid rgba(255,255,255,.06);
+    padding:18px 6%;
+    transition:.4s;
 }
 
-.nav-inner{
+header.scrolled{
+    padding:12px 6%;
+    background:rgba(5,8,22,.82);
+    backdrop-filter:blur(20px);
+    border-bottom:1px solid var(--border);
+}
+
+.nav{
+    max-width:1250px;
+    margin:auto;
     display:flex;
-    align-items:center;
     justify-content:space-between;
+    align-items:center;
 }
 
 .logo{
     font-size:25px;
     font-weight:900;
-    letter-spacing:2px;
+    text-decoration:none;
+    color:white;
 }
 
 .logo span{
     color:var(--cyan);
-    text-shadow:0 0 20px var(--cyan);
 }
 
 .nav-links{
@@ -145,104 +172,155 @@ section{
 }
 
 .nav-links a{
-    color:#b9bfd0;
+    color:#bfc7df;
+    text-decoration:none;
     font-size:14px;
+    font-weight:600;
+    transition:.3s;
+    position:relative;
+}
+
+.nav-links a:hover,
+.nav-links a.active{
+    color:var(--cyan);
+}
+
+.nav-links a::after{
+    content:"";
+    position:absolute;
+    left:0;
+    bottom:-8px;
+    width:0;
+    height:2px;
+    background:linear-gradient(90deg,var(--cyan),var(--pink));
     transition:.3s;
 }
 
-.nav-links a:hover{
-    color:var(--cyan);
-    text-shadow:0 0 15px var(--cyan);
+.nav-links a:hover::after,
+.nav-links a.active::after{
+    width:100%;
 }
 
-.menu-btn{
+.menu{
     display:none;
-    background:none;
-    border:0;
-    color:white;
     font-size:28px;
     cursor:pointer;
 }
 
-/* ================= HERO ================= */
+/* COMMON */
 
-.hero{
-    min-height:100vh;
-    display:flex;
-    align-items:center;
-    padding-top:130px;
+section{
+    padding:120px 6%;
+    position:relative;
 }
 
-.hero-grid{
-    display:grid;
-    grid-template-columns:1.2fr .8fr;
-    gap:70px;
-    align-items:center;
+.container{
+    max-width:1200px;
+    margin:auto;
 }
 
-.badge{
-    display:inline-flex;
-    align-items:center;
-    gap:10px;
-    padding:10px 17px;
-    border:1px solid rgba(0,234,255,.25);
-    border-radius:50px;
-    background:rgba(0,234,255,.06);
+.label{
     color:var(--cyan);
-    font-size:13px;
-    margin-bottom:25px;
+    font-size:12px;
+    font-weight:800;
+    letter-spacing:4px;
+    text-transform:uppercase;
+    margin-bottom:14px;
 }
 
-.dot{
-    width:8px;
-    height:8px;
-    border-radius:50%;
-    background:var(--green);
-    box-shadow:0 0 15px var(--green);
+.section-title{
+    font-size:clamp(35px,5vw,60px);
+    font-weight:900;
+    line-height:1.05;
+    margin-bottom:20px;
 }
 
-.hero h1{
-    font-size:clamp(55px,8vw,105px);
-    line-height:.9;
-    letter-spacing:-5px;
-    margin-bottom:25px;
-}
-
-.gradient-text{
+.section-title span{
     background:linear-gradient(90deg,var(--cyan),var(--purple),var(--pink));
     -webkit-background-clip:text;
     color:transparent;
 }
 
-.hero-desc{
-    max-width:650px;
+.section-text{
     color:var(--muted);
-    font-size:18px;
+    max-width:650px;
     line-height:1.8;
+}
+
+/* HOME */
+
+#home{
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    padding-top:150px;
+}
+
+.hero{
+    max-width:1200px;
+    margin:auto;
+    width:100%;
+    display:grid;
+    grid-template-columns:1.3fr .7fr;
+    gap:70px;
+    align-items:center;
+}
+
+.hero-small{
+    color:var(--cyan);
+    font-weight:800;
+    letter-spacing:4px;
+    margin-bottom:18px;
+}
+
+.hero h1{
+    font-size:clamp(55px,8vw,100px);
+    line-height:.95;
+    font-weight:900;
+}
+
+.hero h1 span{
+    background:linear-gradient(90deg,var(--cyan),var(--purple),var(--pink));
+    -webkit-background-clip:text;
+    color:transparent;
+}
+
+.typing{
+    margin:25px 0;
+    font-size:20px;
+    color:#c5cee3;
+}
+
+#typingText{
+    color:var(--cyan);
+    font-weight:800;
 }
 
 .hero-buttons{
     display:flex;
     gap:15px;
-    margin-top:35px;
     flex-wrap:wrap;
+    margin-top:30px;
 }
 
 .btn{
+    padding:15px 25px;
+    border-radius:50px;
+    text-decoration:none;
+    color:white;
+    font-weight:800;
     display:inline-flex;
     align-items:center;
     justify-content:center;
-    padding:15px 25px;
-    border-radius:12px;
     border:1px solid var(--border);
-    transition:.3s;
-    font-weight:bold;
+    transition:.35s;
+    cursor:pointer;
 }
 
 .btn-primary{
-    background:linear-gradient(90deg,var(--cyan),var(--purple));
-    color:#05060a;
+    background:linear-gradient(90deg,var(--blue),var(--purple),var(--pink));
     border:none;
+    box-shadow:0 15px 45px rgba(139,92,246,.25);
 }
 
 .btn:hover{
@@ -250,247 +328,122 @@ section{
     box-shadow:0 15px 40px rgba(0,234,255,.15);
 }
 
-.hero-card{
-    min-height:450px;
-    border:1px solid var(--border);
-    border-radius:35px;
-    background:linear-gradient(145deg,rgba(255,255,255,.08),rgba(255,255,255,.02));
-    backdrop-filter:blur(25px);
-    display:flex;
-    align-items:center;
-    justify-content:center;
+.hero-photo{
     position:relative;
-    overflow:hidden;
-}
-
-.hero-card::before{
-    content:"";
-    position:absolute;
-    width:250px;
-    height:250px;
-    border-radius:50%;
-    background:var(--cyan);
-    filter:blur(100px);
-    opacity:.18;
-}
-
-.avatar{
-    width:210px;
-    height:210px;
-    border-radius:50%;
-    border:2px solid var(--cyan);
     display:flex;
-    align-items:center;
     justify-content:center;
-    font-size:65px;
-    font-weight:900;
-    color:var(--cyan);
+}
+
+.photo-ring{
+    width:340px;
+    height:340px;
+    border-radius:50%;
+    padding:6px;
+    background:conic-gradient(
+        var(--cyan),
+        var(--purple),
+        var(--pink),
+        var(--cyan)
+    );
+    animation:spin 8s linear infinite;
     box-shadow:
-        0 0 30px rgba(0,234,255,.3),
-        inset 0 0 40px rgba(0,234,255,.08);
-    z-index:1;
+        0 0 60px rgba(0,234,255,.2),
+        0 0 100px rgba(139,92,246,.15);
 }
 
-.floating{
+.photo-ring img{
+    width:100%;
+    height:100%;
+    border-radius:50%;
+    object-fit:cover;
+    border:7px solid #070a17;
+    display:block;
+}
+
+@keyframes spin{
+    to{transform:rotate(360deg)}
+}
+
+.floating-card{
     position:absolute;
-    padding:12px 17px;
-    border-radius:12px;
-    background:rgba(0,0,0,.45);
+    bottom:15px;
+    left:10px;
+    padding:15px 20px;
+    border-radius:16px;
+    background:rgba(10,15,35,.8);
+    backdrop-filter:blur(15px);
     border:1px solid var(--border);
-    backdrop-filter:blur(10px);
-    font-size:13px;
+    box-shadow:0 20px 50px rgba(0,0,0,.3);
 }
 
-.f1{top:50px;left:35px;}
-.f2{right:30px;top:100px;}
-.f3{bottom:55px;left:55px;}
-.f4{right:35px;bottom:45px;}
-
-/* ================= HEADINGS ================= */
-
-.section-title{
-    text-align:center;
-    margin-bottom:65px;
-}
-
-.section-tag{
-    color:var(--cyan);
-    letter-spacing:3px;
-    font-size:12px;
-    font-weight:bold;
-    margin-bottom:15px;
-}
-
-.section-title h2{
-    font-size:clamp(35px,5vw,65px);
-    margin-bottom:15px;
-}
-
-.section-title p{
-    color:var(--muted);
-    max-width:650px;
-    margin:auto;
-    line-height:1.7;
-}
-
-/* ================= CARDS ================= */
-
-.cards{
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:22px;
-}
-
-.card{
-    padding:32px;
-    border:1px solid var(--border);
-    border-radius:24px;
-    background:var(--card);
-    backdrop-filter:blur(20px);
-    transition:.4s;
-}
-
-.card:hover{
-    transform:translateY(-10px);
-    border-color:rgba(0,234,255,.35);
-    box-shadow:0 25px 70px rgba(0,0,0,.3);
-}
-
-.icon{
-    width:60px;
-    height:60px;
-    border-radius:17px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:28px;
-    background:rgba(0,234,255,.08);
-    margin-bottom:25px;
-}
-
-.card h3{
-    font-size:23px;
-    margin-bottom:12px;
-}
-
-.card p{
-    color:var(--muted);
-    line-height:1.7;
-}
-
-/* ================= ABOUT ================= */
+/* ABOUT */
 
 .about-grid{
     display:grid;
-    grid-template-columns:.8fr 1.2fr;
+    grid-template-columns:1fr 1fr;
     gap:60px;
     align-items:center;
 }
 
-.about-box{
-    padding:45px;
-    border-radius:30px;
-    background:linear-gradient(145deg,rgba(0,234,255,.07),rgba(139,92,246,.06));
+.about-card{
+    padding:35px;
     border:1px solid var(--border);
+    border-radius:25px;
+    background:var(--card);
+    backdrop-filter:blur(20px);
 }
 
-.about-big{
-    font-size:75px;
-    font-weight:900;
-    color:var(--cyan);
-    text-shadow:0 0 30px rgba(0,234,255,.3);
+.about-card h3{
+    font-size:30px;
+    margin-bottom:15px;
 }
 
-.about-text h2{
-    font-size:45px;
-    margin-bottom:20px;
-}
-
-.about-text p{
+.about-card p{
     color:var(--muted);
-    line-height:1.9;
-    margin-bottom:18px;
+    line-height:1.8;
 }
 
-.info-list{
-    display:grid;
-    grid-template-columns:repeat(2,1fr);
-    gap:15px;
+.about-list{
     margin-top:25px;
+    display:grid;
+    gap:14px;
 }
 
-.info{
-    padding:17px;
-    background:rgba(255,255,255,.035);
+.about-list div{
+    padding:15px;
     border-radius:12px;
-    border:1px solid var(--border);
+    background:rgba(255,255,255,.035);
+    border-left:3px solid var(--cyan);
 }
 
-.info small{
-    color:#737b90;
-    display:block;
-    margin-bottom:5px;
-}
+/* STATS */
 
-.info strong{
-    font-size:14px;
-}
-
-/* ================= GAMING ================= */
-
-.gaming-main{
+.stats{
     display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:25px;
-}
-
-.gaming-profile{
-    padding:45px;
-    border-radius:30px;
-    background:
-        linear-gradient(145deg,rgba(255,70,0,.09),rgba(139,92,246,.08));
-    border:1px solid rgba(255,255,255,.1);
-    position:relative;
-    overflow:hidden;
-}
-
-.fire{
-    font-size:70px;
-    margin-bottom:20px;
-}
-
-.gaming-profile h3{
-    font-size:38px;
-    margin-bottom:12px;
-}
-
-.uid{
-    font-size:18px;
-    color:var(--muted);
-}
-
-.uid strong{
-    color:var(--cyan);
-    letter-spacing:2px;
-}
-
-.stat-grid{
-    display:grid;
-    grid-template-columns:repeat(2,1fr);
-    gap:18px;
+    grid-template-columns:repeat(4,1fr);
+    gap:20px;
 }
 
 .stat{
-    padding:30px;
+    text-align:center;
+    padding:30px 15px;
     border:1px solid var(--border);
-    border-radius:22px;
+    border-radius:20px;
     background:var(--card);
+    transition:.35s;
+}
+
+.stat:hover{
+    transform:translateY(-8px);
+    border-color:var(--cyan);
 }
 
 .stat-number{
-    font-size:40px;
+    font-size:42px;
     font-weight:900;
-    color:var(--cyan);
+    background:linear-gradient(90deg,var(--cyan),var(--pink));
+    -webkit-background-clip:text;
+    color:transparent;
 }
 
 .stat p{
@@ -498,258 +451,462 @@ section{
     margin-top:8px;
 }
 
-/* ================= AI ================= */
+/* SERVICES */
 
-.ai-box{
-    padding:70px;
-    border-radius:35px;
-    border:1px solid rgba(139,92,246,.25);
-    background:
-        radial-gradient(circle at 80% 20%,rgba(139,92,246,.18),transparent 35%),
-        rgba(255,255,255,.035);
-    text-align:center;
+.service-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:20px;
 }
 
-.ai-logo{
-    font-size:75px;
-    margin-bottom:20px;
-}
-
-.ai-box h2{
-    font-size:45px;
-    margin-bottom:15px;
-}
-
-.ai-box p{
-    color:var(--muted);
-    max-width:700px;
-    margin:auto;
-    line-height:1.8;
-}
-
-/* ================= PROJECTS ================= */
-
-.project{
-    min-height:270px;
+.service{
+    min-height:250px;
+    padding:30px;
+    border-radius:25px;
+    border:1px solid var(--border);
+    background:linear-gradient(145deg,rgba(255,255,255,.06),rgba(255,255,255,.02));
+    transition:.4s;
     position:relative;
     overflow:hidden;
 }
 
-.project-number{
-    font-size:13px;
-    color:var(--cyan);
-    letter-spacing:2px;
-    margin-bottom:30px;
+.service::before{
+    content:"";
+    position:absolute;
+    width:120px;
+    height:120px;
+    border-radius:50%;
+    background:var(--cyan);
+    filter:blur(70px);
+    opacity:.12;
+    right:-40px;
+    top:-40px;
 }
 
-.project h3{
-    font-size:28px;
+.service:hover{
+    transform:translateY(-12px);
+    border-color:rgba(0,234,255,.5);
+}
+
+.service-icon{
+    font-size:45px;
+    margin-bottom:25px;
+}
+
+.service h3{
+    font-size:22px;
     margin-bottom:12px;
 }
 
-/* ================= SKILLS ================= */
+.service p{
+    color:var(--muted);
+    line-height:1.7;
+}
+
+/* GAMING */
+
+.gaming-box{
+    padding:50px;
+    border-radius:30px;
+    background:
+        linear-gradient(135deg,rgba(255,70,0,.12),rgba(139,92,246,.1)),
+        var(--card);
+    border:1px solid var(--border);
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:30px;
+    overflow:hidden;
+}
+
+.gaming-left{
+    display:flex;
+    align-items:center;
+    gap:25px;
+}
+
+.gaming-icon{
+    width:100px;
+    height:100px;
+    border-radius:25px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:55px;
+    background:rgba(255,70,0,.1);
+    border:1px solid rgba(255,100,0,.2);
+}
+
+.gaming-box h3{
+    font-size:35px;
+}
+
+.uid{
+    color:var(--muted);
+    margin-top:10px;
+}
+
+.uid strong{
+    color:var(--cyan);
+}
+
+/* SKILLS */
 
 .skills{
-    max-width:850px;
-    margin:auto;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:25px;
 }
 
 .skill{
-    margin-bottom:30px;
+    padding:25px;
+    border:1px solid var(--border);
+    border-radius:18px;
+    background:var(--card);
 }
 
 .skill-head{
     display:flex;
     justify-content:space-between;
-    margin-bottom:10px;
+    margin-bottom:12px;
 }
 
 .skill-head span:last-child{
     color:var(--cyan);
 }
 
-.bar{
+.skill-bar{
     height:8px;
+    background:#171c31;
     border-radius:20px;
-    background:rgba(255,255,255,.08);
     overflow:hidden;
 }
 
-.bar span{
-    display:block;
+.skill-fill{
     height:100%;
     width:0;
     border-radius:20px;
-    background:linear-gradient(90deg,var(--cyan),var(--purple));
-    transition:2s cubic-bezier(.2,.8,.2,1);
+    background:linear-gradient(90deg,var(--cyan),var(--purple),var(--pink));
+    transition:2s;
 }
 
-/* ================= TIMELINE ================= */
+/* PROJECTS */
+
+.projects{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:25px;
+}
+
+.project{
+    min-height:300px;
+    padding:30px;
+    border-radius:25px;
+    border:1px solid var(--border);
+    background:var(--card);
+    transition:.4s;
+    position:relative;
+    overflow:hidden;
+}
+
+.project:hover{
+    transform:translateY(-10px) rotateX(2deg);
+    border-color:var(--purple);
+}
+
+.project-number{
+    font-size:55px;
+    font-weight:900;
+    color:rgba(255,255,255,.06);
+}
+
+.project h3{
+    font-size:25px;
+    margin:20px 0 12px;
+}
+
+.project p{
+    color:var(--muted);
+    line-height:1.7;
+}
+
+/* TIMELINE */
 
 .timeline{
-    max-width:800px;
-    margin:auto;
     position:relative;
+    max-width:900px;
+    margin:auto;
 }
 
 .timeline::before{
     content:"";
     position:absolute;
-    left:20px;
+    left:50%;
     top:0;
     bottom:0;
-    width:1px;
-    background:linear-gradient(var(--cyan),var(--purple),transparent);
+    width:2px;
+    background:linear-gradient(var(--cyan),var(--purple),var(--pink));
 }
 
 .timeline-item{
+    width:50%;
+    padding:20px 35px;
     position:relative;
-    padding-left:65px;
-    margin-bottom:45px;
 }
 
-.timeline-dot{
-    position:absolute;
-    left:11px;
-    top:4px;
-    width:20px;
-    height:20px;
-    border-radius:50%;
-    background:var(--cyan);
-    box-shadow:0 0 25px var(--cyan);
+.timeline-item:nth-child(even){
+    margin-left:50%;
 }
 
-.timeline-item h3{
+.timeline-card{
+    padding:25px;
+    border-radius:20px;
+    background:var(--card);
+    border:1px solid var(--border);
+}
+
+.timeline-card h3{
+    color:var(--cyan);
     margin-bottom:8px;
 }
 
-.timeline-item p{
+.timeline-card p{
     color:var(--muted);
-    line-height:1.7;
+    line-height:1.6;
 }
 
-/* ================= GALLERY ================= */
+/* CONTACT */
 
-.gallery{
+.contact-grid{
     display:grid;
-    grid-template-columns:repeat(4,1fr);
-    gap:15px;
+    grid-template-columns:.8fr 1.2fr;
+    gap:30px;
 }
 
-.gallery-item{
-    height:220px;
-    border-radius:20px;
+.contact-info,
+.contact-form{
+    padding:35px;
+    border-radius:25px;
+    background:var(--card);
     border:1px solid var(--border);
-    background:
-        linear-gradient(135deg,
-        rgba(0,234,255,.12),
-        rgba(139,92,246,.12));
+}
+
+.contact-info h3{
+    font-size:30px;
+    margin-bottom:20px;
+}
+
+.contact-item{
+    display:flex;
+    gap:15px;
+    align-items:center;
+    padding:18px 0;
+    border-bottom:1px solid rgba(255,255,255,.07);
+}
+
+.contact-item:last-child{
+    border-bottom:0;
+}
+
+.contact-icon{
+    width:45px;
+    height:45px;
     display:flex;
     align-items:center;
     justify-content:center;
-    font-size:35px;
-    transition:.4s;
+    border-radius:12px;
+    background:rgba(0,234,255,.08);
+    font-size:20px;
 }
 
-.gallery-item:hover{
-    transform:scale(1.04);
-    border-color:var(--cyan);
+.contact-item small{
+    color:#7f8ba8;
+    display:block;
+    margin-bottom:4px;
 }
 
-/* ================= ROADMAP ================= */
+.contact-item strong{
+    color:#eef3ff;
+}
 
-.roadmap{
+form{
     display:grid;
-    grid-template-columns:repeat(4,1fr);
-    gap:20px;
+    gap:16px;
 }
 
-.road{
-    padding:30px;
+input,
+textarea{
+    width:100%;
+    padding:17px 18px;
+    border-radius:14px;
     border:1px solid var(--border);
-    border-radius:25px;
-    background:var(--card);
+    outline:none;
+    background:rgba(0,0,0,.18);
+    color:white;
+    font-family:inherit;
+    transition:.3s;
 }
 
-.road span{
-    color:var(--cyan);
-    font-size:12px;
-    letter-spacing:2px;
+input:focus,
+textarea:focus{
+    border-color:var(--cyan);
+    box-shadow:0 0 20px rgba(0,234,255,.08);
 }
 
-.road h3{
-    margin:15px 0;
+textarea{
+    min-height:150px;
+    resize:vertical;
 }
 
-/* ================= SOCIAL ================= */
+/* SOCIAL */
 
-.social-grid{
-    display:grid;
-    grid-template-columns:repeat(4,1fr);
-    gap:18px;
+.socials{
+    display:flex;
+    flex-wrap:wrap;
+    gap:15px;
+    margin-top:25px;
 }
 
 .social{
-    padding:25px;
-    text-align:center;
+    padding:14px 20px;
     border:1px solid var(--border);
-    border-radius:20px;
-    background:var(--card);
+    border-radius:50px;
+    color:white;
+    text-decoration:none;
     transition:.3s;
 }
 
 .social:hover{
-    transform:translateY(-7px);
+    transform:translateY(-5px);
     border-color:var(--cyan);
-}
-
-.social-icon{
-    font-size:32px;
-    margin-bottom:12px;
-}
-
-/* ================= CONTACT ================= */
-
-.contact-box{
-    max-width:900px;
-    margin:auto;
-    text-align:center;
-    padding:65px 30px;
-    border-radius:35px;
-    border:1px solid var(--border);
-    background:
-        radial-gradient(circle at 50% 0%,rgba(0,234,255,.12),transparent 45%),
-        rgba(255,255,255,.035);
-}
-
-.contact-box h2{
-    font-size:50px;
-    margin-bottom:20px;
-}
-
-.contact-box p{
-    color:var(--muted);
-    margin-bottom:30px;
-}
-
-/* ================= FOOTER ================= */
-
-footer{
-    padding:40px 0;
-    border-top:1px solid var(--border);
-    text-align:center;
-    color:#737b90;
-}
-
-footer strong{
     color:var(--cyan);
 }
 
-/* ================= REVEAL ================= */
+/* FAQ */
+
+.faq{
+    max-width:850px;
+    margin:auto;
+}
+
+.faq-item{
+    margin-bottom:15px;
+    border:1px solid var(--border);
+    border-radius:16px;
+    overflow:hidden;
+    background:var(--card);
+}
+
+.faq-question{
+    padding:22px;
+    cursor:pointer;
+    display:flex;
+    justify-content:space-between;
+    font-weight:700;
+}
+
+.faq-answer{
+    max-height:0;
+    overflow:hidden;
+    transition:.4s;
+}
+
+.faq-answer p{
+    padding:0 22px 22px;
+    color:var(--muted);
+    line-height:1.7;
+}
+
+.faq-item.open .faq-answer{
+    max-height:200px;
+}
+
+.faq-item.open .plus{
+    transform:rotate(45deg);
+}
+
+/* FOOTER */
+
+footer{
+    padding:60px 6% 30px;
+    border-top:1px solid var(--border);
+    background:rgba(0,0,0,.2);
+}
+
+.footer-content{
+    max-width:1200px;
+    margin:auto;
+    display:flex;
+    justify-content:space-between;
+    gap:30px;
+    align-items:center;
+}
+
+.footer-logo{
+    font-size:30px;
+    font-weight:900;
+}
+
+.footer-logo span{
+    color:var(--cyan);
+}
+
+.footer-copy{
+    color:#77829d;
+    font-size:14px;
+}
+
+#topBtn{
+    position:fixed;
+    right:25px;
+    bottom:25px;
+    width:50px;
+    height:50px;
+    border:1px solid var(--border);
+    background:rgba(10,15,35,.85);
+    backdrop-filter:blur(10px);
+    color:white;
+    border-radius:50%;
+    cursor:pointer;
+    opacity:0;
+    visibility:hidden;
+    transition:.3s;
+    z-index:500;
+}
+
+#topBtn.show{
+    opacity:1;
+    visibility:visible;
+}
+
+/* TOAST */
+
+#toast{
+    position:fixed;
+    right:25px;
+    bottom:90px;
+    padding:15px 20px;
+    border-radius:12px;
+    background:#11182d;
+    border:1px solid var(--border);
+    color:white;
+    transform:translateY(30px);
+    opacity:0;
+    pointer-events:none;
+    transition:.4s;
+    z-index:2000;
+}
+
+#toast.show{
+    opacity:1;
+    transform:translateY(0);
+}
+
+/* REVEAL */
 
 .reveal{
     opacity:0;
-    transform:translateY(45px);
+    transform:translateY(40px);
     transition:1s ease;
 }
 
@@ -758,108 +915,115 @@ footer strong{
     transform:translateY(0);
 }
 
-/* ================= TOP BUTTON ================= */
+/* RESPONSIVE */
 
-.top-btn{
-    position:fixed;
-    right:25px;
-    bottom:25px;
-    width:48px;
-    height:48px;
-    border:1px solid var(--border);
-    border-radius:14px;
-    background:rgba(10,12,18,.8);
-    color:var(--cyan);
-    cursor:pointer;
-    display:none;
-    z-index:500;
-    font-size:20px;
-}
-
-/* ================= MOBILE ================= */
-
-@media(max-width:900px){
+@media(max-width:950px){
 
     .nav-links{
         position:absolute;
         top:75px;
-        left:4%;
-        right:4%;
+        left:5%;
+        right:5%;
         display:none;
         flex-direction:column;
         padding:25px;
-        border-radius:20px;
-        background:rgba(8,10,16,.96);
+        background:rgba(5,8,22,.96);
+        backdrop-filter:blur(20px);
         border:1px solid var(--border);
+        border-radius:20px;
     }
 
-    .nav-links.show{
+    .nav-links.open{
         display:flex;
     }
 
-    .menu-btn{
+    .menu{
         display:block;
     }
 
-    .hero-grid,
+    .hero,
     .about-grid,
-    .gaming-main{
+    .contact-grid{
         grid-template-columns:1fr;
     }
 
-    .cards{
+    .hero{
+        text-align:center;
+    }
+
+    .hero-buttons{
+        justify-content:center;
+    }
+
+    .hero-photo{
+        order:-1;
+    }
+
+    .service-grid{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .projects{
         grid-template-columns:1fr 1fr;
     }
 
-    .roadmap{
-        grid-template-columns:1fr 1fr;
+    .stats{
+        grid-template-columns:repeat(2,1fr);
     }
 
-    .social-grid{
-        grid-template-columns:1fr 1fr;
+    .skills{
+        grid-template-columns:1fr;
     }
 
-    .gallery{
-        grid-template-columns:1fr 1fr;
+    .gaming-box{
+        flex-direction:column;
+        text-align:center;
+    }
+
+    .gaming-left{
+        flex-direction:column;
     }
 }
 
 @media(max-width:600px){
 
     section{
-        padding:85px 0;
+        padding:90px 5%;
     }
 
     .hero h1{
-        font-size:57px;
-        letter-spacing:-3px;
-    }
-
-    .hero-card{
-        min-height:350px;
-    }
-
-    .cards,
-    .roadmap,
-    .social-grid,
-    .gallery{
-        grid-template-columns:1fr;
-    }
-
-    .info-list{
-        grid-template-columns:1fr;
-    }
-
-    .about-big{
         font-size:55px;
     }
 
-    .ai-box{
-        padding:45px 20px;
+    .photo-ring{
+        width:250px;
+        height:250px;
     }
 
-    .contact-box h2{
-        font-size:38px;
+    .service-grid,
+    .projects{
+        grid-template-columns:1fr;
+    }
+
+    .stats{
+        grid-template-columns:1fr 1fr;
+    }
+
+    .timeline::before{
+        left:8px;
+    }
+
+    .timeline-item,
+    .timeline-item:nth-child(even){
+        width:100%;
+        margin-left:0;
+        padding-left:30px;
+        padding-right:0;
+    }
+
+    .footer-content{
+        flex-direction:column;
+        text-align:center;
     }
 }
 </style>
@@ -867,888 +1031,1122 @@ footer strong{
 
 <body>
 
-<div class="grid-bg"></div>
-<div class="orb one"></div>
-<div class="orb two"></div>
-<div class="orb three"></div>
-
-<!-- ================= NAVBAR ================= -->
-
-<header class="navbar">
-
-<div class="container nav-inner">
-
-<a href="#home" class="logo">
-AB<span>THE</span>PROMO
-</a>
-
-<button class="menu-btn" id="menuBtn">☰</button>
-
-<ul class="nav-links" id="navLinks">
-<li><a href="#home">Home</a></li>
-<li><a href="#about">About</a></li>
-<li><a href="#gaming">Gaming</a></li>
-<li><a href="#ai">AI</a></li>
-<li><a href="#projects">Projects</a></li>
-<li><a href="#skills">Skills</a></li>
-<li><a href="#journey">Journey</a></li>
-<li><a href="#contact">Contact</a></li>
-</ul>
-
+<!-- LOADER -->
+<div id="loader">
+    <div class="loader-logo">ABTHEPROMO</div>
+    <div class="loader-line"><span></span></div>
 </div>
+
+<!-- NAVBAR -->
+<header id="header">
+    <nav class="nav">
+
+        <a href="#home" class="logo">
+            AB<span>THE</span>PROMO
+        </a>
+
+        <div class="menu" id="menu">☰</div>
+
+        <ul class="nav-links" id="navLinks">
+            <li><a href="#home">Home</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#services">Services</a></li>
+            <li><a href="#gaming">Gaming</a></li>
+            <li><a href="#projects">Projects</a></li>
+            <li><a href="#skills">Skills</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+
+    </nav>
 </header>
 
 
-<!-- ================= HERO ================= -->
+<!-- HOME -->
+<section id="home">
 
-<section class="hero" id="home">
+    <div class="hero">
 
-<div class="container hero-grid">
+        <div class="hero-content reveal">
 
-<div class="reveal">
+            <div class="hero-small">
+                ✦ WELCOME TO MY DIGITAL WORLD
+            </div>
 
-<div class="badge">
-<span class="dot"></span>
-AVAILABLE FOR DIGITAL PROJECTS
-</div>
+            <h1>
+                Abdul<br>
+                <span>Ahad.</span>
+            </h1>
 
-<h1>
-I AM<br>
-<span class="gradient-text">ABDUL AHAD</span>
-</h1>
+            <div class="typing">
+                I AM A <span id="typingText"></span>
+            </div>
 
-<p class="hero-desc">
-Welcome to my digital world. I'm <b>ABTHEPROMO</b> —
-a creator exploring Gaming, AI, Graphics Design,
-technology and creative digital experiences.
-</p>
+            <p class="section-text">
+                Welcome to my personal digital space. I create,
+                explore and experiment with Gaming, Graphics,
+                AI and modern digital creativity.
+            </p>
 
-<div class="hero-buttons">
+            <div class="hero-buttons">
 
-<a href="#projects" class="btn btn-primary">
-Explore My Work →
-</a>
+                <a href="#about" class="btn btn-primary">
+                    Explore My World →
+                </a>
 
-<a href="#contact" class="btn">
-Contact Me
-</a>
+                <a href="#contact" class="btn">
+                    Contact Me
+                </a>
 
-</div>
+            </div>
 
-</div>
+        </div>
 
 
-<div class="hero-card reveal">
+        <div class="hero-photo reveal">
 
-<div class="floating f1">🎮 Gaming</div>
-<div class="floating f2">🤖 AI</div>
-<div class="floating f3">🎨 Graphics</div>
-<div class="floating f4">⚡ Creator</div>
+            <div class="photo-ring">
+                <img
+                    src="profile.jpg"
+                    alt="Abdul Ahad"
+                    onerror="this.src='https://placehold.co/600x600/080b18/00eaff?text=ABTHEPROMO'"
+                >
+            </div>
 
-<div class="avatar">
-AA
-</div>
+            <div class="floating-card">
+                ⚡ ABTHEPROMO
+            </div>
 
-</div>
+        </div>
 
-</div>
+    </div>
+
 </section>
 
 
-<!-- ================= ABOUT ================= -->
-
+<!-- ABOUT -->
 <section id="about">
 
-<div class="container">
+    <div class="container">
 
-<div class="section-title reveal">
-<div class="section-tag">WHO I AM</div>
-<h2>About Me</h2>
-<p>
-A digital creator building ideas through technology,
-gaming and creativity.
-</p>
-</div>
+        <div class="about-grid">
 
-<div class="about-grid">
+            <div class="reveal">
 
-<div class="about-box reveal">
-<div class="about-big">AA</div>
-<h3>ABDUL AHAD</h3>
-<p style="color:var(--muted);margin-top:10px;">
-ABTHEPROMO
-</p>
-</div>
+                <div class="label">01 — ABOUT ME</div>
 
-<div class="about-text reveal">
+                <h2 class="section-title">
+                    Creating my own
+                    <span>digital identity.</span>
+                </h2>
 
-<h2>Building My Own Digital Identity.</h2>
+                <p class="section-text">
+                    I'm Abdul Ahad, also known online as
+                    <b>ABTHEPROMO</b>. My interests include
+                    gaming, graphics, AI, technology and
+                    creative digital projects.
+                </p>
 
-<p>
-I'm Abdul Ahad, known online as <b>ABTHEPROMO</b>.
-I enjoy experimenting with technology, gaming,
-AI tools, graphic design and digital projects.
-</p>
+            </div>
 
-<p>
-This website is my personal digital space where
-I can showcase my work, ideas, experiments and
-future projects.
-</p>
+            <div class="about-card reveal">
 
-<div class="info-list">
+                <h3>Who is ABTHEPROMO?</h3>
 
-<div class="info">
-<small>NAME</small>
-<strong>Abdul Ahad</strong>
-</div>
+                <p>
+                    A personal brand built around creativity,
+                    experimentation and digital exploration.
+                    This website represents my journey,
+                    projects and interests.
+                </p>
 
-<div class="info">
-<small>BRAND</small>
-<strong>ABTHEPROMO</strong>
-</div>
+                <div class="about-list">
 
-<div class="info">
-<small>LOCATION</small>
-<strong>Tangail, Bangladesh</strong>
-</div>
+                    <div>🎮 Gaming & Digital Entertainment</div>
+                    <div>🎨 Graphics & Creative Design</div>
+                    <div>🤖 AI & Technology</div>
+                    <div>🌐 Web & Digital Projects</div>
 
-<div class="info">
-<small>FOCUS</small>
-<strong>Digital Creativity</strong>
-</div>
+                </div>
 
-</div>
+            </div>
 
-</div>
-</div>
-</div>
+        </div>
+
+    </div>
+
 </section>
 
 
-<!-- ================= SERVICES ================= -->
-
+<!-- STATS -->
 <section>
 
-<div class="container">
+    <div class="container">
 
-<div class="section-title reveal">
-<div class="section-tag">WHAT I DO</div>
-<h2>My Digital Universe</h2>
-<p>
-Different interests. One digital identity.
-</p>
-</div>
+        <div class="stats">
 
-<div class="cards">
+            <div class="stat reveal">
+                <div class="stat-number" data-count="4">0</div>
+                <p>Main Interests</p>
+            </div>
 
-<div class="card reveal">
-<div class="icon">🎮</div>
-<h3>Gaming</h3>
-<p>
-Gaming, competitive gameplay, gaming identity
-and digital gaming content.
-</p>
-</div>
+            <div class="stat reveal">
+                <div class="stat-number" data-count="10">0</div>
+                <p>Creative Ideas</p>
+            </div>
 
-<div class="card reveal">
-<div class="icon">🤖</div>
-<h3>AI Assistant</h3>
-<p>
-Exploring AI tools, automation, creative AI
-and futuristic technology.
-</p>
-</div>
+            <div class="stat reveal">
+                <div class="stat-number" data-count="100">0</div>
+                <p>% Passion</p>
+            </div>
 
-<div class="card reveal">
-<div class="icon">🎨</div>
-<h3>Graphics Design</h3>
-<p>
-Creative visual concepts, social media designs,
-branding and digital artwork.
-</p>
-</div>
+            <div class="stat reveal">
+                <div class="stat-number" data-count="24">0</div>
+                <p>/7 Digital Mind</p>
+            </div>
 
-<div class="card reveal">
-<div class="icon">💻</div>
-<h3>Web Projects</h3>
-<p>
-Building modern websites and experimenting
-with HTML, CSS and JavaScript.
-</p>
-</div>
+        </div>
 
-<div class="card reveal">
-<div class="icon">🚀</div>
-<h3>Experiments</h3>
-<p>
-Trying new technologies and turning ideas
-into working digital projects.
-</p>
-</div>
+    </div>
 
-<div class="card reveal">
-<div class="icon">🌐</div>
-<h3>Digital Creator</h3>
-<p>
-Creating a unique online identity through
-content, design and technology.
-</p>
-</div>
-
-</div>
-</div>
 </section>
 
 
-<!-- ================= GAMING ================= -->
+<!-- SERVICES -->
+<section id="services">
 
+    <div class="container">
+
+        <div class="label">02 — WHAT I DO</div>
+
+        <h2 class="section-title">
+            My <span>Creative Zones</span>
+        </h2>
+
+        <p class="section-text reveal">
+            Different interests, one digital identity.
+        </p>
+
+        <br><br>
+
+        <div class="service-grid">
+
+            <div class="service reveal">
+                <div class="service-icon">🎮</div>
+                <h3>Gaming</h3>
+                <p>
+                    Gaming identity, gameplay,
+                    competitive mindset and digital
+                    entertainment.
+                </p>
+            </div>
+
+            <div class="service reveal">
+                <div class="service-icon">🎨</div>
+                <h3>Graphics</h3>
+                <p>
+                    Creative visual concepts,
+                    social media designs and
+                    digital artwork.
+                </p>
+            </div>
+
+            <div class="service reveal">
+                <div class="service-icon">🤖</div>
+                <h3>AI Zone</h3>
+                <p>
+                    Exploring artificial intelligence,
+                    automation and futuristic
+                    technology.
+                </p>
+            </div>
+
+            <div class="service reveal">
+                <div class="service-icon">🌐</div>
+                <h3>Web Projects</h3>
+                <p>
+                    Building modern websites,
+                    experiments and personal
+                    digital experiences.
+                </p>
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- GAMING -->
 <section id="gaming">
 
-<div class="container">
+    <div class="container">
 
-<div class="section-title reveal">
-<div class="section-tag">GAMING IDENTITY</div>
-<h2>ABTHEPROMO GAMING</h2>
-<p>
-My gaming profile and digital gaming identity.
-</p>
-</div>
+        <div class="label">03 — GAMING IDENTITY</div>
 
-<div class="gaming-main">
+        <h2 class="section-title">
+            🎮 Gaming <span>Profile</span>
+        </h2>
 
-<div class="gaming-profile reveal">
+        <br>
 
-<div class="fire">🔥</div>
+        <div class="gaming-box reveal">
 
-<h3>ABTHEPROMO</h3>
+            <div class="gaming-left">
 
-<p class="uid">
-FREE FIRE UID:
-<strong>2139735924</strong>
-</p>
+                <div class="gaming-icon">🔥</div>
 
-<p style="color:var(--muted);margin-top:20px;line-height:1.8;">
-Gaming • Competitive Gameplay • Digital Gaming
-</p>
+                <div>
+                    <h3>ABTHEPROMO</h3>
 
-</div>
+                    <p class="uid">
+                        FREE FIRE UID:
+                        <strong id="uid">2139735924</strong>
+                    </p>
 
-<div class="stat-grid">
+                    <p style="color:#9ca8c7;margin-top:8px;">
+                        Gaming • Reality Flow • Competitive Gameplay
+                    </p>
+                </div>
 
-<div class="stat reveal">
-<div class="stat-number">01</div>
-<p>Gaming Identity</p>
-</div>
+            </div>
 
-<div class="stat reveal">
-<div class="stat-number">24/7</div>
-<p>Digital Energy</p>
-</div>
+            <button class="btn btn-primary" id="copyUid">
+                Copy UID
+            </button>
 
-<div class="stat reveal">
-<div class="stat-number">∞</div>
-<p>Future Goals</p>
-</div>
+        </div>
 
-<div class="stat reveal">
-<div class="stat-number">🔥</div>
-<p>ABTHEPROMO</p>
-</div>
+    </div>
 
-</div>
-
-</div>
-</div>
 </section>
 
 
-<!-- ================= AI ================= -->
-
-<section id="ai">
-
-<div class="container">
-
-<div class="ai-box reveal">
-
-<div class="ai-logo">🤖</div>
-
-<h2>AI LAB</h2>
-
-<p>
-Artificial Intelligence is one of the technologies
-I'm interested in exploring. From AI assistants to
-creative tools and automation, the goal is to
-experiment, learn and build something useful.
-</p>
-
-<div class="hero-buttons" style="justify-content:center;">
-<a href="#projects" class="btn btn-primary">
-Explore Projects
-</a>
-</div>
-
-</div>
-
-</div>
-</section>
-
-
-<!-- ================= GRAPHICS ================= -->
-
-<section>
-
-<div class="container">
-
-<div class="section-title reveal">
-<div class="section-tag">CREATIVE STUDIO</div>
-<h2>Graphics Zone</h2>
-<p>
-A space for creative visual experiments.
-</p>
-</div>
-
-<div class="cards">
-
-<div class="card reveal">
-<div class="icon">🖼️</div>
-<h3>Poster Design</h3>
-<p>
-Modern social media posters and creative compositions.
-</p>
-</div>
-
-<div class="card reveal">
-<div class="icon">✨</div>
-<h3>Visual Effects</h3>
-<p>
-Glowing, cinematic and futuristic visual concepts.
-</p>
-</div>
-
-<div class="card reveal">
-<div class="icon">💎</div>
-<h3>Brand Identity</h3>
-<p>
-Building a recognizable ABTHEPROMO visual identity.
-</p>
-</div>
-
-</div>
-</div>
-</section>
-
-
-<!-- ================= PROJECTS ================= -->
-
+<!-- PROJECTS -->
 <section id="projects">
 
-<div class="container">
+    <div class="container">
 
-<div class="section-title reveal">
-<div class="section-tag">SELECTED WORK</div>
-<h2>My Projects</h2>
-<p>
-Some digital projects and experiments.
-</p>
-</div>
+        <div class="label">04 — PROJECTS</div>
 
-<div class="cards">
+        <h2 class="section-title">
+            Things I'm <span>Building</span>
+        </h2>
 
-<div class="card project reveal">
-<div class="project-number">PROJECT 01</div>
-<h3>Personal Website</h3>
-<p>
-A premium personal portfolio website built
-for the ABTHEPROMO identity.
-</p>
-</div>
+        <br><br>
 
-<div class="card project reveal">
-<div class="project-number">PROJECT 02</div>
-<h3>Gaming Profile</h3>
-<p>
-A digital gaming identity featuring Free Fire
-profile information and branding.
-</p>
-</div>
+        <div class="projects">
 
-<div class="card project reveal">
-<div class="project-number">PROJECT 03</div>
-<h3>AI Experiments</h3>
-<p>
-Creative experiments using artificial intelligence
-and digital tools.
-</p>
-</div>
+            <div class="project reveal">
+                <div class="project-number">01</div>
+                <h3>Personal Website</h3>
+                <p>
+                    A modern personal portfolio and
+                    digital identity platform for ABTHEPROMO.
+                </p>
+            </div>
 
-<div class="card project reveal">
-<div class="project-number">PROJECT 04</div>
-<h3>Graphics Studio</h3>
-<p>
-A collection of creative visual concepts and
-branding experiments.
-</p>
-</div>
+            <div class="project reveal">
+                <div class="project-number">02</div>
+                <h3>AI Experiments</h3>
+                <p>
+                    Exploring creative ways to use AI
+                    and modern technology.
+                </p>
+            </div>
 
-<div class="card project reveal">
-<div class="project-number">PROJECT 05</div>
-<h3>Web Experiments</h3>
-<p>
-Testing HTML, CSS and JavaScript ideas
-through interactive websites.
-</p>
-</div>
+            <div class="project reveal">
+                <div class="project-number">03</div>
+                <h3>Gaming Identity</h3>
+                <p>
+                    Building a unique online gaming
+                    identity around ABTHEPROMO.
+                </p>
+            </div>
 
-<div class="card project reveal">
-<div class="project-number">PROJECT 06</div>
-<h3>Future Project</h3>
-<p>
-Something bigger is coming. This space is
-reserved for the next experiment.
-</p>
-</div>
+            <div class="project reveal">
+                <div class="project-number">04</div>
+                <h3>Creative Designs</h3>
+                <p>
+                    Digital graphics, visual concepts
+                    and social media experiments.
+                </p>
+            </div>
 
-</div>
-</div>
+            <div class="project reveal">
+                <div class="project-number">05</div>
+                <h3>Future Lab</h3>
+                <p>
+                    A space for future ideas,
+                    experiments and technology.
+                </p>
+            </div>
+
+            <div class="project reveal">
+                <div class="project-number">06</div>
+                <h3>Digital Journey</h3>
+                <p>
+                    Documenting my growth through
+                    different digital projects.
+                </p>
+            </div>
+
+        </div>
+
+    </div>
+
 </section>
 
 
-<!-- ================= SKILLS ================= -->
-
+<!-- SKILLS -->
 <section id="skills">
 
-<div class="container">
+    <div class="container">
 
-<div class="section-title reveal">
-<div class="section-tag">MY ABILITIES</div>
-<h2>Skills</h2>
-<p>
-Technologies and creative areas I'm exploring.
-</p>
-</div>
+        <div class="label">05 — SKILLS</div>
 
-<div class="skills">
+        <h2 class="section-title">
+            My <span>Digital Skills</span>
+        </h2>
 
-<div class="skill reveal">
-<div class="skill-head">
-<span>HTML</span>
-<span>90%</span>
-</div>
-<div class="bar">
-<span data-width="90%"></span>
-</div>
-</div>
+        <br><br>
 
-<div class="skill reveal">
-<div class="skill-head">
-<span>CSS</span>
-<span>85%</span>
-</div>
-<div class="bar">
-<span data-width="85%"></span>
-</div>
-</div>
+        <div class="skills">
 
-<div class="skill reveal">
-<div class="skill-head">
-<span>JavaScript</span>
-<span>70%</span>
-</div>
-<div class="bar">
-<span data-width="70%"></span>
-</div>
-</div>
+            <div class="skill reveal">
+                <div class="skill-head">
+                    <span>Gaming</span>
+                    <span>90%</span>
+                </div>
+                <div class="skill-bar">
+                    <div class="skill-fill" data-width="90%"></div>
+                </div>
+            </div>
 
-<div class="skill reveal">
-<div class="skill-head">
-<span>Graphics Design</span>
-<span>80%</span>
-</div>
-<div class="bar">
-<span data-width="80%"></span>
-</div>
-</div>
+            <div class="skill reveal">
+                <div class="skill-head">
+                    <span>Graphics</span>
+                    <span>80%</span>
+                </div>
+                <div class="skill-bar">
+                    <div class="skill-fill" data-width="80%"></div>
+                </div>
+            </div>
 
-<div class="skill reveal">
-<div class="skill-head">
-<span>AI Tools</span>
-<span>85%</span>
-</div>
-<div class="bar">
-<span data-width="85%"></span>
-</div>
-</div>
+            <div class="skill reveal">
+                <div class="skill-head">
+                    <span>Web Design</span>
+                    <span>85%</span>
+                </div>
+                <div class="skill-bar">
+                    <div class="skill-fill" data-width="85%"></div>
+                </div>
+            </div>
 
-</div>
-</div>
+            <div class="skill reveal">
+                <div class="skill-head">
+                    <span>AI Exploration</span>
+                    <span>75%</span>
+                </div>
+                <div class="skill-bar">
+                    <div class="skill-fill" data-width="75%"></div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
 </section>
 
 
-<!-- ================= JOURNEY ================= -->
-
-<section id="journey">
-
-<div class="container">
-
-<div class="section-title reveal">
-<div class="section-tag">MY PATH</div>
-<h2>Digital Journey</h2>
-<p>
-Learning, experimenting and building.
-</p>
-</div>
-
-<div class="timeline">
-
-<div class="timeline-item reveal">
-<div class="timeline-dot"></div>
-<h3>Started Exploring Technology</h3>
-<p>
-Learning about computers, software and the digital world.
-</p>
-</div>
-
-<div class="timeline-item reveal">
-<div class="timeline-dot"></div>
-<h3>Entered Creative Space</h3>
-<p>
-Started exploring graphics, social media content
-and digital creativity.
-</p>
-</div>
-
-<div class="timeline-item reveal">
-<div class="timeline-dot"></div>
-<h3>Gaming Identity</h3>
-<p>
-Developed the ABTHEPROMO gaming identity and
-started building a stronger online presence.
-</p>
-</div>
-
-<div class="timeline-item reveal">
-<div class="timeline-dot"></div>
-<h3>Web Development</h3>
-<p>
-Started creating websites and learning HTML,
-CSS and JavaScript.
-</p>
-</div>
-
-<div class="timeline-item reveal">
-<div class="timeline-dot"></div>
-<h3>Future</h3>
-<p>
-More projects, more learning and bigger ideas.
-The journey is just getting started.
-</p>
-</div>
-
-</div>
-</div>
-</section>
-
-
-<!-- ================= GALLERY ================= -->
-
+<!-- JOURNEY -->
 <section>
 
-<div class="container">
+    <div class="container">
 
-<div class="section-title reveal">
-<div class="section-tag">VISUAL SPACE</div>
-<h2>Gallery</h2>
-<p>
-Your future photos, designs and project previews
-can be added here.
-</p>
-</div>
+        <div class="label">06 — JOURNEY</div>
 
-<div class="gallery">
+        <h2 class="section-title">
+            My Digital <span>Journey</span>
+        </h2>
 
-<div class="gallery-item reveal">📸</div>
-<div class="gallery-item reveal">🎨</div>
-<div class="gallery-item reveal">🎮</div>
-<div class="gallery-item reveal">🤖</div>
-<div class="gallery-item reveal">💻</div>
-<div class="gallery-item reveal">🔥</div>
-<div class="gallery-item reveal">⚡</div>
-<div class="gallery-item reveal">🚀</div>
+        <br><br>
 
-</div>
-</div>
+        <div class="timeline">
+
+            <div class="timeline-item reveal">
+                <div class="timeline-card">
+                    <h3>Started Exploring</h3>
+                    <p>
+                        Started exploring technology,
+                        gaming and digital creativity.
+                    </p>
+                </div>
+            </div>
+
+            <div class="timeline-item reveal">
+                <div class="timeline-card">
+                    <h3>Creative Era</h3>
+                    <p>
+                        Began experimenting with graphics,
+                        content and digital ideas.
+                    </p>
+                </div>
+            </div>
+
+            <div class="timeline-item reveal">
+                <div class="timeline-card">
+                    <h3>Web Era</h3>
+                    <p>
+                        Started creating websites and
+                        learning modern web technologies.
+                    </p>
+                </div>
+            </div>
+
+            <div class="timeline-item reveal">
+                <div class="timeline-card">
+                    <h3>ABTHEPROMO</h3>
+                    <p>
+                        Building a unique personal digital
+                        identity and future projects.
+                    </p>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
 </section>
 
 
-<!-- ================= ROADMAP ================= -->
-
+<!-- FAQ -->
 <section>
 
-<div class="container">
+    <div class="container">
 
-<div class="section-title reveal">
-<div class="section-tag">NEXT LEVEL</div>
-<h2>Future Roadmap</h2>
-<p>
-The next chapters of ABTHEPROMO.
-</p>
-</div>
+        <div style="text-align:center">
 
-<div class="roadmap">
+            <div class="label">07 — FAQ</div>
 
-<div class="road reveal">
-<span>01 / NOW</span>
-<h3>Learn</h3>
-<p>Improve coding, design and technology skills.</p>
-</div>
+            <h2 class="section-title">
+                Frequently <span>Asked</span>
+            </h2>
 
-<div class="road reveal">
-<span>02 / NEXT</span>
-<h3>Create</h3>
-<p>Build more websites and digital projects.</p>
-</div>
+        </div>
 
-<div class="road reveal">
-<span>03 / FUTURE</span>
-<h3>Launch</h3>
-<p>Release bigger creative and technology projects.</p>
-</div>
+        <br><br>
 
-<div class="road reveal">
-<span>04 / GOAL</span>
-<h3>Grow</h3>
-<p>Build a strong digital brand around ABTHEPROMO.</p>
-</div>
+        <div class="faq">
 
-</div>
-</div>
+            <div class="faq-item">
+                <div class="faq-question">
+                    Who is Abdul Ahad?
+                    <span class="plus">＋</span>
+                </div>
+                <div class="faq-answer">
+                    <p>
+                        Abdul Ahad is the person behind
+                        the ABTHEPROMO digital identity.
+                    </p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    What is ABTHEPROMO?
+                    <span class="plus">＋</span>
+                </div>
+                <div class="faq-answer">
+                    <p>
+                        ABTHEPROMO is a personal digital
+                        brand focused on gaming, graphics,
+                        AI and web creativity.
+                    </p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    Where are you from?
+                    <span class="plus">＋</span>
+                </div>
+                <div class="faq-answer">
+                    <p>
+                        Tangail, Bangladesh 🇧🇩
+                    </p>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
 </section>
 
 
-<!-- ================= SOCIAL ================= -->
-
-<section>
-
-<div class="container">
-
-<div class="section-title reveal">
-<div class="section-tag">CONNECT</div>
-<h2>Find Me Online</h2>
-<p>
-Follow the ABTHEPROMO journey.
-</p>
-</div>
-
-<div class="social-grid">
-
-<a class="social reveal"
-href="https://instagram.com/ab.the_promo"
-target="_blank">
-
-<div class="social-icon">📸</div>
-<strong>Instagram</strong>
-<p style="color:var(--muted);margin-top:7px;">
-@ab.the_promo
-</p>
-
-</a>
-
-<div class="social reveal">
-<div class="social-icon">🎮</div>
-<strong>Free Fire</strong>
-<p style="color:var(--muted);margin-top:7px;">
-2139735924
-</p>
-</div>
-
-<div class="social reveal">
-<div class="social-icon">💻</div>
-<strong>GitHub</strong>
-<p style="color:var(--muted);margin-top:7px;">
-ABTHEPROMO
-</p>
-</div>
-
-<div class="social reveal">
-<div class="social-icon">🌐</div>
-<strong>Website</strong>
-<p style="color:var(--muted);margin-top:7px;">
-ABTHEPROMO
-</p>
-</div>
-
-</div>
-</div>
-</section>
-
-
-<!-- ================= CONTACT ================= -->
-
+<!-- CONTACT -->
 <section id="contact">
 
-<div class="container">
+    <div class="container">
 
-<div class="contact-box reveal">
+        <div class="label">08 — CONTACT</div>
 
-<div class="section-tag">LET'S CONNECT</div>
+        <h2 class="section-title">
+            Let's <span>Connect.</span>
+        </h2>
 
-<h2>Have An Idea?</h2>
+        <p class="section-text">
+            Have an idea, project or just want to say hello?
+            Send a message.
+        </p>
 
-<p>
-Let's turn ideas into something digital,
-creative and memorable.
-</p>
+        <br><br>
 
-<a
-class="btn btn-primary"
-href="tel:01944882736">
-📞 01944882736
-</a>
+        <div class="contact-grid">
 
-<p style="margin-top:25px;margin-bottom:0;">
-📍 Tangail, Bangladesh
-</p>
+            <!-- ADDRESS -->
+            <div class="contact-info reveal">
 
-</div>
+                <h3>Contact Information</h3>
 
-</div>
+                <div class="contact-item">
+
+                    <div class="contact-icon">👤</div>
+
+                    <div>
+                        <small>Name</small>
+                        <strong>Abdul Ahad</strong>
+                    </div>
+
+                </div>
+
+                <div class="contact-item">
+
+                    <div class="contact-icon">📍</div>
+
+                    <div>
+                        <small>Address</small>
+                        <strong>Tangail, Bangladesh</strong>
+                    </div>
+
+                </div>
+
+                <div class="contact-item">
+
+                    <div class="contact-icon">📞</div>
+
+                    <div>
+                        <small>Phone</small>
+                        <strong>01944882736</strong>
+                    </div>
+
+                </div>
+
+                <div class="contact-item">
+
+                    <div class="contact-icon">📸</div>
+
+                    <div>
+                        <small>Instagram</small>
+                        <strong>@ab.the_promo</strong>
+                    </div>
+
+                </div>
+
+                <div class="socials">
+
+                    <a class="social"
+                       href="https://instagram.com/ab.the_promo"
+                       target="_blank">
+                        Instagram
+                    </a>
+
+                    <a class="social"
+                       href="tel:01944882736">
+                        Call Me
+                    </a>
+
+                </div>
+
+            </div>
+
+
+            <!-- FORM -->
+            <div class="contact-form reveal">
+
+                <form id="contactForm">
+
+                    <input
+                        type="text"
+                        id="name"
+                        placeholder="Your Name"
+                        required
+                    >
+
+                    <input
+                        type="email"
+                        id="email"
+                        placeholder="Your Email"
+                        required
+                    >
+
+                    <input
+                        type="text"
+                        id="subject"
+                        placeholder="Subject"
+                        required
+                    >
+
+                    <textarea
+                        id="message"
+                        placeholder="Write your message..."
+                        required
+                    ></textarea>
+
+                    <button
+                        class="btn btn-primary"
+                        type="submit">
+                        Send Message 🚀
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
 </section>
 
 
-<!-- ================= FOOTER ================= -->
-
+<!-- FOOTER -->
 <footer>
 
-<div class="container">
+    <div class="footer-content">
 
-<p>
-© 2026 <strong>ABTHEPROMO</strong> — Abdul Ahad.
-</p>
+        <div>
 
-<p style="margin-top:8px;">
-Built with HTML • CSS • JavaScript ⚡
-</p>
+            <div class="footer-logo">
+                AB<span>THE</span>PROMO
+            </div>
 
-</div>
+            <p class="footer-copy">
+                Abdul Ahad • Gaming • AI • Graphics • Web
+            </p>
+
+        </div>
+
+        <div class="footer-copy">
+            © <span id="year"></span> ABTHEPROMO.
+            All Rights Reserved.
+        </div>
+
+    </div>
 
 </footer>
 
 
-<button class="top-btn" id="topBtn">↑</button>
+<!-- TOAST -->
+<div id="toast"></div>
+
+<!-- TOP BUTTON -->
+<button id="topBtn">↑</button>
 
 
 <script>
 
-/* ================= MOBILE MENU ================= */
+/* =========================================================
+   ABTHEPROMO JAVASCRIPT ENGINE
+   ========================================================= */
 
-const menuBtn = document.getElementById("menuBtn");
-const navLinks = document.getElementById("navLinks");
+/* LOADER */
 
-menuBtn.addEventListener("click",()=>{
-    navLinks.classList.toggle("show");
+window.addEventListener("load",()=>{
+
+    setTimeout(()=>{
+
+        const loader=document.getElementById("loader");
+
+        loader.style.opacity="0";
+        loader.style.pointerEvents="none";
+
+        setTimeout(()=>{
+            loader.remove();
+        },700);
+
+    },900);
+
+});
+
+
+/* MOBILE MENU */
+
+const menu=document.getElementById("menu");
+const navLinks=document.getElementById("navLinks");
+
+menu.addEventListener("click",()=>{
+
+    navLinks.classList.toggle("open");
+
 });
 
 document.querySelectorAll(".nav-links a").forEach(link=>{
+
     link.addEventListener("click",()=>{
-        navLinks.classList.remove("show");
+        navLinks.classList.remove("open");
     });
+
 });
 
 
-/* ================= SCROLL REVEAL ================= */
+/* NAVBAR SCROLL */
 
-const reveals = document.querySelectorAll(".reveal");
-
-const observer = new IntersectionObserver(
-(entries)=>{
-    entries.forEach(entry=>{
-        if(entry.isIntersecting){
-            entry.target.classList.add("active");
-        }
-    });
-},
-{
-    threshold:.12
-}
-);
-
-reveals.forEach(item=>{
-    observer.observe(item);
-});
-
-
-/* ================= SKILL BARS ================= */
-
-const bars = document.querySelectorAll(".bar span");
-
-const barObserver = new IntersectionObserver(
-(entries)=>{
-    entries.forEach(entry=>{
-        if(entry.isIntersecting){
-            entry.target.style.width =
-                entry.target.dataset.width;
-        }
-    });
-},
-{
-    threshold:.5
-}
-);
-
-bars.forEach(bar=>{
-    barObserver.observe(bar);
-});
-
-
-/* ================= BACK TO TOP ================= */
-
-const topBtn = document.getElementById("topBtn");
+const header=document.getElementById("header");
 
 window.addEventListener("scroll",()=>{
 
-    if(window.scrollY > 600){
-        topBtn.style.display="block";
+    if(window.scrollY>50){
+        header.classList.add("scrolled");
     }else{
-        topBtn.style.display="none";
+        header.classList.remove("scrolled");
+    }
+
+});
+
+
+/* REVEAL */
+
+const observer=new IntersectionObserver(
+(entries)=>{
+
+    entries.forEach(entry=>{
+
+        if(entry.isIntersecting){
+
+            entry.target.classList.add("active");
+
+            /* SKILLS */
+
+            const fill=entry.target.querySelector(".skill-fill");
+
+            if(fill){
+                fill.style.width=fill.dataset.width;
+            }
+
+        }
+
+    });
+
+},
+{
+    threshold:.15
+}
+);
+
+document.querySelectorAll(".reveal")
+.forEach(el=>observer.observe(el));
+
+
+/* TYPING */
+
+const words=[
+    "GAMER",
+    "GRAPHICS DESIGNER",
+    "AI EXPLORER",
+    "WEB CREATOR",
+    "DIGITAL CREATOR"
+];
+
+let wordIndex=0;
+let charIndex=0;
+let deleting=false;
+
+const typing=document.getElementById("typingText");
+
+function typeEffect(){
+
+    const word=words[wordIndex];
+
+    if(!deleting){
+
+        typing.textContent=word.substring(0,charIndex++);
+
+        if(charIndex>word.length){
+
+            deleting=true;
+
+            setTimeout(typeEffect,1000);
+            return;
+
+        }
+
+    }else{
+
+        typing.textContent=word.substring(0,charIndex--);
+
+        if(charIndex<0){
+
+            deleting=false;
+            wordIndex=(wordIndex+1)%words.length;
+            charIndex=0;
+
+        }
+
+    }
+
+    setTimeout(typeEffect,deleting?55:90);
+
+}
+
+typeEffect();
+
+
+/* COUNTERS */
+
+const counters=document.querySelectorAll("[data-count]");
+
+const counterObserver=new IntersectionObserver(
+(entries,observer)=>{
+
+    entries.forEach(entry=>{
+
+        if(!entry.isIntersecting)return;
+
+        const el=entry.target;
+        const target=Number(el.dataset.count);
+
+        let current=0;
+
+        const step=Math.max(1,Math.ceil(target/50));
+
+        const timer=setInterval(()=>{
+
+            current+=step;
+
+            if(current>=target){
+
+                current=target;
+                clearInterval(timer);
+
+            }
+
+            el.textContent=current;
+
+        },30);
+
+        observer.unobserve(el);
+
+    });
+
+},
+{
+    threshold:.7
+});
+
+counters.forEach(c=>counterObserver.observe(c));
+
+
+/* COPY UID */
+
+document.getElementById("copyUid")
+.addEventListener("click",async()=>{
+
+    const uid="2139735924";
+
+    try{
+
+        await navigator.clipboard.writeText(uid);
+
+        showToast("🔥 Free Fire UID copied!");
+
+    }catch{
+
+        showToast("UID: "+uid);
+
+    }
+
+});
+
+
+/* TOAST */
+
+function showToast(message){
+
+    const toast=document.getElementById("toast");
+
+    toast.textContent=message;
+    toast.classList.add("show");
+
+    setTimeout(()=>{
+        toast.classList.remove("show");
+    },2500);
+
+}
+
+
+/* FAQ */
+
+document.querySelectorAll(".faq-question")
+.forEach(question=>{
+
+    question.addEventListener("click",()=>{
+
+        const item=question.parentElement;
+
+        document.querySelectorAll(".faq-item")
+        .forEach(other=>{
+
+            if(other!==item){
+                other.classList.remove("open");
+            }
+
+        });
+
+        item.classList.toggle("open");
+
+    });
+
+});
+
+
+/* CONTACT FORM */
+
+document.getElementById("contactForm")
+.addEventListener("submit",(e)=>{
+
+    e.preventDefault();
+
+    const name=document.getElementById("name").value;
+
+    showToast("🚀 Thanks "+name+"! Message ready to send.");
+
+    e.target.reset();
+
+});
+
+
+/* TOP BUTTON */
+
+const topBtn=document.getElementById("topBtn");
+
+window.addEventListener("scroll",()=>{
+
+    if(window.scrollY>500){
+
+        topBtn.classList.add("show");
+
+    }else{
+
+        topBtn.classList.remove("show");
+
     }
 
 });
 
 topBtn.addEventListener("click",()=>{
+
     window.scrollTo({
         top:0,
         behavior:"smooth"
     });
+
 });
 
 
-/* ================= MOUSE GLOW ================= */
+/* ACTIVE NAVIGATION */
+
+const sections=document.querySelectorAll("section[id]");
+
+window.addEventListener("scroll",()=>{
+
+    let current="";
+
+    sections.forEach(section=>{
+
+        const top=section.offsetTop-180;
+        const height=section.offsetHeight;
+
+        if(window.scrollY>=top &&
+           window.scrollY<top+height){
+
+            current=section.id;
+
+        }
+
+    });
+
+    document.querySelectorAll(".nav-links a")
+    .forEach(link=>{
+
+        link.classList.remove("active");
+
+        if(link.getAttribute("href")==="#"+current){
+            link.classList.add("active");
+        }
+
+    });
+
+});
+
+
+/* CURRENT YEAR */
+
+document.getElementById("year").textContent=
+new Date().getFullYear();
+
+
+/* CURSOR GLOW */
+
+const glow=document.createElement("div");
+
+glow.style.position="fixed";
+glow.style.width="220px";
+glow.style.height="220px";
+glow.style.borderRadius="50%";
+glow.style.pointerEvents="none";
+glow.style.background="radial-gradient(circle,rgba(0,234,255,.07),transparent 70%)";
+glow.style.transform="translate(-50%,-50%)";
+glow.style.zIndex="-1";
+
+document.body.appendChild(glow);
 
 document.addEventListener("mousemove",(e)=>{
 
-    const x = e.clientX;
-    const y = e.clientY;
-
-    document.body.style.backgroundPosition =
-        `${x/120}px ${y/120}px`;
+    glow.style.left=e.clientX+"px";
+    glow.style.top=e.clientY+"px";
 
 });
 
 
-/* ================= CONSOLE ================= */
+/* KEYBOARD */
 
-console.log(`
-=================================
-       ABTHEPROMO
-       ABDUL AHAD
-=================================
-Gaming UID: 2139735924
-Instagram: @ab.the_promo
-Location: Tangail, Bangladesh
-=================================
-Welcome to my digital world.
-`);
+document.addEventListener("keydown",(e)=>{
+
+    if(e.key==="Home"){
+
+        window.scrollTo({
+            top:0,
+            behavior:"smooth"
+        });
+
+    }
+
+});
+
+
+console.log(
+"%c ABTHEPROMO ",
+"background:#00eaff;color:#050816;font-size:25px;font-weight:bold;padding:10px;"
+);
+
+console.log(
+"%c Abdul Ahad | Digital Creator ",
+"color:#8b5cf6;font-size:15px;"
+);
 
 </script>
 
