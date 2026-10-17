@@ -1,2992 +1,2753 @@
-/* =========================================================
-   ABTHEPROMO ULTRA CSS ENGINE
-   ABDUL AHAD • PREMIUM DIGITAL PORTFOLIO
-   ========================================================= */
+/* ============================================================
+   ABTHEPROMO — ULTRA JAVASCRIPT ENGINE
+   ABDUL AHAD • 2026
+   ============================================================ */
 
-/* =========================
-   01. GLOBAL SYSTEM
-========================= */
+"use strict";
 
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-}
+/* ============================================================
+   01. GLOBAL SETTINGS
+============================================================ */
 
-html{
-    scroll-behavior:smooth;
-    scroll-padding-top:90px;
-}
+const APP = {
 
-body{
-    min-height:100vh;
-    overflow-x:hidden;
+    name: "ABTHEPROMO",
 
-    font-family:
-        Inter,
-        Poppins,
-        Arial,
-        Helvetica,
-        sans-serif;
+    owner: "Abdul Ahad",
 
-    color:#f5f7ff;
+    uid: "2139735924",
 
-    background:
-        radial-gradient(
-            circle at 10% 10%,
-            rgba(0,238,255,.10),
-            transparent 28%
-        ),
-        radial-gradient(
-            circle at 90% 20%,
-            rgba(132,80,255,.12),
-            transparent 30%
-        ),
-        radial-gradient(
-            circle at 50% 100%,
-            rgba(255,0,140,.08),
-            transparent 35%
-        ),
-        #030409;
+    phone: "01944882736",
 
-    line-height:1.6;
-}
+    instagram: "@ab.the_promo",
 
-/* Custom selection */
+    location: "Tangail, Bangladesh",
 
-::selection{
-    background:#00eaff;
-    color:#020308;
-}
+    version: "2.0.0",
 
-/* Scrollbar */
+    debug: false
 
-::-webkit-scrollbar{
-    width:9px;
-}
+};
 
-::-webkit-scrollbar-track{
-    background:#030409;
-}
 
-::-webkit-scrollbar-thumb{
-    background:
-        linear-gradient(
-            #00eaff,
-            #7c3cff,
-            #ff2fa3
+/* ============================================================
+   02. DOM HELPERS
+============================================================ */
+
+const $ = (selector, parent = document) =>
+    parent.querySelector(selector);
+
+const $$ = (selector, parent = document) =>
+    [...parent.querySelectorAll(selector)];
+
+
+/* ============================================================
+   03. APPLICATION STATE
+============================================================ */
+
+const state = {
+
+    menuOpen: false,
+
+    currentSection: "home",
+
+    scrollY: 0,
+
+    loaded: false,
+
+    cursorEnabled: false,
+
+    particlesEnabled: true,
+
+    reducedMotion:
+        window.matchMedia(
+            "(prefers-reduced-motion: reduce)"
+        ).matches
+
+};
+
+
+/* ============================================================
+   04. SAFE LOG
+============================================================ */
+
+function log(...args){
+
+    if(APP.debug){
+
+        console.log(
+            "[ABTHEPROMO]",
+            ...args
         );
 
-    border-radius:50px;
-}
-
-/* Images */
-
-img{
-    max-width:100%;
-    display:block;
-}
-
-/* Links */
-
-a{
-    text-decoration:none;
-    color:inherit;
-}
-
-/* Buttons */
-
-button,
-input,
-textarea{
-    font-family:inherit;
-}
-
-
-/* =========================
-   02. VARIABLES
-========================= */
-
-:root{
-
-    --black:#030409;
-    --black2:#070912;
-    --black3:#0b0f1a;
-
-    --white:#ffffff;
-    --text:#f5f7ff;
-    --muted:#8e98ad;
-
-    --cyan:#00eaff;
-    --blue:#3b82f6;
-    --purple:#8b5cf6;
-    --violet:#a855f7;
-    --pink:#ff2fa3;
-    --red:#ff3158;
-    --green:#00ff9d;
-    --yellow:#ffd83d;
-
-    --glass:
-        rgba(255,255,255,.045);
-
-    --glass2:
-        rgba(255,255,255,.075);
-
-    --border:
-        rgba(255,255,255,.10);
-
-    --border2:
-        rgba(0,234,255,.25);
-
-    --shadow:
-        0 30px 90px rgba(0,0,0,.45);
-
-    --glow:
-        0 0 40px rgba(0,234,255,.20);
-
-    --radius:26px;
-}
-
-
-/* =========================
-   03. MAIN BACKGROUND
-========================= */
-
-body::before{
-
-    content:"";
-
-    position:fixed;
-
-    inset:0;
-
-    pointer-events:none;
-
-    z-index:-10;
-
-    opacity:.22;
-
-    background-image:
-
-        linear-gradient(
-            rgba(255,255,255,.025) 1px,
-            transparent 1px
-        ),
-
-        linear-gradient(
-            90deg,
-            rgba(255,255,255,.025) 1px,
-            transparent 1px
-        );
-
-    background-size:
-        55px 55px;
-
-    mask-image:
-        linear-gradient(
-            to bottom,
-            black,
-            transparent 90%
-        );
-}
-
-
-/* Animated light */
-
-body::after{
-
-    content:"";
-
-    position:fixed;
-
-    width:700px;
-    height:700px;
-
-    left:50%;
-    top:40%;
-
-    transform:translate(-50%,-50%);
-
-    border-radius:50%;
-
-    background:
-        radial-gradient(
-            circle,
-            rgba(0,234,255,.06),
-            transparent 65%
-        );
-
-    pointer-events:none;
-
-    z-index:-9;
-
-    animation:
-        breathingGlow 8s ease-in-out infinite;
-}
-
-@keyframes breathingGlow{
-
-    0%,
-    100%{
-        transform:
-            translate(-50%,-50%)
-            scale(1);
     }
 
-    50%{
-        transform:
-            translate(-50%,-50%)
-            scale(1.25);
-    }
 }
 
 
-/* =========================
-   04. FLOATING ORBS
-========================= */
+/* ============================================================
+   05. PAGE LOADER
+============================================================ */
 
-.orb{
+function createLoader(){
 
-    position:fixed;
-
-    border-radius:50%;
-
-    pointer-events:none;
-
-    filter:blur(90px);
-
-    opacity:.13;
-
-    z-index:-5;
-
-    animation:
-        orbFloat 12s ease-in-out infinite;
-}
-
-.orb.one{
-
-    width:420px;
-    height:420px;
-
-    left:-220px;
-    top:10%;
-
-    background:var(--cyan);
-}
-
-.orb.two{
-
-    width:380px;
-    height:380px;
-
-    right:-190px;
-    top:40%;
-
-    background:var(--purple);
-
-    animation-delay:-4s;
-}
-
-.orb.three{
-
-    width:350px;
-    height:350px;
-
-    left:35%;
-    bottom:-200px;
-
-    background:var(--pink);
-
-    animation-delay:-8s;
-}
-
-@keyframes orbFloat{
-
-    0%,
-    100%{
-        transform:
-            translate3d(0,0,0)
-            scale(1);
+    if(document.querySelector("#pageLoader")){
+        return;
     }
 
-    50%{
-        transform:
-            translate3d(0,-60px,0)
-            scale(1.15);
-    }
-}
+    const loader =
+        document.createElement("div");
 
+    loader.id = "pageLoader";
 
-/* =========================
-   05. CONTAINER
-========================= */
+    loader.innerHTML = `
 
-.container{
+        <div class="loader-inner">
 
-    width:min(
-        1220px,
-        92%
+            <div class="loader-logo">
+                ABTHEPROMO
+            </div>
+
+            <div class="loader-line">
+                <span></span>
+            </div>
+
+            <div class="loader-text">
+                INITIALIZING DIGITAL WORLD...
+            </div>
+
+        </div>
+
+    `;
+
+    Object.assign(
+        loader.style,
+        {
+
+            position:"fixed",
+
+            inset:"0",
+
+            zIndex:"999999",
+
+            display:"flex",
+
+            alignItems:"center",
+
+            justifyContent:"center",
+
+            background:"#030409",
+
+            transition:
+                "opacity .7s ease, visibility .7s ease"
+
+        }
     );
 
-    margin:auto;
+    document.body.appendChild(loader);
+
 }
 
 
-/* =========================
-   06. SECTION
-========================= */
+function removeLoader(){
 
-section{
+    const loader =
+        $("#pageLoader");
 
-    position:relative;
+    if(!loader) return;
 
-    padding:
-        130px
-        0;
+    loader.style.opacity = "0";
 
-    overflow:hidden;
+    loader.style.visibility = "hidden";
+
+    setTimeout(()=>{
+
+        loader.remove();
+
+    },800);
+
 }
 
 
-/* =========================
-   07. NAVBAR
-========================= */
+/* ============================================================
+   06. MOBILE NAVIGATION
+============================================================ */
 
-.navbar{
+function initMobileMenu(){
 
-    position:fixed;
+    const menuBtn =
+        $("#menuBtn");
 
-    top:0;
-    left:0;
+    const nav =
+        $("#navLinks");
 
-    width:100%;
+    if(!menuBtn || !nav){
 
-    z-index:9999;
+        log("Mobile menu elements not found.");
 
-    padding:18px 0;
+        return;
 
-    background:
-        rgba(3,4,9,.62);
-
-    backdrop-filter:
-        blur(25px)
-        saturate(160%);
-
-    -webkit-backdrop-filter:
-        blur(25px)
-        saturate(160%);
-
-    border-bottom:
-        1px solid
-        rgba(255,255,255,.06);
-
-    transition:.35s ease;
-}
-
-.navbar:hover{
-
-    background:
-        rgba(3,4,9,.82);
-
-    border-bottom-color:
-        rgba(0,234,255,.12);
-}
-
-.nav-inner{
-
-    display:flex;
-
-    align-items:center;
-
-    justify-content:space-between;
-
-    gap:30px;
-}
-
-
-/* Logo */
-
-.logo{
-
-    position:relative;
-
-    font-size:25px;
-
-    font-weight:950;
-
-    letter-spacing:3px;
-
-    color:white;
-}
-
-.logo span{
-
-    background:
-        linear-gradient(
-            90deg,
-            var(--cyan),
-            var(--purple),
-            var(--pink)
-        );
-
-    -webkit-background-clip:text;
-
-    color:transparent;
-
-    text-shadow:none;
-}
-
-.logo::after{
-
-    content:"";
-
-    position:absolute;
-
-    width:6px;
-    height:6px;
-
-    border-radius:50%;
-
-    right:-12px;
-    top:5px;
-
-    background:var(--cyan);
-
-    box-shadow:
-        0 0 10px var(--cyan),
-        0 0 25px var(--cyan);
-
-    animation:
-        blink 1.5s infinite;
-}
-
-@keyframes blink{
-
-    0%,
-    100%{
-        opacity:1;
     }
 
-    50%{
-        opacity:.2;
-    }
-}
+    function toggleMenu(){
 
+        state.menuOpen =
+            !state.menuOpen;
 
-/* Navigation */
-
-.nav-links{
-
-    display:flex;
-
-    align-items:center;
-
-    gap:8px;
-
-    list-style:none;
-}
-
-.nav-links li{
-    position:relative;
-}
-
-.nav-links a{
-
-    display:block;
-
-    padding:
-        10px
-        14px;
-
-    color:#aeb6c9;
-
-    font-size:13px;
-
-    font-weight:600;
-
-    border-radius:10px;
-
-    transition:.3s ease;
-}
-
-.nav-links a:hover{
-
-    color:var(--cyan);
-
-    background:
-        rgba(0,234,255,.055);
-
-    box-shadow:
-        inset 0 0 0 1px
-        rgba(0,234,255,.08);
-
-    transform:
-        translateY(-2px);
-}
-
-
-/* Mobile menu */
-
-.menu-btn{
-
-    width:45px;
-    height:45px;
-
-    display:none;
-
-    align-items:center;
-    justify-content:center;
-
-    border:
-        1px solid
-        var(--border);
-
-    border-radius:13px;
-
-    background:
-        rgba(255,255,255,.05);
-
-    color:white;
-
-    cursor:pointer;
-
-    font-size:22px;
-
-    transition:.3s;
-}
-
-.menu-btn:hover{
-
-    border-color:var(--cyan);
-
-    color:var(--cyan);
-
-    box-shadow:
-        0 0 25px
-        rgba(0,234,255,.15);
-}
-
-
-/* =========================
-   08. HERO
-========================= */
-
-.hero{
-
-    min-height:100vh;
-
-    display:flex;
-
-    align-items:center;
-
-    padding-top:150px;
-
-    position:relative;
-}
-
-.hero-grid{
-
-    display:grid;
-
-    grid-template-columns:
-        1.15fr
-        .85fr;
-
-    align-items:center;
-
-    gap:80px;
-}
-
-
-/* Status badge */
-
-.badge{
-
-    display:inline-flex;
-
-    align-items:center;
-
-    gap:10px;
-
-    padding:
-        9px
-        15px;
-
-    margin-bottom:25px;
-
-    border:
-        1px solid
-        rgba(0,234,255,.20);
-
-    border-radius:999px;
-
-    background:
-        rgba(0,234,255,.045);
-
-    color:var(--cyan);
-
-    font-size:11px;
-
-    font-weight:800;
-
-    letter-spacing:1.5px;
-
-    box-shadow:
-        inset 0 0 20px
-        rgba(0,234,255,.025);
-}
-
-.dot{
-
-    width:8px;
-    height:8px;
-
-    border-radius:50%;
-
-    background:var(--green);
-
-    box-shadow:
-        0 0 8px var(--green),
-        0 0 20px var(--green);
-
-    animation:
-        pulseDot 1.5s infinite;
-}
-
-@keyframes pulseDot{
-
-    0%{
-        transform:scale(1);
-        opacity:1;
-    }
-
-    50%{
-        transform:scale(1.4);
-        opacity:.55;
-    }
-
-    100%{
-        transform:scale(1);
-        opacity:1;
-    }
-}
-
-
-/* Hero heading */
-
-.hero h1{
-
-    font-size:
-        clamp(
-            55px,
-            8vw,
-            108px
+        nav.classList.toggle(
+            "show",
+            state.menuOpen
         );
 
-    line-height:.88;
-
-    letter-spacing:
-        -6px;
-
-    font-weight:950;
-
-    margin-bottom:30px;
-}
-
-.gradient-text{
-
-    background:
-        linear-gradient(
-            90deg,
-            #00eaff 0%,
-            #4f8cff 30%,
-            #9b5cff 60%,
-            #ff2fa3 100%
+        menuBtn.setAttribute(
+            "aria-expanded",
+            String(state.menuOpen)
         );
 
-    background-size:250% auto;
+        menuBtn.innerHTML =
+            state.menuOpen
+                ? "✕"
+                : "☰";
 
-    -webkit-background-clip:text;
-
-    color:transparent;
-
-    animation:
-        gradientMove 6s linear infinite;
-}
-
-@keyframes gradientMove{
-
-    to{
-        background-position:
-            250% center;
-    }
-}
-
-.hero-desc{
-
-    max-width:680px;
-
-    color:var(--muted);
-
-    font-size:18px;
-
-    line-height:1.9;
-}
-
-.hero-desc b{
-
-    color:white;
-}
-
-
-/* Hero buttons */
-
-.hero-buttons{
-
-    display:flex;
-
-    align-items:center;
-
-    gap:14px;
-
-    flex-wrap:wrap;
-
-    margin-top:38px;
-}
-
-.btn{
-
-    position:relative;
-
-    display:inline-flex;
-
-    align-items:center;
-
-    justify-content:center;
-
-    gap:10px;
-
-    min-height:52px;
-
-    padding:
-        0
-        23px;
-
-    border:
-        1px solid
-        var(--border);
-
-    border-radius:14px;
-
-    color:white;
-
-    background:
-        rgba(255,255,255,.035);
-
-    font-size:14px;
-
-    font-weight:800;
-
-    overflow:hidden;
-
-    transition:
-        transform .35s,
-        border-color .35s,
-        box-shadow .35s;
-}
-
-.btn::before{
-
-    content:"";
-
-    position:absolute;
-
-    inset:0;
-
-    background:
-        linear-gradient(
-            110deg,
-            transparent 25%,
-            rgba(255,255,255,.25),
-            transparent 75%
-        );
-
-    transform:
-        translateX(-120%);
-
-    transition:.7s;
-}
-
-.btn:hover::before{
-
-    transform:
-        translateX(120%);
-}
-
-.btn:hover{
-
-    transform:
-        translateY(-5px);
-
-    border-color:
-        rgba(0,234,255,.35);
-
-    box-shadow:
-        0 15px 45px
-        rgba(0,0,0,.35);
-}
-
-.btn-primary{
-
-    color:#020409;
-
-    border:none;
-
-    background:
-        linear-gradient(
-            100deg,
-            var(--cyan),
-            #6f7cff,
-            var(--purple)
-        );
-
-    box-shadow:
-        0 10px 35px
-        rgba(0,234,255,.18);
-}
-
-.btn-primary:hover{
-
-    color:white;
-
-    box-shadow:
-        0 15px 50px
-        rgba(0,234,255,.25);
-}
-
-
-/* =========================
-   09. HERO CARD
-========================= */
-
-.hero-card{
-
-    position:relative;
-
-    min-height:510px;
-
-    display:flex;
-
-    align-items:center;
-
-    justify-content:center;
-
-    border:
-        1px solid
-        var(--border);
-
-    border-radius:38px;
-
-    background:
-        linear-gradient(
-            145deg,
-            rgba(255,255,255,.08),
-            rgba(255,255,255,.018)
-        );
-
-    backdrop-filter:
-        blur(25px);
-
-    box-shadow:
-        var(--shadow);
-
-    overflow:hidden;
-
-    isolation:isolate;
-}
-
-.hero-card::before{
-
-    content:"";
-
-    position:absolute;
-
-    width:320px;
-    height:320px;
-
-    border-radius:50%;
-
-    background:
-        var(--cyan);
-
-    filter:
-        blur(110px);
-
-    opacity:.13;
-
-    animation:
-        cardGlow 6s ease-in-out infinite;
-}
-
-.hero-card::after{
-
-    content:"";
-
-    position:absolute;
-
-    inset:1px;
-
-    border-radius:37px;
-
-    border:
-        1px solid
-        rgba(255,255,255,.025);
-
-    pointer-events:none;
-}
-
-@keyframes cardGlow{
-
-    0%,
-    100%{
-        transform:scale(1);
     }
 
-    50%{
-        transform:scale(1.25);
-    }
-}
 
-
-/* Avatar */
-
-.avatar{
-
-    position:relative;
-
-    z-index:5;
-
-    width:225px;
-    height:225px;
-
-    display:flex;
-
-    align-items:center;
-    justify-content:center;
-
-    border-radius:50%;
-
-    font-size:65px;
-
-    font-weight:950;
-
-    color:var(--cyan);
-
-    background:
-        radial-gradient(
-            circle,
-            rgba(0,234,255,.13),
-            rgba(0,0,0,.25)
-        );
-
-    border:
-        2px solid
-        rgba(0,234,255,.65);
-
-    box-shadow:
-        0 0 30px
-        rgba(0,234,255,.20),
-
-        0 0 100px
-        rgba(0,234,255,.10),
-
-        inset 0 0 40px
-        rgba(0,234,255,.07);
-
-    animation:
-        avatarFloat 5s ease-in-out infinite;
-}
-
-@keyframes avatarFloat{
-
-    0%,
-    100%{
-        transform:translateY(0);
-    }
-
-    50%{
-        transform:translateY(-15px);
-    }
-}
-
-
-/* Floating cards */
-
-.floating{
-
-    position:absolute;
-
-    z-index:10;
-
-    padding:
-        12px
-        16px;
-
-    border:
-        1px solid
-        rgba(255,255,255,.11);
-
-    border-radius:13px;
-
-    background:
-        rgba(5,7,13,.72);
-
-    backdrop-filter:
-        blur(15px);
-
-    color:#dce4f4;
-
-    font-size:12px;
-
-    font-weight:700;
-
-    box-shadow:
-        0 15px 40px
-        rgba(0,0,0,.25);
-
-    animation:
-        floatingCard 5s ease-in-out infinite;
-}
-
-.f1{
-    top:55px;
-    left:30px;
-}
-
-.f2{
-    top:100px;
-    right:30px;
-    animation-delay:-1s;
-}
-
-.f3{
-    bottom:65px;
-    left:45px;
-    animation-delay:-2s;
-}
-
-.f4{
-    bottom:45px;
-    right:35px;
-    animation-delay:-3s;
-}
-
-@keyframes floatingCard{
-
-    0%,
-    100%{
-        transform:
-            translateY(0);
-    }
-
-    50%{
-        transform:
-            translateY(-12px);
-    }
-}
-
-
-/* =========================
-   10. SECTION TITLE
-========================= */
-
-.section-title{
-
-    text-align:center;
-
-    max-width:800px;
-
-    margin:
-        0 auto
-        70px;
-}
-
-.section-tag{
-
-    display:inline-block;
-
-    margin-bottom:13px;
-
-    color:var(--cyan);
-
-    font-size:11px;
-
-    font-weight:900;
-
-    letter-spacing:4px;
-
-    text-transform:uppercase;
-}
-
-.section-title h2{
-
-    font-size:
-        clamp(
-            38px,
-            5vw,
-            68px
-        );
-
-    line-height:1;
-
-    letter-spacing:-2px;
-
-    margin-bottom:18px;
-
-    font-weight:950;
-}
-
-.section-title p{
-
-    max-width:650px;
-
-    margin:auto;
-
-    color:var(--muted);
-
-    line-height:1.8;
-}
-
-
-/* =========================
-   11. CARD SYSTEM
-========================= */
-
-.cards{
-
-    display:grid;
-
-    grid-template-columns:
-        repeat(3,1fr);
-
-    gap:22px;
-}
-
-.card{
-
-    position:relative;
-
-    padding:34px;
-
-    min-height:250px;
-
-    border:
-        1px solid
-        var(--border);
-
-    border-radius:
-        var(--radius);
-
-    background:
-        linear-gradient(
-            145deg,
-            rgba(255,255,255,.055),
-            rgba(255,255,255,.018)
-        );
-
-    backdrop-filter:
-        blur(18px);
-
-    overflow:hidden;
-
-    transition:
-        transform .45s cubic-bezier(.2,.8,.2,1),
-        border-color .45s,
-        box-shadow .45s;
-}
-
-.card::before{
-
-    content:"";
-
-    position:absolute;
-
-    width:180px;
-    height:180px;
-
-    top:-120px;
-    right:-100px;
-
-    border-radius:50%;
-
-    background:
-        var(--cyan);
-
-    filter:blur(80px);
-
-    opacity:0;
-
-    transition:.5s;
-}
-
-.card:hover::before{
-
-    opacity:.16;
-}
-
-.card:hover{
-
-    transform:
-        translateY(-12px);
-
-    border-color:
-        rgba(0,234,255,.25);
-
-    box-shadow:
-        0 30px 80px
-        rgba(0,0,0,.35);
-}
-
-.icon{
-
-    width:65px;
-    height:65px;
-
-    display:flex;
-
-    align-items:center;
-    justify-content:center;
-
-    margin-bottom:25px;
-
-    border-radius:18px;
-
-    background:
-        rgba(0,234,255,.055);
-
-    border:
-        1px solid
-        rgba(0,234,255,.10);
-
-    font-size:29px;
-
-    transition:.4s;
-}
-
-.card:hover .icon{
-
-    transform:
-        rotate(-5deg)
-        scale(1.08);
-
-    border-color:
-        rgba(0,234,255,.30);
-
-    box-shadow:
-        0 0 30px
-        rgba(0,234,255,.12);
-}
-
-.card h3{
-
-    font-size:23px;
-
-    margin-bottom:12px;
-
-    position:relative;
-}
-
-.card p{
-
-    color:var(--muted);
-
-    line-height:1.8;
-
-    font-size:14px;
-
-    position:relative;
-}
-
-
-/* =========================
-   12. ABOUT
-========================= */
-
-.about-grid{
-
-    display:grid;
-
-    grid-template-columns:
-        .8fr
-        1.2fr;
-
-    gap:70px;
-
-    align-items:center;
-}
-
-.about-box{
-
-    position:relative;
-
-    min-height:380px;
-
-    display:flex;
-
-    flex-direction:column;
-
-    justify-content:center;
-
-    padding:50px;
-
-    border-radius:35px;
-
-    background:
-        linear-gradient(
-            145deg,
-            rgba(0,234,255,.07),
-            rgba(139,92,246,.07)
-        );
-
-    border:
-        1px solid
-        var(--border);
-
-    overflow:hidden;
-}
-
-.about-box::before{
-
-    content:"";
-
-    position:absolute;
-
-    width:250px;
-    height:250px;
-
-    right:-100px;
-    bottom:-120px;
-
-    border-radius:50%;
-
-    background:
-        var(--purple);
-
-    filter:blur(90px);
-
-    opacity:.16;
-}
-
-.about-big{
-
-    position:relative;
-
-    font-size:100px;
-
-    line-height:1;
-
-    font-weight:950;
-
-    background:
-        linear-gradient(
-            135deg,
-            var(--cyan),
-            var(--purple)
-        );
-
-    -webkit-background-clip:text;
-
-    color:transparent;
-
-    margin-bottom:15px;
-}
-
-.about-box h3{
-
-    position:relative;
-
-    font-size:28px;
-}
-
-.about-box p{
-
-    position:relative;
-
-    color:var(--muted);
-}
-
-.about-text h2{
-
-    font-size:
-        clamp(
-            35px,
-            4vw,
-            55px
-        );
-
-    line-height:1.05;
-
-    letter-spacing:-2px;
-
-    margin-bottom:25px;
-}
-
-.about-text p{
-
-    color:var(--muted);
-
-    line-height:1.9;
-
-    margin-bottom:18px;
-}
-
-.info-list{
-
-    display:grid;
-
-    grid-template-columns:
-        repeat(2,1fr);
-
-    gap:14px;
-
-    margin-top:28px;
-}
-
-.info{
-
-    padding:18px;
-
-    border:
-        1px solid
-        var(--border);
-
-    border-radius:15px;
-
-    background:
-        rgba(255,255,255,.025);
-
-    transition:.3s;
-}
-
-.info:hover{
-
-    transform:
-        translateY(-4px);
-
-    border-color:
-        rgba(0,234,255,.20);
-}
-
-.info small{
-
-    display:block;
-
-    color:#6e778c;
-
-    font-size:10px;
-
-    letter-spacing:1.5px;
-
-    margin-bottom:5px;
-}
-
-.info strong{
-
-    font-size:14px;
-}
-
-
-/* =========================
-   13. GAMING
-========================= */
-
-.gaming-main{
-
-    display:grid;
-
-    grid-template-columns:
-        1fr
-        1fr;
-
-    gap:24px;
-}
-
-.gaming-profile{
-
-    position:relative;
-
-    min-height:330px;
-
-    padding:45px;
-
-    display:flex;
-
-    flex-direction:column;
-
-    justify-content:center;
-
-    border-radius:32px;
-
-    border:
-        1px solid
-        rgba(255,255,255,.10);
-
-    background:
-        radial-gradient(
-            circle at 85% 20%,
-            rgba(255,70,0,.15),
-            transparent 35%
-        ),
-        linear-gradient(
-            145deg,
-            rgba(255,70,0,.07),
-            rgba(139,92,246,.07)
-        );
-
-    overflow:hidden;
-}
-
-.gaming-profile::after{
-
-    content:"";
-
-    position:absolute;
-
-    width:350px;
-    height:350px;
-
-    right:-200px;
-    bottom:-220px;
-
-    border-radius:50%;
-
-    background:
-        #ff4800;
-
-    filter:blur(110px);
-
-    opacity:.10;
-}
-
-.fire{
-
-    font-size:75px;
-
-    margin-bottom:15px;
-
-    filter:
-        drop-shadow(
-            0 0 25px
-            rgba(255,80,0,.45)
-        );
-
-    animation:
-        firePulse 2s infinite;
-}
-
-@keyframes firePulse{
-
-    0%,
-    100%{
-        transform:scale(1);
-    }
-
-    50%{
-        transform:scale(1.08);
-    }
-}
-
-.gaming-profile h3{
-
-    position:relative;
-    z-index:2;
-
-    font-size:40px;
-
-    margin-bottom:10px;
-}
-
-.uid{
-
-    position:relative;
-    z-index:2;
-
-    color:var(--muted);
-
-    font-size:17px;
-}
-
-.uid strong{
-
-    color:var(--cyan);
-
-    letter-spacing:2px;
-
-    text-shadow:
-        0 0 20px
-        rgba(0,234,255,.25);
-}
-
-.stat-grid{
-
-    display:grid;
-
-    grid-template-columns:
-        repeat(2,1fr);
-
-    gap:18px;
-}
-
-.stat{
-
-    min-height:150px;
-
-    display:flex;
-
-    flex-direction:column;
-
-    justify-content:center;
-
-    padding:28px;
-
-    border:
-        1px solid
-        var(--border);
-
-    border-radius:22px;
-
-    background:
-        var(--glass);
-
-    transition:.35s;
-}
-
-.stat:hover{
-
-    transform:
-        translateY(-8px);
-
-    border-color:
-        rgba(0,234,255,.25);
-}
-
-.stat-number{
-
-    font-size:40px;
-
-    font-weight:950;
-
-    color:var(--cyan);
-
-    line-height:1;
-}
-
-.stat p{
-
-    color:var(--muted);
-
-    margin-top:9px;
-
-    font-size:13px;
-}
-
-
-/* =========================
-   14. AI ZONE
-========================= */
-
-.ai-box{
-
-    position:relative;
-
-    padding:
-        90px
-        50px;
-
-    text-align:center;
-
-    border:
-        1px solid
-        rgba(139,92,246,.22);
-
-    border-radius:38px;
-
-    background:
-        radial-gradient(
-            circle at 50% 0%,
-            rgba(139,92,246,.16),
-            transparent 45%
-        ),
-        rgba(255,255,255,.025);
-
-    overflow:hidden;
-}
-
-.ai-box::before{
-
-    content:"";
-
-    position:absolute;
-
-    width:450px;
-    height:450px;
-
-    left:50%;
-    top:-300px;
-
-    transform:
-        translateX(-50%);
-
-    border-radius:50%;
-
-    background:
-        var(--purple);
-
-    filter:
-        blur(130px);
-
-    opacity:.12;
-}
-
-.ai-logo{
-
-    position:relative;
-
-    font-size:80px;
-
-    margin-bottom:20px;
-
-    filter:
-        drop-shadow(
-            0 0 25px
-            rgba(139,92,246,.35)
-        );
-
-    animation:
-        robotFloat 4s infinite ease-in-out;
-}
-
-@keyframes robotFloat{
-
-    0%,
-    100%{
-        transform:translateY(0)
-        rotate(0);
-    }
-
-    50%{
-        transform:translateY(-10px)
-        rotate(2deg);
-    }
-}
-
-.ai-box h2{
-
-    position:relative;
-
-    font-size:
-        clamp(
-            40px,
-            5vw,
-            62px
-        );
-
-    margin-bottom:15px;
-}
-
-.ai-box p{
-
-    position:relative;
-
-    max-width:720px;
-
-    margin:auto;
-
-    color:var(--muted);
-
-    line-height:1.9;
-}
-
-
-/* =========================
-   15. PROJECTS
-========================= */
-
-.project{
-
-    min-height:290px;
-
-    display:flex;
-
-    flex-direction:column;
-
-    justify-content:flex-end;
-}
-
-.project-number{
-
-    position:absolute;
-
-    top:30px;
-    left:32px;
-
-    color:var(--cyan);
-
-    font-size:10px;
-
-    font-weight:900;
-
-    letter-spacing:3px;
-}
-
-.project h3{
-
-    font-size:28px;
-
-    margin-bottom:12px;
-}
-
-
-/* =========================
-   16. SKILLS
-========================= */
-
-.skills{
-
-    width:min(
-        900px,
-        100%
+    menuBtn.addEventListener(
+        "click",
+        toggleMenu
     );
 
-    margin:auto;
-}
 
-.skill{
+    $$("#navLinks a")
+        .forEach(link=>{
 
-    margin-bottom:30px;
-}
+            link.addEventListener(
+                "click",
+                ()=>{
 
-.skill-head{
+                    state.menuOpen = false;
 
-    display:flex;
+                    nav.classList.remove("show");
 
-    justify-content:space-between;
+                    menuBtn.innerHTML = "☰";
 
-    align-items:center;
+                    menuBtn.setAttribute(
+                        "aria-expanded",
+                        "false"
+                    );
 
-    margin-bottom:10px;
-
-    font-size:14px;
-
-    font-weight:700;
-}
-
-.skill-head span:last-child{
-
-    color:var(--cyan);
-
-    font-size:12px;
-}
-
-.bar{
-
-    position:relative;
-
-    height:9px;
-
-    border-radius:50px;
-
-    background:
-        rgba(255,255,255,.07);
-
-    overflow:hidden;
-}
-
-.bar::after{
-
-    content:"";
-
-    position:absolute;
-
-    inset:0;
-
-    background:
-        linear-gradient(
-            90deg,
-            transparent,
-            rgba(255,255,255,.06),
-            transparent
-        );
-
-    transform:
-        translateX(-100%);
-
-    animation:
-        barShine 3s infinite;
-}
-
-@keyframes barShine{
-
-    100%{
-        transform:
-            translateX(100%);
-    }
-}
-
-.bar span{
-
-    display:block;
-
-    height:100%;
-
-    width:0;
-
-    border-radius:50px;
-
-    background:
-        linear-gradient(
-            90deg,
-            var(--cyan),
-            var(--blue),
-            var(--purple)
-        );
-
-    box-shadow:
-        0 0 15px
-        rgba(0,234,255,.25);
-
-    transition:
-        width 2s
-        cubic-bezier(.2,.8,.2,1);
-}
-
-
-/* =========================
-   17. TIMELINE
-========================= */
-
-.timeline{
-
-    position:relative;
-
-    max-width:850px;
-
-    margin:auto;
-}
-
-.timeline::before{
-
-    content:"";
-
-    position:absolute;
-
-    left:18px;
-
-    top:0;
-    bottom:0;
-
-    width:1px;
-
-    background:
-        linear-gradient(
-            var(--cyan),
-            var(--purple),
-            transparent
-        );
-}
-
-.timeline-item{
-
-    position:relative;
-
-    padding-left:65px;
-
-    margin-bottom:55px;
-}
-
-.timeline-dot{
-
-    position:absolute;
-
-    left:8px;
-
-    top:5px;
-
-    width:22px;
-    height:22px;
-
-    border-radius:50%;
-
-    background:
-        var(--cyan);
-
-    border:
-        4px solid
-        var(--black);
-
-    box-shadow:
-        0 0 15px
-        var(--cyan),
-        0 0 35px
-        rgba(0,234,255,.25);
-}
-
-.timeline-item h3{
-
-    font-size:23px;
-
-    margin-bottom:8px;
-}
-
-.timeline-item p{
-
-    color:var(--muted);
-
-    line-height:1.8;
-}
-
-
-/* =========================
-   18. GALLERY
-========================= */
-
-.gallery{
-
-    display:grid;
-
-    grid-template-columns:
-        repeat(4,1fr);
-
-    gap:16px;
-}
-
-.gallery-item{
-
-    position:relative;
-
-    height:230px;
-
-    display:flex;
-
-    align-items:center;
-
-    justify-content:center;
-
-    border:
-        1px solid
-        var(--border);
-
-    border-radius:22px;
-
-    background:
-        linear-gradient(
-            135deg,
-            rgba(0,234,255,.07),
-            rgba(139,92,246,.07)
-        );
-
-    overflow:hidden;
-
-    font-size:38px;
-
-    transition:
-        transform .45s,
-        border-color .45s;
-}
-
-.gallery-item::before{
-
-    content:"";
-
-    position:absolute;
-
-    inset:0;
-
-    background:
-        radial-gradient(
-            circle at center,
-            rgba(0,234,255,.12),
-            transparent 65%
-        );
-
-    opacity:0;
-
-    transition:.4s;
-}
-
-.gallery-item:hover::before{
-
-    opacity:1;
-}
-
-.gallery-item:hover{
-
-    transform:
-        scale(1.035)
-        translateY(-6px);
-
-    border-color:
-        rgba(0,234,255,.25);
-}
-
-
-/* =========================
-   19. ROADMAP
-========================= */
-
-.roadmap{
-
-    display:grid;
-
-    grid-template-columns:
-        repeat(4,1fr);
-
-    gap:18px;
-}
-
-.road{
-
-    position:relative;
-
-    padding:32px;
-
-    min-height:230px;
-
-    border:
-        1px solid
-        var(--border);
-
-    border-radius:25px;
-
-    background:
-        var(--glass);
-
-    overflow:hidden;
-
-    transition:.4s;
-}
-
-.road:hover{
-
-    transform:
-        translateY(-8px);
-
-    border-color:
-        rgba(0,234,255,.25);
-}
-
-.road::after{
-
-    content:"";
-
-    position:absolute;
-
-    width:100px;
-    height:100px;
-
-    right:-50px;
-    bottom:-50px;
-
-    border-radius:50%;
-
-    background:
-        var(--purple);
-
-    filter:
-        blur(50px);
-
-    opacity:.12;
-}
-
-.road span{
-
-    color:var(--cyan);
-
-    font-size:10px;
-
-    font-weight:900;
-
-    letter-spacing:3px;
-}
-
-.road h3{
-
-    font-size:24px;
-
-    margin:
-        16px
-        0
-        10px;
-}
-
-.road p{
-
-    color:var(--muted);
-
-    line-height:1.7;
-
-    font-size:13px;
-}
-
-
-/* =========================
-   20. SOCIAL
-========================= */
-
-.social-grid{
-
-    display:grid;
-
-    grid-template-columns:
-        repeat(4,1fr);
-
-    gap:18px;
-}
-
-.social{
-
-    position:relative;
-
-    padding:30px 20px;
-
-    text-align:center;
-
-    border:
-        1px solid
-        var(--border);
-
-    border-radius:22px;
-
-    background:
-        var(--glass);
-
-    transition:.4s;
-
-    overflow:hidden;
-}
-
-.social::before{
-
-    content:"";
-
-    position:absolute;
-
-    left:50%;
-    top:0;
-
-    width:80px;
-    height:3px;
-
-    transform:
-        translateX(-50%);
-
-    background:
-        linear-gradient(
-            90deg,
-            var(--cyan),
-            var(--purple)
-        );
-
-    opacity:0;
-
-    transition:.4s;
-}
-
-.social:hover::before{
-
-    opacity:1;
-}
-
-.social:hover{
-
-    transform:
-        translateY(-9px);
-
-    border-color:
-        rgba(0,234,255,.25);
-
-    box-shadow:
-        0 25px 60px
-        rgba(0,0,0,.3);
-}
-
-.social-icon{
-
-    font-size:35px;
-
-    margin-bottom:13px;
-
-    transition:.4s;
-}
-
-.social:hover .social-icon{
-
-    transform:
-        scale(1.18)
-        rotate(-5deg);
-}
-
-.social p{
-
-    color:var(--muted);
-
-    margin-top:6px;
-
-    font-size:12px;
-}
-
-
-/* =========================
-   21. CONTACT
-========================= */
-
-.contact-box{
-
-    position:relative;
-
-    max-width:950px;
-
-    margin:auto;
-
-    padding:
-        80px
-        35px;
-
-    text-align:center;
-
-    border:
-        1px solid
-        var(--border);
-
-    border-radius:38px;
-
-    background:
-        radial-gradient(
-            circle at 50% 0%,
-            rgba(0,234,255,.12),
-            transparent 48%
-        ),
-        rgba(255,255,255,.025);
-
-    overflow:hidden;
-}
-
-.contact-box::before{
-
-    content:"";
-
-    position:absolute;
-
-    width:500px;
-    height:500px;
-
-    left:50%;
-    top:-420px;
-
-    transform:
-        translateX(-50%);
-
-    border-radius:50%;
-
-    background:
-        var(--cyan);
-
-    filter:
-        blur(130px);
-
-    opacity:.08;
-}
-
-.contact-box > *{
-
-    position:relative;
-}
-
-.contact-box h2{
-
-    font-size:
-        clamp(
-            40px,
-            6vw,
-            70px
-        );
-
-    line-height:1;
-
-    letter-spacing:-3px;
-
-    margin:
-        10px
-        0
-        20px;
-}
-
-.contact-box p{
-
-    color:var(--muted);
-
-    margin-bottom:30px;
-}
-
-
-/* =========================
-   22. FOOTER
-========================= */
-
-footer{
-
-    position:relative;
-
-    padding:
-        45px
-        0;
-
-    text-align:center;
-
-    border-top:
-        1px solid
-        rgba(255,255,255,.07);
-
-    background:
-        rgba(0,0,0,.18);
-
-    color:#687287;
-}
-
-footer strong{
-
-    color:var(--cyan);
-
-    text-shadow:
-        0 0 15px
-        rgba(0,234,255,.15);
-}
-
-
-/* =========================
-   23. REVEAL ANIMATION
-========================= */
-
-.reveal{
-
-    opacity:0;
-
-    transform:
-        translateY(50px)
-        scale(.98);
-
-    filter:
-        blur(4px);
-
-    transition:
-        opacity .9s ease,
-        transform .9s cubic-bezier(.2,.8,.2,1),
-        filter .9s ease;
-}
-
-.reveal.active{
-
-    opacity:1;
-
-    transform:
-        translateY(0)
-        scale(1);
-
-    filter:
-        blur(0);
-}
-
-
-/* =========================
-   24. TOP BUTTON
-========================= */
-
-.top-btn{
-
-    position:fixed;
-
-    right:25px;
-    bottom:25px;
-
-    width:52px;
-    height:52px;
-
-    display:none;
-
-    align-items:center;
-    justify-content:center;
-
-    border:
-        1px solid
-        rgba(0,234,255,.18);
-
-    border-radius:15px;
-
-    background:
-        rgba(5,7,13,.82);
-
-    backdrop-filter:
-        blur(15px);
-
-    color:var(--cyan);
-
-    cursor:pointer;
-
-    font-size:20px;
-
-    z-index:5000;
-
-    box-shadow:
-        0 15px 40px
-        rgba(0,0,0,.3);
-
-    transition:.3s;
-}
-
-.top-btn:hover{
-
-    transform:
-        translateY(-5px);
-
-    border-color:
-        var(--cyan);
-
-    box-shadow:
-        0 0 30px
-        rgba(0,234,255,.15);
-}
-
-
-/* =========================
-   25. MOBILE
-========================= */
-
-@media(max-width:1000px){
-
-    .hero-grid{
-
-        grid-template-columns:1fr;
-
-        gap:50px;
-    }
-
-    .hero-card{
-
-        max-width:700px;
-
-        width:100%;
-
-        margin:auto;
-    }
-
-    .about-grid{
-
-        grid-template-columns:1fr;
-
-        gap:40px;
-    }
-
-    .gaming-main{
-
-        grid-template-columns:1fr;
-    }
-
-    .cards{
-
-        grid-template-columns:
-            repeat(2,1fr);
-    }
-
-    .roadmap{
-
-        grid-template-columns:
-            repeat(2,1fr);
-    }
-
-    .social-grid{
-
-        grid-template-columns:
-            repeat(2,1fr);
-    }
-
-    .gallery{
-
-        grid-template-columns:
-            repeat(2,1fr);
-    }
-}
-
-
-@media(max-width:760px){
-
-    section{
-
-        padding:
-            95px
-            0;
-    }
-
-    .nav-links{
-
-        position:absolute;
-
-        left:4%;
-        right:4%;
-
-        top:78px;
-
-        display:none;
-
-        flex-direction:column;
-
-        align-items:stretch;
-
-        padding:15px;
-
-        border:
-            1px solid
-            var(--border);
-
-        border-radius:20px;
-
-        background:
-            rgba(4,6,11,.97);
-
-        backdrop-filter:
-            blur(25px);
-
-        box-shadow:
-            0 25px 70px
-            rgba(0,0,0,.45);
-    }
-
-    .nav-links.show{
-
-        display:flex;
-    }
-
-    .nav-links a{
-
-        padding:
-            13px
-            15px;
-    }
-
-    .menu-btn{
-
-        display:flex;
-    }
-
-    .hero{
-
-        padding-top:130px;
-    }
-
-    .hero h1{
-
-        font-size:
-            clamp(
-                48px,
-                15vw,
-                78px
+                }
             );
 
-        letter-spacing:
-            -4px;
-    }
+        });
 
-    .hero-desc{
 
-        font-size:15px;
-    }
+    document.addEventListener(
+        "keydown",
+        event=>{
 
-    .hero-card{
+            if(
+                event.key === "Escape" &&
+                state.menuOpen
+            ){
 
-        min-height:390px;
+                state.menuOpen = false;
 
-        border-radius:28px;
-    }
+                nav.classList.remove("show");
 
-    .avatar{
+                menuBtn.innerHTML = "☰";
 
-        width:175px;
-        height:175px;
+            }
 
-        font-size:50px;
-    }
+        }
+    );
 
-    .floating{
-
-        font-size:10px;
-
-        padding:
-            9px
-            12px;
-    }
-
-    .f1{
-        left:15px;
-        top:30px;
-    }
-
-    .f2{
-        right:15px;
-        top:70px;
-    }
-
-    .f3{
-        left:20px;
-        bottom:35px;
-    }
-
-    .f4{
-        right:20px;
-        bottom:25px;
-    }
-
-    .cards{
-
-        grid-template-columns:1fr;
-    }
-
-    .roadmap{
-
-        grid-template-columns:1fr;
-    }
-
-    .social-grid{
-
-        grid-template-columns:
-            repeat(2,1fr);
-    }
-
-    .gallery{
-
-        grid-template-columns:
-            repeat(2,1fr);
-    }
-
-    .gallery-item{
-
-        height:170px;
-    }
-
-    .ai-box{
-
-        padding:
-            65px
-            20px;
-    }
-
-    .contact-box{
-
-        padding:
-            65px
-            20px;
-    }
-
-    .info-list{
-
-        grid-template-columns:1fr;
-    }
 }
 
 
-@media(max-width:450px){
+/* ============================================================
+   07. NAVBAR SCROLL EFFECT
+============================================================ */
 
-    .container{
+function initNavbar(){
 
-        width:90%;
+    const navbar =
+        $(".navbar");
+
+    if(!navbar) return;
+
+
+    function update(){
+
+        if(window.scrollY > 40){
+
+            navbar.classList.add(
+                "scrolled"
+            );
+
+            navbar.style.padding =
+                "11px 0";
+
+        }else{
+
+            navbar.classList.remove(
+                "scrolled"
+            );
+
+            navbar.style.padding =
+                "";
+
+        }
+
     }
 
-    section{
 
-        padding:
-            75px
-            0;
-    }
+    window.addEventListener(
+        "scroll",
+        update,
+        {passive:true}
+    );
 
-    .hero-buttons{
+    update();
 
-        flex-direction:column;
-
-        align-items:stretch;
-    }
-
-    .btn{
-
-        width:100%;
-    }
-
-    .hero-card{
-
-        min-height:330px;
-    }
-
-    .gaming-profile{
-
-        padding:32px 25px;
-    }
-
-    .gaming-profile h3{
-
-        font-size:31px;
-    }
-
-    .stat-grid{
-
-        grid-template-columns:1fr;
-    }
-
-    .social-grid{
-
-        grid-template-columns:1fr;
-    }
-
-    .gallery{
-
-        grid-template-columns:1fr;
-    }
-
-    .gallery-item{
-
-        height:220px;
-    }
-
-    .section-title{
-
-        margin-bottom:45px;
-    }
-
-    .section-title h2{
-
-        font-size:38px;
-    }
-
-    .about-big{
-
-        font-size:70px;
-    }
-
-    .top-btn{
-
-        right:16px;
-        bottom:16px;
-    }
 }
 
 
-/* =========================
-   26. REDUCED MOTION
-========================= */
+/* ============================================================
+   08. ACTIVE NAVIGATION
+============================================================ */
 
-@media(prefers-reduced-motion:reduce){
+function initActiveNavigation(){
 
-    *,
-    *::before,
-    *::after{
+    const sections =
+        $$("section[id]");
 
-        animation-duration:
-            .01ms !important;
+    const links =
+        $$("#navLinks a");
 
-        animation-iteration-count:
-            1 !important;
+    if(!sections.length) return;
 
-        scroll-behavior:
-            auto !important;
 
-        transition-duration:
-            .01ms !important;
+    const observer =
+        new IntersectionObserver(
+            entries=>{
+
+                entries.forEach(
+                    entry=>{
+
+                        if(
+                            entry.isIntersecting
+                        ){
+
+                            state.currentSection =
+                                entry.target.id;
+
+
+                            links.forEach(
+                                link=>{
+
+                                    const href =
+                                        link.getAttribute(
+                                            "href"
+                                        );
+
+                                    link.classList.toggle(
+                                        "active",
+                                        href ===
+                                        `#${entry.target.id}`
+                                    );
+
+                                }
+                            );
+
+                        }
+
+                    }
+                );
+
+            },
+            {
+                threshold:0.35
+            }
+        );
+
+
+    sections.forEach(
+        section=>
+            observer.observe(section)
+    );
+
+}
+
+
+/* ============================================================
+   09. SMOOTH INTERNAL LINKS
+============================================================ */
+
+function initSmoothLinks(){
+
+    $$('a[href^="#"]')
+        .forEach(link=>{
+
+            link.addEventListener(
+                "click",
+                event=>{
+
+                    const id =
+                        link.getAttribute(
+                            "href"
+                        );
+
+                    if(
+                        !id ||
+                        id === "#"
+                    ){
+
+                        return;
+
+                    }
+
+                    const target =
+                        document.querySelector(
+                            id
+                        );
+
+                    if(!target){
+
+                        return;
+
+                    }
+
+                    event.preventDefault();
+
+                    const offset = 80;
+
+                    const top =
+                        target.getBoundingClientRect()
+                        .top +
+                        window.scrollY -
+                        offset;
+
+                    window.scrollTo({
+
+                        top,
+
+                        behavior:
+                            state.reducedMotion
+                                ? "auto"
+                                : "smooth"
+
+                    });
+
+                }
+            );
+
+        });
+
+}
+
+
+/* ============================================================
+   10. SCROLL REVEAL
+============================================================ */
+
+function initReveal(){
+
+    const elements =
+        $$(".reveal");
+
+    if(!elements.length) return;
+
+
+    if(state.reducedMotion){
+
+        elements.forEach(
+            element=>
+                element.classList.add(
+                    "active"
+                )
+        );
+
+        return;
+
     }
+
+
+    const observer =
+        new IntersectionObserver(
+            entries=>{
+
+                entries.forEach(
+                    entry=>{
+
+                        if(
+                            entry.isIntersecting
+                        ){
+
+                            entry.target
+                                .classList
+                                .add("active");
+
+                            observer.unobserve(
+                                entry.target
+                            );
+
+                        }
+
+                    }
+                );
+
+            },
+            {
+                threshold:.12,
+
+                rootMargin:
+                    "0px 0px -50px 0px"
+            }
+        );
+
+
+    elements.forEach(
+        element=>
+            observer.observe(element)
+    );
+
 }
 
 
-/* =========================
-   27. EXTRA NEON UTILITIES
-========================= */
+/* ============================================================
+   11. STAGGER CARDS
+============================================================ */
 
-.neon-cyan{
+function initCardStagger(){
 
-    color:var(--cyan);
+    const groups = [
 
-    text-shadow:
-        0 0 10px
-        rgba(0,234,255,.4),
+        ".cards",
 
-        0 0 30px
-        rgba(0,234,255,.15);
-}
+        ".stat-grid",
 
-.neon-purple{
+        ".roadmap",
 
-    color:var(--purple);
+        ".social-grid",
 
-    text-shadow:
-        0 0 10px
-        rgba(139,92,246,.4),
+        ".gallery"
 
-        0 0 30px
-        rgba(139,92,246,.15);
-}
-
-.neon-pink{
-
-    color:var(--pink);
-
-    text-shadow:
-        0 0 10px
-        rgba(255,47,163,.4),
-
-        0 0 30px
-        rgba(255,47,163,.15);
-}
+    ];
 
 
-/* =========================
-   28. EXTRA GLASS
-========================= */
+    groups.forEach(
+        selector=>{
 
-.glass{
+            $$(selector)
+                .forEach(group=>{
 
-    background:
-        rgba(255,255,255,.04);
+                    const children =
+                        [...group.children];
 
-    border:
-        1px solid
-        rgba(255,255,255,.08);
+                    children.forEach(
+                        (child,index)=>{
 
-    backdrop-filter:
-        blur(20px);
+                            child.style.transitionDelay =
+                                `${index * 70}ms`;
 
-    -webkit-backdrop-filter:
-        blur(20px);
+                        }
+                    );
 
-    box-shadow:
-        0 25px 70px
-        rgba(0,0,0,.25);
+                });
+
+        }
+    );
+
 }
 
 
-/* =========================
-   29. SPECIAL HOVER
-========================= */
+/* ============================================================
+   12. SKILL BARS
+============================================================ */
 
-.glow-hover{
+function initSkillBars(){
 
-    transition:.4s;
+    const bars =
+        $$(".bar span");
+
+    if(!bars.length) return;
+
+
+    const observer =
+        new IntersectionObserver(
+            entries=>{
+
+                entries.forEach(
+                    entry=>{
+
+                        if(
+                            entry.isIntersecting
+                        ){
+
+                            const width =
+                                entry.target
+                                .dataset
+                                .width;
+
+                            if(width){
+
+                                entry.target.style.width =
+                                    width;
+
+                            }
+
+                            observer.unobserve(
+                                entry.target
+                            );
+
+                        }
+
+                    }
+                );
+
+            },
+            {
+                threshold:.5
+            }
+        );
+
+
+    bars.forEach(
+        bar=>
+            observer.observe(bar)
+    );
+
 }
 
-.glow-hover:hover{
 
-    box-shadow:
-        0 0 0 1px
-        rgba(0,234,255,.12),
+/* ============================================================
+   13. NUMBER COUNTER
+============================================================ */
 
-        0 0 40px
-        rgba(0,234,255,.10);
+function animateNumber(
+    element,
+    target,
+    duration = 1800
+){
+
+    if(
+        state.reducedMotion
+    ){
+
+        element.textContent =
+            target;
+
+        return;
+
+    }
+
+
+    const start = 0;
+
+    const startTime =
+        performance.now();
+
+
+    function update(currentTime){
+
+        const elapsed =
+            currentTime -
+            startTime;
+
+        const progress =
+            Math.min(
+                elapsed / duration,
+                1
+            );
+
+
+        const eased =
+            1 -
+            Math.pow(
+                1 - progress,
+                4
+            );
+
+
+        const value =
+            Math.floor(
+                start +
+                (target - start) *
+                eased
+            );
+
+
+        element.textContent =
+            value.toLocaleString();
+
+
+        if(progress < 1){
+
+            requestAnimationFrame(
+                update
+            );
+
+        }
+
+    }
+
+
+    requestAnimationFrame(
+        update
+    );
+
 }
 
 
-/* =========================
-   30. END
-========================= */
+/* ============================================================
+   14. STATS OBSERVER
+============================================================ */
+
+function initCounters(){
+
+    const counters =
+        $$("[data-counter]");
+
+    if(!counters.length) return;
+
+
+    const observer =
+        new IntersectionObserver(
+            entries=>{
+
+                entries.forEach(
+                    entry=>{
+
+                        if(
+                            entry.isIntersecting
+                        ){
+
+                            const value =
+                                Number(
+                                    entry.target
+                                    .dataset
+                                    .counter
+                                );
+
+
+                            if(
+                                Number.isFinite(
+                                    value
+                                )
+                            ){
+
+                                animateNumber(
+                                    entry.target,
+                                    value
+                                );
+
+                            }
+
+
+                            observer.unobserve(
+                                entry.target
+                            );
+
+                        }
+
+                    }
+                );
+
+            },
+            {
+                threshold:.6
+            }
+        );
+
+
+    counters.forEach(
+        counter=>
+            observer.observe(counter)
+    );
+
+}
+
+
+/* ============================================================
+   15. TYPING ENGINE
+============================================================ */
+
+class TypeWriter{
+
+    constructor(
+        element,
+        words,
+        speed = 90,
+        pause = 1600
+    ){
+
+        this.element = element;
+
+        this.words = words;
+
+        this.speed = speed;
+
+        this.pause = pause;
+
+        this.wordIndex = 0;
+
+        this.charIndex = 0;
+
+        this.deleting = false;
+
+        this.timer = null;
+
+    }
+
+
+    start(){
+
+        if(!this.element){
+            return;
+        }
+
+        this.tick();
+
+    }
+
+
+    tick(){
+
+        const word =
+            this.words[
+                this.wordIndex
+            ];
+
+
+        if(!this.deleting){
+
+            this.charIndex++;
+
+        }else{
+
+            this.charIndex--;
+
+        }
+
+
+        this.element.textContent =
+            word.substring(
+                0,
+                this.charIndex
+            );
+
+
+        let delay =
+            this.deleting
+                ? this.speed / 2
+                : this.speed;
+
+
+        if(
+            !this.deleting &&
+            this.charIndex ===
+            word.length
+        ){
+
+            delay = this.pause;
+
+            this.deleting = true;
+
+        }
+
+
+        if(
+            this.deleting &&
+            this.charIndex === 0
+        ){
+
+            this.deleting = false;
+
+            this.wordIndex =
+                (
+                    this.wordIndex + 1
+                ) %
+                this.words.length;
+
+            delay = 500;
+
+        }
+
+
+        this.timer =
+            setTimeout(
+                ()=>this.tick(),
+                delay
+            );
+
+    }
+
+
+    stop(){
+
+        clearTimeout(
+            this.timer
+        );
+
+    }
+
+}
+
+
+/* ============================================================
+   16. AUTO TYPE TARGET
+============================================================ */
+
+function initTyping(){
+
+    const target =
+        $("#typingText");
+
+    if(!target){
+
+        log(
+            "Add id='typingText' to enable typing effect."
+        );
+
+        return;
+
+    }
+
+
+    const writer =
+        new TypeWriter(
+            target,
+
+            [
+                "Digital Creator",
+                "Gamer",
+                "AI Explorer",
+                "Graphics Designer",
+                "Web Developer",
+                "ABTHEPROMO"
+            ],
+
+            80,
+
+            1300
+        );
+
+
+    writer.start();
+
+}
+
+
+/* ============================================================
+   17. BACK TO TOP
+============================================================ */
+
+function initBackToTop(){
+
+    let button =
+        $("#topBtn");
+
+
+    if(!button){
+
+        button =
+            document.createElement(
+                "button"
+            );
+
+        button.id = "topBtn";
+
+        button.className =
+            "top-btn";
+
+        button.textContent =
+            "↑";
+
+        button.setAttribute(
+            "aria-label",
+            "Back to top"
+        );
+
+        document.body.appendChild(
+            button
+        );
+
+    }
+
+
+    function update(){
+
+        if(
+            window.scrollY >
+            650
+        ){
+
+            button.style.display =
+                "flex";
+
+        }else{
+
+            button.style.display =
+                "none";
+
+        }
+
+    }
+
+
+    window.addEventListener(
+        "scroll",
+        update,
+        {passive:true}
+    );
+
+
+    button.addEventListener(
+        "click",
+        ()=>{
+
+            window.scrollTo({
+
+                top:0,
+
+                behavior:
+                    state.reducedMotion
+                        ? "auto"
+                        : "smooth"
+
+            });
+
+        }
+    );
+
+
+    update();
+
+}
+
+
+/* ============================================================
+   18. PARTICLE SYSTEM
+============================================================ */
+
+class ParticleEngine{
+
+    constructor(){
+
+        this.canvas = null;
+
+        this.ctx = null;
+
+        this.particles = [];
+
+        this.count = 75;
+
+        this.mouse = {
+
+            x:null,
+
+            y:null,
+
+            radius:130
+
+        };
+
+        this.animation = null;
+
+    }
+
+
+    create(){
+
+        if(
+            state.reducedMotion ||
+            !state.particlesEnabled
+        ){
+
+            return;
+
+        }
+
+
+        this.canvas =
+            document.createElement(
+                "canvas"
+            );
+
+        this.canvas.id =
+            "particleCanvas";
+
+
+        Object.assign(
+            this.canvas.style,
+            {
+
+                position:"fixed",
+
+                inset:"0",
+
+                width:"100%",
+
+                height:"100%",
+
+                pointerEvents:"none",
+
+                zIndex:"-1",
+
+                opacity:".35"
+
+            }
+        );
+
+
+        document.body.appendChild(
+            this.canvas
+        );
+
+
+        this.ctx =
+            this.canvas.getContext(
+                "2d"
+            );
+
+
+        this.resize();
+
+        this.generate();
+
+        this.bind();
+
+        this.animate();
+
+    }
+
+
+    resize(){
+
+        if(!this.canvas) return;
+
+        const ratio =
+            Math.min(
+                window.devicePixelRatio || 1,
+                2
+            );
+
+
+        this.canvas.width =
+            window.innerWidth *
+            ratio;
+
+        this.canvas.height =
+            window.innerHeight *
+            ratio;
+
+
+        this.ctx.setTransform(
+            ratio,
+            0,
+            0,
+            ratio,
+            0,
+            0
+        );
+
+    }
+
+
+    generate(){
+
+        this.particles = [];
+
+        for(
+            let i = 0;
+            i < this.count;
+            i++
+        ){
+
+            this.particles.push({
+
+                x:
+                    Math.random() *
+                    window.innerWidth,
+
+                y:
+                    Math.random() *
+                    window.innerHeight,
+
+                vx:
+                    (Math.random()-.5)
+                    * .35,
+
+                vy:
+                    (Math.random()-.5)
+                    * .35,
+
+                size:
+                    Math.random() *
+                    1.8 +
+                    .5,
+
+                alpha:
+                    Math.random() *
+                    .6 +
+                    .15
+
+            });
+
+        }
+
+    }
+
+
+    bind(){
+
+        window.addEventListener(
+            "resize",
+            ()=>{
+                this.resize();
+            }
+        );
+
+
+        window.addEventListener(
+            "mousemove",
+            event=>{
+
+                this.mouse.x =
+                    event.clientX;
+
+                this.mouse.y =
+                    event.clientY;
+
+            },
+            {passive:true}
+        );
+
+
+        window.addEventListener(
+            "mouseleave",
+            ()=>{
+                this.mouse.x = null;
+                this.mouse.y = null;
+            }
+        );
+
+    }
+
+
+    update(){
+
+        const width =
+            window.innerWidth;
+
+        const height =
+            window.innerHeight;
+
+
+        this.particles.forEach(
+            p=>{
+
+                p.x += p.vx;
+
+                p.y += p.vy;
+
+
+                if(
+                    p.x < 0 ||
+                    p.x > width
+                ){
+
+                    p.vx *= -1;
+
+                }
+
+
+                if(
+                    p.y < 0 ||
+                    p.y > height
+                ){
+
+                    p.vy *= -1;
+
+                }
+
+
+                if(
+                    this.mouse.x !== null
+                ){
+
+                    const dx =
+                        p.x -
+                        this.mouse.x;
+
+                    const dy =
+                        p.y -
+                        this.mouse.y;
+
+                    const distance =
+                        Math.sqrt(
+                            dx*dx +
+                            dy*dy
+                        );
+
+
+                    if(
+                        distance <
+                        this.mouse.radius
+                    ){
+
+                        const force =
+                            (
+                                this.mouse.radius -
+                                distance
+                            ) /
+                            this.mouse.radius;
+
+
+                        const angle =
+                            Math.atan2(
+                                dy,
+                                dx
+                            );
+
+
+                        p.x +=
+                            Math.cos(angle) *
+                            force *
+                            1.4;
+
+                        p.y +=
+                            Math.sin(angle) *
+                            force *
+                            1.4;
+
+                    }
+
+                }
+
+            }
+        );
+
+    }
+
+
+    draw(){
+
+        if(!this.ctx) return;
+
+        const width =
+            window.innerWidth;
+
+        const height =
+            window.innerHeight;
+
+
+        this.ctx.clearRect(
+            0,
+            0,
+            width,
+            height
+        );
+
+
+        this.particles.forEach(
+            p=>{
+
+                this.ctx.beginPath();
+
+                this.ctx.arc(
+                    p.x,
+                    p.y,
+                    p.size,
+                    0,
+                    Math.PI * 2
+                );
+
+                this.ctx.fillStyle =
+                    `rgba(0,234,255,${p.alpha})`;
+
+                this.ctx.fill();
+
+            }
+        );
+
+    }
+
+
+    animate(){
+
+        this.update();
+
+        this.draw();
+
+        this.animation =
+            requestAnimationFrame(
+                ()=>this.animate()
+            );
+
+    }
+
+
+    destroy(){
+
+        cancelAnimationFrame(
+            this.animation
+        );
+
+        this.canvas?.remove();
+
+    }
+
+}
+
+
+/* ============================================================
+   19. CURSOR GLOW
+============================================================ */
+
+function initCursorGlow(){
+
+    if(
+        state.reducedMotion ||
+        window.innerWidth < 900
+    ){
+
+        return;
+
+    }
+
+
+    const glow =
+        document.createElement(
+            "div"
+        );
+
+    glow.id =
+        "cursorGlow";
+
+
+    Object.assign(
+        glow.style,
+        {
+
+            position:"fixed",
+
+            width:"280px",
+
+            height:"280px",
+
+            borderRadius:"50%",
+
+            pointerEvents:"none",
+
+            zIndex:"-2",
+
+            transform:
+                "translate(-50%,-50%)",
+
+            background:
+                "radial-gradient(circle,rgba(0,234,255,.09),transparent 65%)",
+
+            filter:
+                "blur(20px)",
+
+            opacity:"0",
+
+            transition:
+                "opacity .3s ease"
+
+        }
+    );
+
+
+    document.body.appendChild(
+        glow
+    );
+
+
+    window.addEventListener(
+        "mousemove",
+        event=>{
+
+            glow.style.left =
+                `${event.clientX}px`;
+
+            glow.style.top =
+                `${event.clientY}px`;
+
+            glow.style.opacity =
+                "1";
+
+        },
+        {passive:true}
+    );
+
+
+    state.cursorEnabled =
+        true;
+
+}
+
+
+/* ============================================================
+   20. CARD TILT
+============================================================ */
+
+function initCardTilt(){
+
+    if(
+        state.reducedMotion ||
+        window.innerWidth < 900
+    ){
+
+        return;
+
+    }
+
+
+    const cards =
+        $$(".card");
+
+
+    cards.forEach(
+        card=>{
+
+            card.addEventListener(
+                "mousemove",
+                event=>{
+
+                    const rect =
+                        card.getBoundingClientRect();
+
+                    const x =
+                        event.clientX -
+                        rect.left;
+
+                    const y =
+                        event.clientY -
+                        rect.top;
+
+
+                    const rotateY =
+                        (
+                            x /
+                            rect.width -
+                            .5
+                        ) * 6;
+
+
+                    const rotateX =
+                        (
+                            .5 -
+                            y /
+                            rect.height
+                        ) * 6;
+
+
+                    card.style.transform =
+                        `perspective(900px)
+                         rotateX(${rotateX}deg)
+                         rotateY(${rotateY}deg)
+                         translateY(-10px)`;
+
+                }
+            );
+
+
+            card.addEventListener(
+                "mouseleave",
+                ()=>{
+
+                    card.style.transform =
+                        "";
+
+                }
+            );
+
+        }
+    );
+
+}
+
+
+/* ============================================================
+   21. MAGNETIC BUTTONS
+============================================================ */
+
+function initMagneticButtons(){
+
+    if(
+        state.reducedMotion ||
+        window.innerWidth < 900
+    ){
+
+        return;
+
+    }
+
+
+    const buttons =
+        $$(".btn");
+
+
+    buttons.forEach(
+        button=>{
+
+            button.addEventListener(
+                "mousemove",
+                event=>{
+
+                    const rect =
+                        button.getBoundingClientRect();
+
+                    const x =
+                        event.clientX -
+                        (
+                            rect.left +
+                            rect.width / 2
+                        );
+
+                    const y =
+                        event.clientY -
+                        (
+                            rect.top +
+                            rect.height / 2
+                        );
+
+
+                    button.style.transform =
+                        `translate(
+                            ${x * .08}px,
+                            ${y * .08}px
+                        )`;
+
+                }
+            );
+
+
+            button.addEventListener(
+                "mouseleave",
+                ()=>{
+
+                    button.style.transform =
+                        "";
+
+                }
+            );
+
+        }
+    );
+
+}
+
+
+/* ============================================================
+   22. COPY UID
+============================================================ */
+
+function initCopyUID(){
+
+    const uidElements =
+        $$(".uid strong");
+
+
+    uidElements.forEach(
+        element=>{
+
+            element.style.cursor =
+                "pointer";
+
+            element.title =
+                "Click to copy UID";
+
+
+            element.addEventListener(
+                "click",
+                async()=>{
+
+                    const uid =
+                        element.textContent
+                        .trim();
+
+
+                    try{
+
+                        await navigator.clipboard
+                            .writeText(uid);
+
+                        showToast(
+                            "Free Fire UID copied 🔥"
+                        );
+
+                    }catch(error){
+
+                        showToast(
+                            `UID: ${uid}`
+                        );
+
+                    }
+
+                }
+            );
+
+        }
+    );
+
+}
+
+
+/* ============================================================
+   23. TOAST SYSTEM
+============================================================ */
+
+function showToast(message){
+
+    let toast =
+        $("#abToast");
+
+
+    if(!toast){
+
+        toast =
+            document.createElement(
+                "div"
+            );
+
+        toast.id =
+            "abToast";
+
+
+        Object.assign(
+            toast.style,
+            {
+
+                position:"fixed",
+
+                left:"50%",
+
+                bottom:"30px",
+
+                transform:
+                    "translate(-50%,20px)",
+
+                zIndex:"100000",
+
+                padding:
+                    "13px 20px",
+
+                border:
+                    "1px solid rgba(0,234,255,.25)",
+
+                borderRadius:"14px",
+
+                background:
+                    "rgba(5,8,15,.90)",
+
+                backdropFilter:
+                    "blur(20px)",
+
+                color:"#eafcff",
+
+                fontSize:"13px",
+
+                fontWeight:"700",
+
+                boxShadow:
+                    "0 20px 60px rgba(0,0,0,.45)",
+
+                opacity:"0",
+
+                transition:
+                    "opacity .3s ease, transform .3s ease"
+
+            }
+        );
+
+
+        document.body.appendChild(
+            toast
+        );
+
+    }
+
+
+    toast.textContent =
+        message;
+
+
+    toast.style.opacity =
+        "1";
+
+    toast.style.transform =
+        "translate(-50%,0)";
+
+
+    clearTimeout(
+        toast._timer
+    );
+
+
+    toast._timer =
+        setTimeout(
+            ()=>{
+
+                toast.style.opacity =
+                    "0";
+
+                toast.style.transform =
+                    "translate(-50%,20px)";
+
+            },
+            2500
+        );
+
+}
+
+
+/* ============================================================
+   24. COPY PHONE
+============================================================ */
+
+function initPhoneCopy(){
+
+    const phoneLinks =
+        $$('a[href^="tel:"]');
+
+
+    phoneLinks.forEach(
+        link=>{
+
+            link.addEventListener(
+                "contextmenu",
+                async event=>{
+
+                    event.preventDefault();
+
+                    try{
+
+                        await navigator.clipboard
+                            .writeText(
+                                APP.phone
+                            );
+
+                        showToast(
+                            "Phone number copied 📞"
+                        );
+
+                    }catch(error){
+
+                        showToast(
+                            APP.phone
+                        );
+
+                    }
+
+                }
+            );
+
+        }
+    );
+
+}
+
+
+/* ============================================================
+   25. IMAGE FALLBACK
+============================================================ */
+
+function initImageFallback(){
+
+    $$("img")
+        .forEach(
+            image=>{
+
+                image.addEventListener(
+                    "error",
+                    ()=>{
+
+                        image.style.display =
+                            "none";
+
+                        log(
+                            "Image failed:",
+                            image.src
+                        );
+
+                    }
+                );
+
+            }
+        );
+
+}
+
+
+/* ============================================================
+   26. LAZY IMAGES
+============================================================ */
+
+function initLazyImages(){
+
+    $$("img[data-src]")
+        .forEach(
+            image=>{
+
+                const observer =
+                    new IntersectionObserver(
+                        entries=>{
+
+                            entries.forEach(
+                                entry=>{
+
+                                    if(
+                                        entry.isIntersecting
+                                    ){
+
+                                        image.src =
+                                            image.dataset
+                                            .src;
+
+                                        image.removeAttribute(
+                                            "data-src"
+                                        );
+
+                                        observer.unobserve(
+                                            image
+                                        );
+
+                                    }
+
+                                }
+                            );
+
+                        }
+                    );
+
+
+                observer.observe(
+                    image
+                );
+
+            }
+        );
+
+}
+
+
+/* ============================================================
+   27. GALLERY LIGHTBOX
+============================================================ */
+
+function initLightbox(){
+
+    const images =
+        $$(".gallery-item img");
+
+
+    if(!images.length){
+
+        return;
+
+    }
+
+
+    const overlay =
+        document.createElement(
+            "div"
+        );
+
+    overlay.id =
+        "imageLightbox";
+
+
+    Object.assign(
+        overlay.style,
+        {
+
+            position:"fixed",
+
+            inset:"0",
+
+            zIndex:"100000",
+
+            display:"none",
+
+            alignItems:"center",
+
+            justifyContent:"center",
+
+            padding:"30px",
+
+            background:
+                "rgba(0,0,0,.88)",
+
+            backdropFilter:
+                "blur(15px)"
+
+        }
+    );
+
+
+    const preview =
+        document.createElement(
+            "img"
+        );
+
+
+    Object.assign(
+        preview.style,
+        {
+
+            maxWidth:"95vw",
+
+            maxHeight:"90vh",
+
+            objectFit:"contain",
+
+            borderRadius:"18px",
+
+            boxShadow:
+                "0 30px 100px rgba(0,0,0,.6)"
+
+        }
+    );
+
+
+    overlay.appendChild(
+        preview
+    );
+
+
+    document.body.appendChild(
+        overlay
+    );
+
+
+    images.forEach(
+        image=>{
+
+            image.style.cursor =
+                "zoom-in";
+
+
+            image.addEventListener(
+                "click",
+                ()=>{
+
+                    preview.src =
+                        image.src;
+
+                    overlay.style.display =
+                        "flex";
+
+                }
+            );
+
+        }
+    );
+
+
+    overlay.addEventListener(
+        "click",
+        ()=>{
+
+            overlay.style.display =
+                "none";
+
+        }
+    );
+
+
+    document.addEventListener(
+        "keydown",
+        event=>{
+
+            if(
+                event.key === "Escape"
+            ){
+
+                overlay.style.display =
+                    "none";
+
+            }
+
+        }
+    );
+
+}
+
+
+/* ============================================================
+   28. SCROLL PROGRESS
+============================================================ */
+
+function initScrollProgress(){
+
+    const progress =
+        document.createElement(
+            "div"
+        );
+
+    progress.id =
+        "scrollProgress";
+
+
+    Object.assign(
+        progress.style,
+        {
+
+            position:"fixed",
+
+            top:"0",
+
+            left:"0",
+
+            width:"0%",
+
+            height:"3px",
+
+            zIndex:"10001",
+
+            background:
+                "linear-gradient(90deg,#00eaff,#8b5cf6,#ff2fa3)",
+
+            boxShadow:
+                "0 0 15px rgba(0,234,255,.45)",
+
+            pointerEvents:"none"
+
+        }
+    );
+
+
+    document.body.appendChild(
+        progress
+    );
+
+
+    function update(){
+
+        const scrollTop =
+            window.scrollY;
+
+        const height =
+            document.documentElement
+            .scrollHeight -
+            window.innerHeight;
+
+
+        const percent =
+            height > 0
+                ? (
+                    scrollTop /
+                    height
+                ) * 100
+                : 0;
+
+
+        progress.style.width =
+            `${percent}%`;
+
+    }
+
+
+    window.addEventListener(
+        "scroll",
+        update,
+        {passive:true}
+    );
+
+
+    update();
+
+}
+
+
+/* ============================================================
+   29. DIGITAL CLOCK
+============================================================ */
+
+function initClock(){
+
+    const clock =
+        $("#digitalClock");
+
+
+    if(!clock){
+
+        return;
+
+    }
+
+
+    function update(){
+
+        const now =
+            new Date();
+
+
+        clock.textContent =
+            now.toLocaleTimeString(
+                "en-BD",
+                {
+                    hour:"2-digit",
+                    minute:"2-digit",
+                    second:"2-digit"
+                }
+            );
+
+    }
+
+
+    update();
+
+    setInterval(
+        update,
+        1000
+    );
+
+}
+
+
+/* ============================================================
+   30. CURRENT YEAR
+============================================================ */
+
+function initYear(){
+
+    $$("[data-year]")
+        .forEach(
+            element=>{
+
+                element.textContent =
+                    new Date()
+                    .getFullYear();
+
+            }
+        );
+
+}
+
+
+/* ============================================================
+   31. PARALLAX
+============================================================ */
+
+function initParallax(){
+
+    if(
+        state.reducedMotion ||
+        window.innerWidth < 900
+    ){
+
+        return;
+
+    }
+
+
+    const elements =
+        $$(".parallax");
+
+
+    if(!elements.length){
+
+        return;
+
+    }
+
+
+    let ticking = false;
+
+
+    function update(){
+
+        const scroll =
+            window.scrollY;
+
+
+        elements.forEach(
+            element=>{
+
+                const speed =
+                    Number(
+                        element.dataset.speed
+                    ) || .2;
+
+
+                element.style.transform =
+                    `translate3d(
+                        0,
+                        ${scroll * speed}px,
+                        0
+                    )`;
+
+            }
+        );
+
+
+        ticking = false;
+
+    }
+
+
+    window.addEventListener(
+        "scroll",
+        ()=>{
+
+            if(!ticking){
+
+                requestAnimationFrame(
+                    update
+                );
+
+                ticking = true;
+
+            }
+
+        },
+        {passive:true}
+    );
+
+}
+
+
+/* ============================================================
+   32. EASTER EGG
+============================================================ */
+
+function initEasterEgg(){
+
+    let sequence = "";
+
+    const secret =
+        "ahad";
+
+
+    document.addEventListener(
+        "keydown",
+        event=>{
+
+            if(
+                event.key.length !== 1
+            ){
+
+                return;
+
+            }
+
+
+            sequence +=
+                event.key.toLowerCase();
+
+
+            if(
+                sequence.length >
+                secret.length
+            ){
+
+                sequence =
+                    sequence.slice(
+                        -secret.length
+                    );
+
+            }
+
+
+            if(
+                sequence === secret
+            ){
+
+                showToast(
+                    "🔥 ABTHEPROMO MODE ACTIVATED!"
+                );
+
+
+                document.body
+                    .classList
+                    .add(
+                        "promo-mode"
+                    );
+
+
+                setTimeout(
+                    ()=>{
+                        document.body
+                            .classList
+                            .remove(
+                                "promo-mode"
+                            );
+                    },
+                    5000
+                );
+
+            }
+
+        }
+    );
+
+}
+
+
+/* ============================================================
+   33. PERFORMANCE MODE
+============================================================ */
+
+function initPerformanceMode(){
+
+    const memory =
+        navigator.deviceMemory || 4;
+
+
+    if(
+        memory <= 2 ||
+        window.innerWidth < 500
+    ){
+
+        state.particlesEnabled =
+            false;
+
+        log(
+            "Low-power mode enabled."
+        );
+
+    }
+
+}
+
+
+/* ============================================================
+   34. ONLINE/OFFLINE
+============================================================ */
+
+function initConnectionStatus(){
+
+    function status(){
+
+        if(
+            navigator.onLine
+        ){
+
+            log(
+                "Internet connection available."
+            );
+
+        }else{
+
+            showToast(
+                "You are currently offline."
+            );
+
+        }
+
+    }
+
+
+    window.addEventListener(
+        "online",
+        ()=>{
+            showToast(
+                "Connection restored ⚡"
+            );
+        }
+    );
+
+
+    window.addEventListener(
+        "offline",
+        ()=>{
+            showToast(
+                "You are offline."
+            );
+        }
+    );
+
+
+    status();
+
+}
+
+
+/* ============================================================
+   35. VISIBILITY API
+============================================================ */
+
+function initVisibility(){
+
+    document.addEventListener(
+        "visibilitychange",
+        ()=>{
+
+            if(
+                document.hidden
+            ){
+
+                document.title =
+                    "Come back • ABTHEPROMO";
+
+            }else{
+
+                document.title =
+                    "ABTHEPROMO — Abdul Ahad";
+
+            }
+
+        }
+    );
+
+}
+
+
+/* ============================================================
+   36. CONSOLE BRANDING
+============================================================ */
+
+function initConsole(){
+
+    console.clear();
+
+    console.log(
+        "%c ABTHEPROMO ",
+        `
+        background:#00eaff;
+        color:#030409;
+        font-size:22px;
+        font-weight:900;
+        padding:8px 15px;
+        border-radius:8px;
+        `
+    );
+
+    console.log(
+        `
+        Abdul Ahad
+        Gaming UID: ${APP.uid}
+        Instagram: ${APP.instagram}
+        Location: ${APP.location}
+
+        Welcome to the ABTHEPROMO digital world.
+        `
+    );
+
+}
+
+
+/* ============================================================
+   37. KEYBOARD SHORTCUTS
+============================================================ */
+
+function initKeyboard(){
+
+    document.addEventListener(
+        "keydown",
+        event=>{
+
+            /* Home */
+
+            if(
+                event.key === "Home" &&
+                !event.ctrlKey &&
+                !event.shiftKey &&
+                !event.altKey
+            ){
+
+                if(
+                    document.activeElement.tagName
+                    === "BODY"
+                ){
+
+                    window.scrollTo({
+
+                        top:0,
+
+                        behavior:"smooth"
+
+                    });
+
+                }
+
+            }
+
+
+            /* Ctrl + K */
+
+            if(
+                event.ctrlKey &&
+                event.key.toLowerCase()
+                === "k"
+            ){
+
+                event.preventDefault();
+
+                const contact =
+                    $("#contact");
+
+                if(contact){
+
+                    contact.scrollIntoView({
+                        behavior:"smooth"
+                    });
+
+                }
+
+            }
+
+        }
+    );
+
+}
+
+
+/* ============================================================
+   38. INIT ALL
+============================================================ */
+
+function initApp(){
+
+    log(
+        "Starting ABTHEPROMO engine..."
+    );
+
+
+    initPerformanceMode();
+
+    createLoader();
+
+    initMobileMenu();
+
+    initNavbar();
+
+    initActiveNavigation();
+
+    initSmoothLinks();
+
+    initReveal();
+
+    initCardStagger();
+
+    initSkillBars();
+
+    initCounters();
+
+    initTyping();
+
+    initBackToTop();
+
+    initScrollProgress();
+
+    initCursorGlow();
+
+    initCardTilt();
+
+    initMagneticButtons();
+
+    initCopyUID();
+
+    initPhoneCopy();
+
+    initImageFallback();
+
+    initLazyImages();
+
+    initLightbox();
+
+    initClock();
+
+    initYear();
+
+    initParallax();
+
+    initEasterEgg();
+
+    initConnectionStatus();
+
+    initVisibility();
+
+    initKeyboard();
+
+    initConsole();
+
+
+    /* Particle engine */
+
+    const particles =
+        new ParticleEngine();
+
+    particles.create();
+
+
+    state.loaded = true;
+
+
+    setTimeout(
+        removeLoader,
+        900
+    );
+
+
+    log(
+        "ABTHEPROMO engine ready."
+    );
+
+}
+
+
+/* ============================================================
+   39. START
+============================================================ */
+
+if(
+    document.readyState ===
+    "loading"
+){
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        initApp
+    );
+
+}else{
+
+    initApp();
+
+}
+
+
+/* ============================================================
+   40. OPTIONAL HTML ELEMENTS
+============================================================ */
+
+/*
+
+Typing effect:
+
+<span id="typingText"></span>
+
+
+Counter:
+
+<span data-counter="500">0</span>
+
+
+Digital clock:
+
+<div id="digitalClock"></div>
+
+
+Lazy image:
+
+<img data-src="profile.jpg" alt="Abdul Ahad">
+
+
+Parallax:
+
+<div class="parallax" data-speed="0.2">
+    Content
+</div>
+
+*/
+
+
+/* ============================================================
+   END OF ABTHEPROMO JAVASCRIPT ENGINE
+============================================================ */
