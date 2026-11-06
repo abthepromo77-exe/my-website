@@ -1,1125 +1,463 @@
+/* =========================================================
+   AB THE PROMO — PERFORMANCE LAB ENGINE
+   Works with the Performance Lab HTML.
+========================================================= */
+
 "use strict";
 
-/* =====================================================
-   AB THE PROMO — SCRIPT.JS
-   Works with the previous CSS
-===================================================== */
+
+/* =========================================================
+   ELEMENTS
+========================================================= */
+
+const PL = {
+
+    section: document.querySelector("#performance-lab"),
+
+    canvas: document.querySelector("#pl-shader"),
+    graph: document.querySelector("#pl-graph"),
+
+    fps: document.querySelector("#pl-fps"),
+    frame: document.querySelector("#pl-frame"),
+
+    avg: document.querySelector("#pl-avg"),
+    min: document.querySelector("#pl-min"),
+    max: document.querySelector("#pl-max"),
+
+    cpuScore: document.querySelector("#pl-cpu-score"),
+    cpuBig: document.querySelector("#pl-cpu-big"),
+
+    device: document.querySelector("#pl-device"),
+    cores: document.querySelector("#pl-cores"),
+    memory: document.querySelector("#pl-memory"),
+    screen: document.querySelector("#pl-screen"),
+
+    status: document.querySelector("#pl-status"),
+    rating: document.querySelector("#pl-rating"),
+
+    result: document.querySelector("#pl-result-score"),
+    resultText: document.querySelector("#pl-result-text"),
+
+    start: document.querySelector("#pl-start"),
+    stop: document.querySelector("#pl-stop"),
+    reset: document.querySelector("#pl-reset"),
+
+    cpuTest: document.querySelector("#pl-cpu-test"),
+    sound: document.querySelector("#pl-sound"),
+    volume: document.querySelector("#pl-volume"),
+    full: document.querySelector("#pl-full")
+
+};
 
 
-/* ===============================
-   1. DOM READY
-================================ */
+/* =========================================================
+   DEVICE INFO
+========================================================= */
 
-document.addEventListener("DOMContentLoaded", () => {
+function detectDevice() {
 
-    document.body.classList.add("loaded");
+    const ua = navigator.userAgent;
 
-    initTyping();
-    initReveal();
-    initNavbar();
-    initSmoothScroll();
-    initBackToTop();
-    initCounters();
-    initContactForm();
-    initCurrentYear();
-    initImageFallback();
+    let device = "Desktop";
 
-});
-
-
-/* ===============================
-   2. TYPING EFFECT
-================================ */
-
-function initTyping() {
-
-    const element =
-        document.querySelector(".typing") ||
-        document.querySelector("#typing");
-
-    if (!element) return;
-
-    const words = [
-        "AI Assistant",
-        "Graphics Designer",
-        "Web Developer",
-        "Free Fire Gamer",
-        "Digital Creator",
-        "AB THE PROMO"
-    ];
-
-    let wordIndex = 0;
-    let letterIndex = 0;
-    let deleting = false;
-
-    function type() {
-
-        const word = words[wordIndex];
-
-        if (!deleting) {
-
-            element.textContent =
-                word.substring(0, letterIndex + 1);
-
-            letterIndex++;
-
-            if (letterIndex === word.length) {
-
-                deleting = true;
-
-                setTimeout(type, 1500);
-                return;
-            }
-
-        } else {
-
-            element.textContent =
-                word.substring(0, letterIndex - 1);
-
-            letterIndex--;
-
-            if (letterIndex === 0) {
-
-                deleting = false;
-
-                wordIndex =
-                    (wordIndex + 1) % words.length;
-            }
-        }
-
-        setTimeout(
-            type,
-            deleting ? 55 : 95
-        );
+    if (/Android/i.test(ua)) {
+        device = "Android";
     }
 
-    type();
-}
-
-
-/* ===============================
-   3. SCROLL REVEAL
-================================ */
-
-function initReveal() {
-
-    const elements =
-        document.querySelectorAll(
-            ".card, .skill-card, .project-card, .about-card"
-        );
-
-    if (!elements.length) return;
-
-    const observer =
-        new IntersectionObserver(
-            entries => {
-
-                entries.forEach(entry => {
-
-                    if (
-                        entry.isIntersecting
-                    ) {
-
-                        entry.target.classList.add(
-                            "active"
-                        );
-
-                        observer.unobserve(
-                            entry.target
-                        );
-                    }
-
-                });
-
-            },
-            {
-                threshold: 0.15
-            }
-        );
-
-    elements.forEach(element => {
-
-        element.classList.add("reveal");
-
-        observer.observe(element);
-
-    });
-}
-
-
-/* ===============================
-   4. NAVBAR ACTIVE LINK
-================================ */
-
-function initNavbar() {
-
-    const links =
-        document.querySelectorAll(
-            ".nav-links a"
-        );
-
-    const sections =
-        document.querySelectorAll(
-            "section[id]"
-        );
-
-    if (!links.length || !sections.length)
-        return;
-
-    function updateNavbar() {
-
-        let current = "";
-
-        sections.forEach(section => {
-
-            const top =
-                section.offsetTop - 180;
-
-            if (
-                window.scrollY >= top
-            ) {
-                current =
-                    section.id;
-            }
-
-        });
-
-        links.forEach(link => {
-
-            link.classList.remove(
-                "active"
-            );
-
-            const href =
-                link.getAttribute("href");
-
-            if (
-                href === `#${current}`
-            ) {
-
-                link.classList.add(
-                    "active"
-                );
-            }
-
-        });
+    else if (/iPhone|iPad|iPod/i.test(ua)) {
+        device = "iPhone / iPad";
     }
 
-    window.addEventListener(
-        "scroll",
-        updateNavbar,
-        {
-            passive: true
-        }
-    );
-
-    updateNavbar();
-}
-
-
-/* ===============================
-   5. SMOOTH SCROLL
-================================ */
-
-function initSmoothScroll() {
-
-    document.querySelectorAll(
-        'a[href^="#"]'
-    ).forEach(link => {
-
-        link.addEventListener(
-            "click",
-            event => {
-
-                const id =
-                    link.getAttribute("href");
-
-                if (
-                    id === "#" ||
-                    id.length < 2
-                ) {
-                    return;
-                }
-
-                const target =
-                    document.querySelector(id);
-
-                if (!target) return;
-
-                event.preventDefault();
-
-                const offset = 90;
-
-                window.scrollTo({
-
-                    top:
-                        target.offsetTop -
-                        offset,
-
-                    behavior:
-                        "smooth"
-                });
-
-            }
-        );
-    });
-}
-
-
-/* ===============================
-   6. BACK TO TOP
-================================ */
-
-function initBackToTop() {
-
-    let button =
-        document.querySelector(
-            ".back-to-top"
-        );
-
-    if (!button) {
-
-        button =
-            document.createElement(
-                "button"
-            );
-
-        button.className =
-            "back-to-top";
-
-        button.innerHTML = "↑";
-
-        document.body.appendChild(
-            button
-        );
+    else if (/Windows/i.test(ua)) {
+        device = "Windows PC";
     }
 
-    window.addEventListener(
-        "scroll",
-        () => {
-
-            if (
-                window.scrollY > 500
-            ) {
-
-                button.classList.add(
-                    "show"
-                );
-
-            } else {
-
-                button.classList.remove(
-                    "show"
-                );
-            }
-
-        },
-        {
-            passive: true
-        }
-    );
-
-    button.addEventListener(
-        "click",
-        () => {
-
-            window.scrollTo({
-
-                top: 0,
-
-                behavior: "smooth"
-
-            });
-
-        }
-    );
-}
-
-
-/* ===============================
-   7. COUNTER ANIMATION
-================================ */
-
-function initCounters() {
-
-    const counters =
-        document.querySelectorAll(
-            "[data-counter]"
-        );
-
-    if (!counters.length) return;
-
-    const observer =
-        new IntersectionObserver(
-            entries => {
-
-                entries.forEach(entry => {
-
-                    if (
-                        !entry.isIntersecting
-                    )
-                        return;
-
-                    const counter =
-                        entry.target;
-
-                    const target =
-                        Number(
-                            counter.dataset.counter
-                        );
-
-                    let start = 0;
-
-                    const duration = 1500;
-
-                    const startTime =
-                        performance.now();
-
-                    function animate(time) {
-
-                        const progress =
-                            Math.min(
-                                (time - startTime) /
-                                duration,
-                                1
-                            );
-
-                        start =
-                            Math.floor(
-                                progress *
-                                target
-                            );
-
-                        counter.textContent =
-                            start.toLocaleString();
-
-                        if (
-                            progress < 1
-                        ) {
-
-                            requestAnimationFrame(
-                                animate
-                            );
-
-                        }
-
-                    }
-
-                    requestAnimationFrame(
-                        animate
-                    );
-
-                    observer.unobserve(
-                        counter
-                    );
-
-                });
-
-            }
-        );
-
-    counters.forEach(counter =>
-        observer.observe(counter)
-    );
-}
-
-
-/* ===============================
-   8. CONTACT FORM
-================================ */
-
-function initContactForm() {
-
-    const form =
-        document.querySelector(
-            ".contact-form"
-        ) ||
-        document.querySelector(
-            "#contactForm"
-        );
-
-    if (!form) return;
-
-    form.addEventListener(
-        "submit",
-        event => {
-
-            event.preventDefault();
-
-            const inputs =
-                form.querySelectorAll(
-                    "input, textarea"
-                );
-
-            let valid = true;
-
-            inputs.forEach(input => {
-
-                if (
-                    input.hasAttribute(
-                        "required"
-                    ) &&
-                    input.value.trim() === ""
-                ) {
-
-                    valid = false;
-
-                    input.style.borderColor =
-                        "#ff3864";
-
-                } else {
-
-                    input.style.borderColor =
-                        "";
-                }
-
-            });
-
-            if (!valid) {
-
-                showMessage(
-                    "Please fill in all required fields."
-                );
-
-                return;
-            }
-
-            showMessage(
-                "Message submitted successfully 🚀"
-            );
-
-            form.reset();
-
-        }
-    );
-}
-
-
-/* ===============================
-   9. MESSAGE / TOAST
-================================ */
-
-function showMessage(message) {
-
-    let toast =
-        document.querySelector(
-            ".ab-toast"
-        );
-
-    if (!toast) {
-
-        toast =
-            document.createElement(
-                "div"
-            );
-
-        toast.className =
-            "ab-toast";
-
-        document.body.appendChild(
-            toast
-        );
+    else if (/Mac/i.test(ua)) {
+        device = "Mac";
     }
 
-    toast.textContent =
-        message;
-
-    toast.classList.add(
-        "show"
-    );
-
-    setTimeout(() => {
-
-        toast.classList.remove(
-            "show"
-        );
-
-    }, 3000);
-}
-
-
-/* ===============================
-   10. CURRENT YEAR
-================================ */
-
-function initCurrentYear() {
-
-    const yearElements =
-        document.querySelectorAll(
-            ".current-year"
-        );
-
-    yearElements.forEach(element => {
-
-        element.textContent =
-            new Date().getFullYear();
-
-    });
-}
-
-
-/* ===============================
-   11. IMAGE ERROR PROTECTION
-================================ */
-
-function initImageFallback() {
-
-    const images =
-        document.querySelectorAll(
-            "img"
-        );
-
-    images.forEach(image => {
-
-        image.addEventListener(
-            "error",
-            () => {
-
-                image.style.opacity = "0.5";
-
-            }
-        );
-
-    });
-}
-
-
-/* ===============================
-   12. ONLINE / OFFLINE STATUS
-================================ */
-
-window.addEventListener(
-    "online",
-    () => {
-
-        showMessage(
-            "You are back online 🌐"
-        );
-
+    else if (/Linux/i.test(ua)) {
+        device = "Linux";
     }
-);
 
-window.addEventListener(
-    "offline",
-    () => {
+    PL.device.textContent = device;
 
-        showMessage(
-            "You are currently offline."
-        );
+    PL.cores.textContent =
+        navigator.hardwareConcurrency
+        ? navigator.hardwareConcurrency + " Threads"
+        : "N/A";
 
-    }
-);
-
-
-/* ===============================
-   13. KEYBOARD SHORTCUT
-================================ */
-
-document.addEventListener(
-    "keydown",
-    event => {
-
-        /*
-         Press H to go Home
-        */
-
-        if (
-            event.key.toLowerCase() === "h" &&
-            !event.target.matches(
-                "input, textarea"
-            )
-        ) {
-
-            window.location.hash =
-                "#home";
-        }
-
-    }
-);
-
-
-/* ===============================
-   14. CONSOLE BRANDING
-================================ */
-
-console.log(
-    "%c AB THE PROMO ",
-    "background:#8b5cf6;color:white;font-size:22px;font-weight:bold;padding:10px 20px;border-radius:10px;"
-);
-
-console.log(
-    "%c Abdul Ahad • AI Assistant • Graphics Designer • Gamer ",
-    "color:#00f5d4;font-size:13px;font-weight:bold;"
-);
-
-console.log(
-    "%c Website successfully loaded 🚀 ",
-    "color:#ff2cdf;font-size:14px;font-weight:bold;"
-);
-/* =====================================================
-   AB THE PROMO — PERFORMANCE LAB ENGINE
-===================================================== */
-
-(() => {
-
-    const canvas =
-        document.getElementById("shaderCanvas");
-
-    if (!canvas) return;
-
-    const gl =
-        canvas.getContext("webgl2", {
-            antialias: false,
-            powerPreference: "high-performance"
-        }) ||
-        canvas.getContext("webgl", {
-            antialias: false,
-            powerPreference: "high-performance"
-        });
-
-    const fpsValue =
-        document.getElementById("fpsValue");
-
-    const frameTime =
-        document.getElementById("frameTime");
-
-    const avgFPS =
-        document.getElementById("avgFPS");
-
-    const liveFPS =
-        document.getElementById("liveFPS");
-
-    const liveFrameTime =
-        document.getElementById("liveFrameTime");
-
-    const rating =
-        document.getElementById(
-            "performanceRating"
-        );
-
-    const status =
-        document.getElementById(
-            "webglStatus"
-        );
-
-    const graph =
-        document.getElementById(
-            "performanceGraph"
-        );
-
-    const graphCtx =
-        graph.getContext("2d");
-
-    let running = false;
-
-    let animationFrame;
-
-    let lastTime = performance.now();
-
-    let fpsFrames = 0;
-
-    let fpsTimer = performance.now();
-
-    let currentFPS = 0;
-
-    let fpsHistory = [];
-
-    let mouseX = 0;
-
-    let mouseY = 0;
-
-    let rotationX = 0;
-
-    let rotationY = 0;
-
-    let workload = 1;
-
-
-    /* ==========================================
-       DEVICE INFORMATION
-    ========================================== */
-
-    const cores =
-        navigator.hardwareConcurrency ||
-        "Unknown";
-
-    document.getElementById(
-        "cpuCores"
-    ).textContent =
-        cores;
-
-    document.getElementById(
-        "screenInfo"
-    ).textContent =
-        `${screen.width} × ${screen.height}`;
-
-    document.getElementById(
-        "memoryInfo"
-    ).textContent =
+    PL.memory.textContent =
         navigator.deviceMemory
-            ? `${navigator.deviceMemory} GB`
-            : "N/A";
+        ? navigator.deviceMemory + " GB"
+        : "N/A";
 
-    document.getElementById(
-        "deviceName"
-    ).textContent =
-        navigator.userAgent.includes(
-            "Mobile"
+    PL.screen.textContent =
+        `${window.screen.width} × ${window.screen.height}`;
+
+}
+
+detectDevice();
+
+
+/* =========================================================
+   WEBGL
+========================================================= */
+
+const gl =
+    PL.canvas.getContext("webgl2", {
+        antialias: false,
+        alpha: false,
+        powerPreference: "high-performance"
+    }) ||
+    PL.canvas.getContext("webgl", {
+        antialias: false,
+        alpha: false,
+        powerPreference: "high-performance"
+    });
+
+
+/* =========================================================
+   SHADER SOURCE
+========================================================= */
+
+const vertexSource = `
+
+attribute vec2 a_position;
+
+void main() {
+
+    gl_Position =
+        vec4(a_position, 0.0, 1.0);
+
+}
+
+`;
+
+
+const fragmentSource = `
+
+precision highp float;
+
+uniform vec2 u_resolution;
+uniform float u_time;
+uniform vec2 u_mouse;
+uniform float u_workload;
+
+#define MAX_STEPS 180
+
+float hash(vec3 p) {
+
+    p = fract(
+        p * 0.3183099
+        + vec3(0.1,0.2,0.3)
+    );
+
+    p *= 17.0;
+
+    return fract(
+        p.x * p.y * p.z *
+        (p.x + p.y + p.z)
+    );
+
+}
+
+
+float noise(vec3 p) {
+
+    vec3 i = floor(p);
+    vec3 f = fract(p);
+
+    f = f*f*(3.0-2.0*f);
+
+    return mix(
+        mix(
+            mix(
+                hash(i + vec3(0,0,0)),
+                hash(i + vec3(1,0,0)),
+                f.x
+            ),
+            mix(
+                hash(i + vec3(0,1,0)),
+                hash(i + vec3(1,1,0)),
+                f.x
+            ),
+            f.y
+        ),
+        mix(
+            mix(
+                hash(i + vec3(0,0,1)),
+                hash(i + vec3(1,0,1)),
+                f.x
+            ),
+            mix(
+                hash(i + vec3(0,1,1)),
+                hash(i + vec3(1,1,1)),
+                f.x
+            ),
+            f.y
+        ),
+        f.z
+    );
+
+}
+
+
+float mapScene(vec3 p) {
+
+    float d =
+        length(p) - 1.25;
+
+    float n =
+        noise(
+            p * 2.4 +
+            vec3(u_time * .18)
+        );
+
+    d +=
+        (n - .5)
+        * .32;
+
+    return d;
+
+}
+
+
+void main() {
+
+    vec2 uv =
+        (gl_FragCoord.xy * 2.0
+        - u_resolution.xy)
+        / min(
+            u_resolution.x,
+            u_resolution.y
+        );
+
+    vec2 mouse =
+        (u_mouse - .5) * 1.2;
+
+    float ca =
+        cos(mouse.x);
+
+    float sa =
+        sin(mouse.x);
+
+    mat2 rot =
+        mat2(
+            ca,-sa,
+            sa,ca
+        );
+
+    uv = rot * uv;
+
+    vec3 ro =
+        vec3(
+            0.0,
+            0.0,
+            3.8
+        );
+
+    vec3 rd =
+        normalize(
+            vec3(
+                uv,
+                -2.2
+            )
+        );
+
+    float total = 0.0;
+
+    float glow = 0.0;
+
+    int steps =
+        int(
+            60.0 +
+            u_workload * 110.0
+        );
+
+    for(int i=0;i<MAX_STEPS;i++) {
+
+        if(i >= steps)
+            break;
+
+        vec3 p =
+            ro + rd * total;
+
+        float d =
+            mapScene(p);
+
+        glow +=
+            exp(
+                -abs(d) * 8.0
+            ) * .018;
+
+        total +=
+            max(
+                .012,
+                abs(d) * .65
+            );
+
+        if(total > 7.0)
+            break;
+
+    }
+
+    vec3 col =
+        vec3(
+            0.01,
+            0.005,
+            0.03
+        );
+
+    col +=
+        vec3(
+            0.0,
+            0.9,
+            0.75
+        ) * glow;
+
+    col +=
+        vec3(
+            0.55,
+            0.15,
+            1.0
         )
-            ? "Mobile Device"
-            : "Desktop / PC";
+        * pow(
+            max(
+                0.0,
+                1.0 - total / 6.0
+            ),
+            2.0
+        );
+
+    col +=
+        vec3(
+            1.0,
+            0.05,
+            0.7
+        )
+        * glow
+        * .35;
+
+    float vignette =
+        1.0 -
+        smoothstep(
+            .3,
+            1.5,
+            length(uv)
+        );
+
+    col *=
+        .55 +
+        vignette * .7;
+
+    gl_FragColor =
+        vec4(
+            col,
+            1.0
+        );
+
+}
+
+`;
 
 
-    /* ==========================================
-       WEBGL CHECK
-    ========================================== */
+/* =========================================================
+   SHADER HELPERS
+========================================================= */
+
+let program = null;
+let buffer = null;
+
+let uResolution = null;
+let uTime = null;
+let uMouse = null;
+let uWorkload = null;
+
+
+function compileShader(type, source) {
+
+    const shader =
+        gl.createShader(type);
+
+    gl.shaderSource(
+        shader,
+        source
+    );
+
+    gl.compileShader(shader);
+
+    if (!gl.getShaderParameter(
+        shader,
+        gl.COMPILE_STATUS
+    )) {
+
+        console.error(
+            gl.getShaderInfoLog(shader)
+        );
+
+        return null;
+    }
+
+    return shader;
+}
+
+
+function createProgram() {
 
     if (!gl) {
 
-        status.textContent =
-            "WebGL NOT AVAILABLE";
+        PL.status.textContent =
+            "WEBGL NOT AVAILABLE";
 
-        status.style.color =
-            "#ff3864";
-
-        return;
+        return false;
     }
 
-    status.textContent =
-        "WEBGL READY";
-
-    status.style.color =
-        "#00f5d4";
-
-
-    /* ==========================================
-       SHADER
-    ========================================== */
-
-    const vertexShaderSource = `
-
-        attribute vec2 position;
-
-        void main() {
-
-            gl_Position =
-                vec4(position, 0.0, 1.0);
-
-        }
-
-    `;
-
-
-    const fragmentShaderSource = `
-
-        precision highp float;
-
-        uniform float u_time;
-
-        uniform vec2 u_resolution;
-
-        uniform vec2 u_mouse;
-
-        uniform float u_workload;
-
-
-        float map(vec3 p) {
-
-            float sphere =
-                length(p) - 0.8;
-
-            float wave =
-                sin(
-                    p.x * 7.0 +
-                    u_time * 1.5
-                ) * 0.06;
-
-            wave +=
-                cos(
-                    p.y * 9.0 -
-                    u_time * 1.2
-                ) * 0.06;
-
-            return sphere + wave;
-
-        }
-
-
-        vec3 getNormal(vec3 p) {
-
-            float e = 0.002;
-
-            return normalize(
-                vec3(
-                    map(p + vec3(e,0,0))
-                    - map(p - vec3(e,0,0)),
-
-                    map(p + vec3(0,e,0))
-                    - map(p - vec3(0,e,0)),
-
-                    map(p + vec3(0,0,e))
-                    - map(p - vec3(0,0,e))
-                )
-            );
-
-        }
-
-
-        void main() {
-
-            vec2 uv =
-                (
-                    gl_FragCoord.xy
-                    -
-                    0.5 *
-                    u_resolution
-                )
-                /
-                u_resolution.y;
-
-
-            vec3 ro =
-                vec3(
-                    0.0,
-                    0.0,
-                    3.2
-                );
-
-
-            vec3 rd =
-                normalize(
-                    vec3(
-                        uv,
-                        -1.5
-                    )
-                );
-
-
-            float angle =
-                u_mouse.x * 1.5;
-
-
-            float cs =
-                cos(angle);
-
-            float sn =
-                sin(angle);
-
-
-            rd.xz =
-                mat2(
-                    cs, -sn,
-                    sn, cs
-                ) * rd.xz;
-
-
-            float t = 0.0;
-
-            float glow = 0.0;
-
-            vec3 hit = vec3(0.0);
-
-
-            for (
-                int i = 0;
-                i < 160;
-                i++
-            ) {
-
-                vec3 p =
-                    ro + rd * t;
-
-                float d =
-                    map(p);
-
-                glow +=
-                    0.001 /
-                    (
-                        0.01 +
-                        abs(d)
-                    );
-
-                if (
-                    abs(d) < 0.002
-                ) {
-
-                    hit = p;
-
-                    break;
-                }
-
-                t += d * 0.65;
-
-                if (t > 6.0)
-                    break;
-
-            }
-
-
-            vec3 color =
-                vec3(
-                    0.005,
-                    0.008,
-                    0.025
-                );
-
-
-            if (length(hit) > 0.0) {
-
-                vec3 normal =
-                    getNormal(hit);
-
-                vec3 light =
-                    normalize(
-                        vec3(
-                            2.0,
-                            3.0,
-                            4.0
-                        )
-                    );
-
-                float diffuse =
-                    max(
-                        dot(
-                            normal,
-                            light
-                        ),
-                        0.0
-                    );
-
-
-                float rim =
-                    pow(
-                        1.0 -
-                        max(
-                            dot(
-                                normal,
-                                -rd
-                            ),
-                            0.0
-                        ),
-                        3.0
-                    );
-
-
-                color =
-                    vec3(
-                        0.12,
-                        0.35,
-                        1.0
-                    )
-                    *
-                    diffuse;
-
-
-                color +=
-                    vec3(
-                        0.8,
-                        0.05,
-                        1.0
-                    )
-                    *
-                    rim;
-
-            }
-
-
-            color +=
-                vec3(
-                    0.02,
-                    0.4,
-                    0.7
-                )
-                * glow
-                * 0.04;
-
-
-            gl_FragColor =
-                vec4(
-                    color,
-                    1.0
-                );
-
-        }
-
-    `;
-
-
-    /* ==========================================
-       SHADER COMPILER
-    ========================================== */
-
-    function createShader(
-        type,
-        source
-    ) {
-
-        const shader =
-            gl.createShader(type);
-
-        gl.shaderSource(
-            shader,
-            source
-        );
-
-        gl.compileShader(shader);
-
-        if (
-            !gl.getShaderParameter(
-                shader,
-                gl.COMPILE_STATUS
-            )
-        ) {
-
-            console.error(
-                gl.getShaderInfoLog(
-                    shader
-                )
-            );
-
-            return null;
-        }
-
-        return shader;
-    }
-
-
-    const vertexShader =
-        createShader(
+    const vertex =
+        compileShader(
             gl.VERTEX_SHADER,
-            vertexShaderSource
+            vertexSource
         );
 
-    const fragmentShader =
-        createShader(
+    const fragment =
+        compileShader(
             gl.FRAGMENT_SHADER,
-            fragmentShaderSource
+            fragmentSource
         );
 
+    if (!vertex || !fragment)
+        return false;
 
-    const program =
+    program =
         gl.createProgram();
 
     gl.attachShader(
         program,
-        vertexShader
+        vertex
     );
 
     gl.attachShader(
         program,
-        fragmentShader
+        fragment
     );
 
     gl.linkProgram(program);
 
+    if (!gl.getProgramParameter(
+        program,
+        gl.LINK_STATUS
+    )) {
+
+        console.error(
+            gl.getProgramInfoLog(program)
+        );
+
+        return false;
+    }
+
     gl.useProgram(program);
 
-
-    /* ==========================================
-       FULLSCREEN QUAD
-    ========================================== */
-
-    const buffer =
+    buffer =
         gl.createBuffer();
 
     gl.bindBuffer(
@@ -1130,22 +468,21 @@ console.log(
     gl.bufferData(
         gl.ARRAY_BUFFER,
         new Float32Array([
-            -1, -1,
-             1, -1,
-            -1,  1,
+            -1,-1,
+             1,-1,
+            -1, 1,
 
-            -1,  1,
-             1, -1,
-             1,  1
+            -1, 1,
+             1,-1,
+             1, 1
         ]),
         gl.STATIC_DRAW
     );
 
-
     const position =
         gl.getAttribLocation(
             program,
-            "position"
+            "a_position"
         );
 
     gl.enableVertexAttribArray(
@@ -1161,496 +498,611 @@ console.log(
         0
     );
 
-
-    const timeLocation =
-        gl.getUniformLocation(
-            program,
-            "u_time"
-        );
-
-    const resolutionLocation =
+    uResolution =
         gl.getUniformLocation(
             program,
             "u_resolution"
         );
 
-    const mouseLocation =
+    uTime =
+        gl.getUniformLocation(
+            program,
+            "u_time"
+        );
+
+    uMouse =
         gl.getUniformLocation(
             program,
             "u_mouse"
         );
 
-    const workloadLocation =
+    uWorkload =
         gl.getUniformLocation(
             program,
             "u_workload"
         );
 
+    return true;
+}
 
-    /* ==========================================
-       CANVAS RESIZE
-    ========================================== */
+createProgram();
 
-    function resizeCanvas() {
 
-        const dpr =
+/* =========================================================
+   CANVAS SIZE
+========================================================= */
+
+function resizeShader() {
+
+    if (!gl)
+        return;
+
+    const rect =
+        PL.canvas.getBoundingClientRect();
+
+    const dpr =
+        Math.min(
+            window.devicePixelRatio || 1,
+            2
+        );
+
+    const width =
+        Math.max(
+            1,
+            Math.floor(rect.width * dpr)
+        );
+
+    const height =
+        Math.max(
+            1,
+            Math.floor(rect.height * dpr)
+        );
+
+    if (
+        PL.canvas.width !== width ||
+        PL.canvas.height !== height
+    ) {
+
+        PL.canvas.width = width;
+        PL.canvas.height = height;
+
+    }
+
+    gl.viewport(
+        0,
+        0,
+        PL.canvas.width,
+        PL.canvas.height
+    );
+}
+
+window.addEventListener(
+    "resize",
+    resizeShader
+);
+
+resizeShader();
+
+
+/* =========================================================
+   BENCHMARK STATE
+========================================================= */
+
+let running = false;
+
+let animationID = null;
+
+let stressLevel = 1;
+
+let mouseX = .5;
+let mouseY = .5;
+
+let previousTime = performance.now();
+
+let frameTimes = [];
+
+let fpsHistory = [];
+
+let minFPS = Infinity;
+
+let maxFPS = 0;
+
+
+/* =========================================================
+   MOUSE / TOUCH
+========================================================= */
+
+function updatePointer(clientX, clientY) {
+
+    const rect =
+        PL.canvas.getBoundingClientRect();
+
+    mouseX =
+        Math.max(
+            0,
             Math.min(
-                window.devicePixelRatio || 1,
-                2
-            );
-
-        canvas.width =
-            canvas.clientWidth * dpr;
-
-        canvas.height =
-            canvas.clientHeight * dpr;
-
-        gl.viewport(
-            0,
-            0,
-            canvas.width,
-            canvas.height
+                1,
+                (clientX - rect.left) /
+                rect.width
+            )
         );
-    }
 
-    window.addEventListener(
-        "resize",
-        resizeCanvas
+    mouseY =
+        1 -
+        Math.max(
+            0,
+            Math.min(
+                1,
+                (clientY - rect.top) /
+                rect.height
+            )
+        );
+}
+
+
+PL.canvas.addEventListener(
+    "pointermove",
+    e => {
+
+        updatePointer(
+            e.clientX,
+            e.clientY
+        );
+
+    }
+);
+
+
+/* =========================================================
+   SHADER RENDER
+========================================================= */
+
+function renderShader(time) {
+
+    if (!running)
+        return;
+
+    resizeShader();
+
+    const now =
+        performance.now();
+
+    const delta =
+        now - previousTime;
+
+    previousTime = now;
+
+    const fps =
+        delta > 0
+        ? 1000 / delta
+        : 0;
+
+    const safeFPS =
+        Math.min(
+            240,
+            Math.max(
+                0,
+                fps
+            )
+        );
+
+    frameTimes.push(delta);
+
+    fpsHistory.push(safeFPS);
+
+    if (frameTimes.length > 100)
+        frameTimes.shift();
+
+    if (fpsHistory.length > 100)
+        fpsHistory.shift();
+
+    minFPS =
+        Math.min(
+            minFPS,
+            safeFPS
+        );
+
+    maxFPS =
+        Math.max(
+            maxFPS,
+            safeFPS
+        );
+
+    const average =
+        fpsHistory.length
+        ? fpsHistory.reduce(
+            (a,b) => a + b,
+            0
+        ) / fpsHistory.length
+        : 0;
+
+
+    PL.fps.textContent =
+        safeFPS.toFixed(0);
+
+    PL.frame.textContent =
+        delta.toFixed(1) + " ms";
+
+    PL.avg.textContent =
+        average.toFixed(0);
+
+    PL.min.textContent =
+        minFPS === Infinity
+        ? "0"
+        : minFPS.toFixed(0);
+
+    PL.max.textContent =
+        maxFPS.toFixed(0);
+
+
+    gl.useProgram(program);
+
+    gl.uniform2f(
+        uResolution,
+        PL.canvas.width,
+        PL.canvas.height
     );
 
-    resizeCanvas();
+    gl.uniform1f(
+        uTime,
+        time * .001
+    );
+
+    gl.uniform2f(
+        uMouse,
+        mouseX,
+        mouseY
+    );
+
+    gl.uniform1f(
+        uWorkload,
+        stressLevel
+    );
+
+    gl.drawArrays(
+        gl.TRIANGLES,
+        0,
+        6
+    );
+
+    drawGraph();
+
+    animationID =
+        requestAnimationFrame(
+            renderShader
+        );
+
+}
 
 
-    /* ==========================================
-       MOUSE + TOUCH
-    ========================================== */
+/* =========================================================
+   GRAPH
+========================================================= */
 
-    function movePointer(x, y) {
+function drawGraph() {
 
-        mouseX =
-            (x / window.innerWidth)
-            * 2 - 1;
+    const canvas =
+        PL.graph;
 
-        mouseY =
-            (y / window.innerHeight)
-            * 2 - 1;
+    const ctx =
+        canvas.getContext("2d");
 
-        rotationX =
-            mouseY;
+    const rect =
+        canvas.getBoundingClientRect();
 
-        rotationY =
-            mouseX;
+    const dpr =
+        Math.min(
+            window.devicePixelRatio || 1,
+            2
+        );
+
+    const width =
+        Math.max(
+            1,
+            Math.floor(rect.width * dpr)
+        );
+
+    const height =
+        Math.max(
+            1,
+            Math.floor(rect.height * dpr)
+        );
+
+    if (
+        canvas.width !== width ||
+        canvas.height !== height
+    ) {
+
+        canvas.width = width;
+        canvas.height = height;
+
     }
 
-
-    canvas.addEventListener(
-        "mousemove",
-        e => {
-
-            movePointer(
-                e.clientX,
-                e.clientY
-            );
-
-        }
+    ctx.clearRect(
+        0,
+        0,
+        width,
+        height
     );
 
 
-    canvas.addEventListener(
-        "touchmove",
-        e => {
+    /* GRID */
 
-            if (!e.touches.length)
-                return;
+    ctx.strokeStyle =
+        "rgba(255,255,255,.07)";
 
-            movePointer(
-                e.touches[0].clientX,
-                e.touches[0].clientY
-            );
+    ctx.lineWidth = 1;
 
-        },
-        {
-            passive: true
-        }
-    );
+    for (
+        let y = 0;
+        y < height;
+        y += height / 5
+    ) {
 
+        ctx.beginPath();
 
-    /* ==========================================
-       RENDER
-    ========================================== */
+        ctx.moveTo(0,y);
 
-    function render(time) {
+        ctx.lineTo(width,y);
 
-        if (!running)
-            return;
+        ctx.stroke();
 
-        const seconds =
-            time * 0.001;
-
-
-        gl.uniform1f(
-            timeLocation,
-            seconds
-        );
-
-        gl.uniform2f(
-            resolutionLocation,
-            canvas.width,
-            canvas.height
-        );
-
-        gl.uniform2f(
-            mouseLocation,
-            rotationY,
-            rotationX
-        );
-
-        gl.uniform1f(
-            workloadLocation,
-            workload
-        );
-
-
-        gl.drawArrays(
-            gl.TRIANGLES,
-            0,
-            6
-        );
-
-
-        updateFPS(time);
-
-        animationFrame =
-            requestAnimationFrame(
-                render
-            );
     }
 
 
-    /* ==========================================
-       FPS
-    ========================================== */
+    if (fpsHistory.length < 2)
+        return;
 
-    function updateFPS(time) {
 
-        fpsFrames++;
+    /* FPS LINE */
 
-        const delta =
-            time - fpsTimer;
+    ctx.beginPath();
 
-        if (delta >= 500) {
+    fpsHistory.forEach(
+        (fps,index) => {
 
-            currentFPS =
-                Math.round(
-                    fpsFrames /
-                    (delta / 1000)
+            const x =
+                index /
+                (fpsHistory.length - 1) *
+                width;
+
+            const normalized =
+                Math.min(
+                    fps / 144,
+                    1
                 );
 
-            const ms =
-                currentFPS > 0
-                    ? 1000 / currentFPS
-                    : 0;
+            const y =
+                height -
+                normalized *
+                (height * .85) -
+                height * .075;
 
-            fpsValue.textContent =
-                currentFPS;
+            if (index === 0)
+                ctx.moveTo(x,y);
 
-            liveFPS.textContent =
-                currentFPS;
+            else
+                ctx.lineTo(x,y);
 
-            avgFPS.textContent =
-                currentFPS;
-
-            frameTime.textContent =
-                ms.toFixed(1);
-
-            liveFrameTime.textContent =
-                `${ms.toFixed(1)} ms`;
-
-            graphFPS.textContent =
-                `${currentFPS} FPS`;
-
-            fpsHistory.push(
-                currentFPS
-            );
-
-            if (
-                fpsHistory.length > 80
-            ) {
-
-                fpsHistory.shift();
-
-            }
-
-            drawGraph();
-
-            updateRating(
-                currentFPS
-            );
-
-            fpsFrames = 0;
-
-            fpsTimer = time;
         }
-
-        lastTime = time;
-    }
+    );
 
 
-    /* ==========================================
-       PERFORMANCE GRAPH
-    ========================================== */
-
-    function drawGraph() {
-
-        const width =
-            graph.clientWidth;
-
-        const height =
-            graph.clientHeight;
-
-        const dpr =
-            window.devicePixelRatio || 1;
-
-        graph.width =
-            width * dpr;
-
-        graph.height =
-            height * dpr;
-
-        graphCtx.setTransform(
-            dpr,
-            0,
-            0,
-            dpr,
-            0,
-            0
-        );
-
-        graphCtx.clearRect(
+    const gradient =
+        ctx.createLinearGradient(
             0,
             0,
             width,
-            height
+            0
         );
 
+    gradient.addColorStop(
+        0,
+        "#00f5d4"
+    );
 
-        graphCtx.beginPath();
+    gradient.addColorStop(
+        .5,
+        "#8b5cf6"
+    );
 
-        graphCtx.strokeStyle =
-            "#8b5cf6";
+    gradient.addColorStop(
+        1,
+        "#ff2cdf"
+    );
 
-        graphCtx.lineWidth = 3;
+    ctx.strokeStyle =
+        gradient;
+
+    ctx.lineWidth =
+        3;
+
+    ctx.shadowBlur =
+        12;
+
+    ctx.shadowColor =
+        "#8b5cf6";
+
+    ctx.stroke();
+
+    ctx.shadowBlur = 0;
 
 
-        fpsHistory.forEach(
-            (value, index) => {
+    /* RATING */
 
-                const x =
-                    (index /
-                    Math.max(
-                        fpsHistory.length - 1,
-                        1
-                    )) *
-                    width;
+    const avg =
+        fpsHistory.reduce(
+            (a,b) => a+b,
+            0
+        ) / fpsHistory.length;
 
-                const normalized =
-                    Math.min(
-                        value / 144,
-                        1
-                    );
+    let rating =
+        "LOW";
 
-                const y =
-                    height -
-                    normalized *
-                    height;
+    if (avg >= 120)
+        rating = "ULTRA";
 
-                if (index === 0) {
+    else if (avg >= 90)
+        rating = "HIGH";
 
-                    graphCtx.moveTo(
-                        x,
-                        y
-                    );
+    else if (avg >= 60)
+        rating = "GOOD";
 
-                } else {
+    else if (avg >= 30)
+        rating = "MEDIUM";
 
-                    graphCtx.lineTo(
-                        x,
-                        y
-                    );
-                }
+    PL.rating.textContent =
+        rating;
 
-            }
+}
+
+
+/* =========================================================
+   START
+========================================================= */
+
+function startBenchmark() {
+
+    if (running)
+        return;
+
+    running = true;
+
+    PL.section.classList.add(
+        "pl-running"
+    );
+
+    PL.section.classList.remove(
+        "pl-stopped"
+    );
+
+    PL.status.textContent =
+        "RUNNING";
+
+    previousTime =
+        performance.now();
+
+    if (animationID)
+        cancelAnimationFrame(
+            animationID
         );
 
-        graphCtx.stroke();
+    animationID =
+        requestAnimationFrame(
+            renderShader
+        );
+
+}
+
+
+/* =========================================================
+   STOP
+========================================================= */
+
+function stopBenchmark() {
+
+    running = false;
+
+    if (animationID) {
+
+        cancelAnimationFrame(
+            animationID
+        );
+
+        animationID = null;
+
     }
 
+    PL.section.classList.remove(
+        "pl-running"
+    );
 
-    /* ==========================================
-       RATING
-    ========================================== */
+    PL.section.classList.add(
+        "pl-stopped"
+    );
 
-    function updateRating(fps) {
+    PL.status.textContent =
+        "STOPPED";
 
-        let result;
-
-        if (fps >= 120) {
-
-            result = "ULTRA";
-
-        } else if (fps >= 90) {
-
-            result = "EXCELLENT";
-
-        } else if (fps >= 60) {
-
-            result = "GOOD";
-
-        } else if (fps >= 30) {
-
-            result = "MEDIUM";
-
-        } else {
-
-            result = "LOW";
-        }
-
-        rating.textContent =
-            result;
-    }
+}
 
 
-    /* ==========================================
-       START / STOP / RESET
-    ========================================== */
+/* =========================================================
+   RESET
+========================================================= */
 
-    document
-        .getElementById(
-            "startShader"
-        )
-        ?.addEventListener(
-            "click",
-            () => {
+function resetBenchmark() {
 
-                if (running)
-                    return;
+    stopBenchmark();
 
-                running = true;
+    frameTimes = [];
 
-                fpsTimer =
-                    performance.now();
+    fpsHistory = [];
 
-                fpsFrames = 0;
+    minFPS = Infinity;
 
-                animationFrame =
-                    requestAnimationFrame(
-                        render
-                    );
+    maxFPS = 0;
 
-            }
-        );
+    PL.fps.textContent = "0";
+    PL.frame.textContent = "0 ms";
+    PL.avg.textContent = "0";
+    PL.min.textContent = "0";
+    PL.max.textContent = "0";
 
+    PL.status.textContent =
+        "READY";
 
-    document
-        .getElementById(
-            "stopShader"
-        )
-        ?.addEventListener(
-            "click",
-            () => {
+    PL.rating.textContent =
+        "WAITING";
 
-                running = false;
+    PL.cpuScore.textContent =
+        "0";
 
-                cancelAnimationFrame(
-                    animationFrame
-                );
+    PL.cpuBig.textContent =
+        "0";
 
-            }
-        );
+    PL.result.textContent =
+        "0";
+
+    PL.resultText.textContent =
+        "Start a test to see your result.";
+
+    drawGraph();
+
+}
 
 
-    document
-        .getElementById(
-            "resetShader"
-        )
-        ?.addEventListener(
-            "click",
-            () => {
+/* =========================================================
+   LEVEL BUTTONS
+========================================================= */
 
-                running = false;
-
-                cancelAnimationFrame(
-                    animationFrame
-                );
-
-                fpsHistory = [];
-
-                currentFPS = 0;
-
-                fpsValue.textContent = "0";
-
-                avgFPS.textContent = "0";
-
-                liveFPS.textContent = "0";
-
-                frameTime.textContent = "0";
-
-                liveFrameTime.textContent =
-                    "0 ms";
-
-                rating.textContent =
-                    "READY";
-
-                graphCtx.clearRect(
-                    0,
-                    0,
-                    graph.width,
-                    graph.height
-                );
-
-            }
-        );
-
-
-    /* ==========================================
-       PERFORMANCE LEVEL
-    ========================================== */
-
-    document.querySelectorAll(
-        "[data-level]"
-    ).forEach(button => {
+document
+    .querySelectorAll(".pl-level")
+    .forEach(button => {
 
         button.addEventListener(
             "click",
             () => {
 
-                workload =
+                document
+                    .querySelectorAll(
+                        ".pl-level"
+                    )
+                    .forEach(
+                        b =>
+                        b.classList.remove(
+                            "active"
+                        )
+                    );
+
+                button.classList.add(
+                    "active"
+                );
+
+                stressLevel =
                     Number(
                         button.dataset.level
                     );
-
-                const description =
-                    document.getElementById(
-                        "modeDescription"
-                    );
-
-                const messages = {
-
-                    1:
-                        "Light workload — safe for normal testing.",
-
-                    2:
-                        "Medium workload — balanced graphics test.",
-
-                    3:
-                        "Heavy workload — higher GPU load.",
-
-                    4:
-                        "Extreme workload — may cause high load and heat."
-                };
-
-                description.textContent =
-                    messages[workload];
 
             }
         );
@@ -1658,257 +1110,388 @@ console.log(
     });
 
 
-    /* ==========================================
-       CPU TEST
-    ========================================== */
+/* =========================================================
+   BUTTON EVENTS
+========================================================= */
 
-    const cpuButton =
-        document.getElementById(
-            "cpuTestButton"
-        );
+PL.start.addEventListener(
+    "click",
+    startBenchmark
+);
 
-    const cpuProgress =
-        document.getElementById(
-            "cpuProgress"
-        );
+PL.stop.addEventListener(
+    "click",
+    stopBenchmark
+);
 
-    const cpuResult =
-        document.getElementById(
-            "cpuResult"
-        );
-
-    const cpuScore =
-        document.getElementById(
-            "cpuScore"
-        );
+PL.reset.addEventListener(
+    "click",
+    resetBenchmark
+);
 
 
-    cpuButton?.addEventListener(
-        "click",
-        async () => {
+/* =========================================================
+   CPU BENCHMARK
+========================================================= */
 
-            cpuButton.disabled = true;
-
-            cpuResult.textContent =
-                "TESTING...";
-
-            let score = 0;
-
-            const start =
-                performance.now();
-
-            const duration =
-                3000;
+let cpuRunning = false;
 
 
-            while (
-                performance.now() -
-                start <
-                duration
-            ) {
+async function runCPUTest() {
 
-                for (
-                    let i = 0;
-                    i < 250000;
-                    i++
-                ) {
+    if (cpuRunning)
+        return;
 
-                    score +=
-                        Math.sqrt(i) *
-                        Math.sin(i);
+    cpuRunning = true;
 
-                }
+    PL.cpuBig.textContent =
+        "...";
 
-                const elapsed =
-                    performance.now() -
-                    start;
+    PL.cpuScore.textContent =
+        "...";
 
-                const progress =
-                    Math.min(
-                        elapsed /
-                        duration *
-                        100,
-                        100
-                    );
+    const start =
+        performance.now();
 
-                cpuProgress.style.width =
-                    `${progress}%`;
+    let value = 0;
 
-                await new Promise(
-                    resolve =>
-                        setTimeout(
-                            resolve,
-                            0
-                        )
-                );
-            }
+    /*
+       Bounded browser workload.
+       It is intentionally a benchmark,
+       not an attempt to damage the CPU.
+    */
 
+    const rounds =
+        7000000;
 
-            const elapsed =
-                performance.now() -
-                start;
+    for (
+        let i = 0;
+        i < rounds;
+        i++
+    ) {
 
+        value +=
+            Math.sin(i * .0001) *
+            Math.cos(i * .00007);
 
-            const final =
-                Math.round(
-                    100000000 /
-                    Math.max(
-                        elapsed,
-                        1
+        value +=
+            Math.sqrt(
+                (i % 1000) + 1
+            ) * .00001;
+
+        if (
+            i % 250000 === 0
+        ) {
+
+            await new Promise(
+                resolve =>
+                    setTimeout(
+                        resolve,
+                        0
                     )
-                );
-
-
-            cpuScore.textContent =
-                final;
-
-            cpuResult.textContent =
-                `${final} POINTS`;
-
-            cpuButton.disabled =
-                false;
-
-        }
-    );
-
-
-    /* ==========================================
-       GAMING SOUND
-    ========================================== */
-
-    const soundButton =
-        document.getElementById(
-            "soundButton"
-        );
-
-    let audioContext;
-
-    soundButton?.addEventListener(
-        "click",
-        () => {
-
-            audioContext =
-                audioContext ||
-                new (
-                    window.AudioContext ||
-                    window.webkitAudioContext
-                )();
-
-            const oscillator =
-                audioContext.createOscillator();
-
-            const gain =
-                audioContext.createGain();
-
-            oscillator.type =
-                "sawtooth";
-
-            oscillator.frequency.value =
-                220;
-
-            gain.gain.value =
-                0.08;
-
-            oscillator.connect(
-                gain
-            );
-
-            gain.connect(
-                audioContext.destination
-            );
-
-            oscillator.start();
-
-            oscillator.frequency.exponentialRampToValueAtTime(
-                880,
-                audioContext.currentTime + 0.4
-            );
-
-            gain.gain.exponentialRampToValueAtTime(
-                0.001,
-                audioContext.currentTime + 0.5
-            );
-
-            oscillator.stop(
-                audioContext.currentTime + 0.5
             );
 
         }
-    );
 
+    }
 
-    /* ==========================================
-       FULL TEST
-    ========================================== */
+    const elapsed =
+        performance.now() - start;
 
-    document
-        .getElementById(
-            "fullTest"
-        )
-        ?.addEventListener(
-            "click",
-            () => {
+    /*
+       Higher score = faster execution.
+    */
 
-                workload = 3;
-
-                running = true;
-
-                fpsTimer =
-                    performance.now();
-
-                fpsFrames = 0;
-
-                cancelAnimationFrame(
-                    animationFrame
-                );
-
-                animationFrame =
-                    requestAnimationFrame(
-                        render
-                    );
-
-                document
-                    .getElementById(
-                        "finalScore"
-                    )
-                    .textContent =
-                    "TESTING...";
-
-                setTimeout(
-                    () => {
-
-                        const score =
-                            Math.round(
-                                Math.min(
-                                    currentFPS *
-                                    0.7 +
-                                    (Number(
-                                        cpuScore.textContent
-                                    ) || 0) *
-                                    0.3,
-                                    999
-                                )
-                            );
-
-                        document
-                            .getElementById(
-                                "finalScore"
-                            )
-                            .textContent =
-                            `${score} / 999`;
-
-                        document
-                            .getElementById(
-                                "finalMessage"
-                            )
-                            .textContent =
-                            `Current graphics performance: ${currentFPS} FPS`;
-
-                    },
-                    7000
-                );
-
-            }
+    const score =
+        Math.round(
+            100000000 /
+            Math.max(
+                elapsed,
+                1
+            )
         );
 
-})();
+    PL.cpuBig.textContent =
+        score.toLocaleString();
+
+    PL.cpuScore.textContent =
+        score.toLocaleString();
+
+    cpuRunning = false;
+
+    return score;
+
+}
+
+
+PL.cpuTest.addEventListener(
+    "click",
+    runCPUTest
+);
+
+
+/* =========================================================
+   AUDIO ENGINE
+========================================================= */
+
+let audioContext = null;
+
+let masterGain = null;
+
+let oscillator = null;
+
+let audioRunning = false;
+
+
+function startSound() {
+
+    if (!audioContext) {
+
+        audioContext =
+            new (
+                window.AudioContext ||
+                window.webkitAudioContext
+            )();
+
+        masterGain =
+            audioContext.createGain();
+
+        masterGain.gain.value =
+            Number(
+                PL.volume.value
+            ) / 100;
+
+        masterGain.connect(
+            audioContext.destination
+        );
+
+    }
+
+    if (audioContext.state === "suspended")
+        audioContext.resume();
+
+
+    if (audioRunning)
+        return;
+
+
+    oscillator =
+        audioContext.createOscillator();
+
+    oscillator.type =
+        "sawtooth";
+
+    oscillator.frequency.value =
+        110;
+
+    oscillator.connect(
+        masterGain
+    );
+
+    oscillator.start();
+
+    audioRunning = true;
+
+    PL.sound.textContent =
+        "■ STOP SOUND";
+
+}
+
+
+function stopSound() {
+
+    if (!oscillator)
+        return;
+
+    try {
+        oscillator.stop();
+    }
+
+    catch(e) {}
+
+    oscillator.disconnect();
+
+    oscillator = null;
+
+    audioRunning = false;
+
+    PL.sound.textContent =
+        "🔊 START SOUND";
+
+}
+
+
+PL.sound.addEventListener(
+    "click",
+    () => {
+
+        if (audioRunning)
+            stopSound();
+
+        else
+            startSound();
+
+    }
+);
+
+
+PL.volume.addEventListener(
+    "input",
+    () => {
+
+        if (masterGain) {
+
+            masterGain.gain.value =
+                Number(
+                    PL.volume.value
+                ) / 100;
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   FULL TEST
+========================================================= */
+
+async function fullTest() {
+
+    resetBenchmark();
+
+    startBenchmark();
+
+    /*
+       Let GPU test collect data.
+    */
+
+    await new Promise(
+        resolve =>
+            setTimeout(
+                resolve,
+                6000
+            )
+    );
+
+    stopBenchmark();
+
+    const cpu =
+        await runCPUTest();
+
+    const average =
+        fpsHistory.length
+        ? fpsHistory.reduce(
+            (a,b) => a+b,
+            0
+        ) / fpsHistory.length
+        : 0;
+
+
+    const gpuScore =
+        Math.round(
+            Math.min(
+                100,
+                average / 1.44
+            )
+        );
+
+
+    const cpuNormalized =
+        Math.min(
+            100,
+            cpu / 1000
+        );
+
+
+    const finalScore =
+        Math.round(
+            gpuScore * .6 +
+            cpuNormalized * .4
+        );
+
+
+    PL.result.textContent =
+        finalScore;
+
+
+    let message =
+        "Entry-level performance.";
+
+    if (finalScore >= 90)
+        message =
+            "🔥 ULTRA — Excellent performance!";
+
+    else if (finalScore >= 75)
+        message =
+            "🚀 HIGH — Very strong performance.";
+
+    else if (finalScore >= 55)
+        message =
+            "⚡ GOOD — Solid everyday performance.";
+
+    else if (finalScore >= 35)
+        message =
+            "🟡 MEDIUM — Moderate performance.";
+
+    else
+        message =
+            "🔴 LOW — Performance is limited.";
+
+
+    PL.resultText.textContent =
+        message;
+
+}
+
+
+PL.full.addEventListener(
+    "click",
+    fullTest
+);
+
+
+/* =========================================================
+   INITIAL GRAPH
+========================================================= */
+
+drawGraph();
+
+
+/* =========================================================
+   STOP TEST WHEN PAGE IS HIDDEN
+========================================================= */
+
+document.addEventListener(
+    "visibilitychange",
+    () => {
+
+        if (
+            document.hidden &&
+            running
+        ) {
+
+            stopBenchmark();
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   PAGE LOAD
+========================================================= */
+
+window.addEventListener(
+    "load",
+    () => {
+
+        detectDevice();
+
+        resizeShader();
+
+        drawGraph();
+
+    }
+);
