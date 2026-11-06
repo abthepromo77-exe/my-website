@@ -1,359 +1,527 @@
 /* =========================================================
-   AB THE PROMO — PERFORMANCE LAB ENGINE
-   Works with the Performance Lab HTML.
+   AB THE PROMO
+   FUTURISTIC WEBSITE ENGINE
 ========================================================= */
 
 "use strict";
 
 
 /* =========================================================
-   ELEMENTS
+   MOBILE MENU
 ========================================================= */
 
-const PL = {
+const menuButton =
+    document.getElementById("menuButton");
 
-    section: document.querySelector("#performance-lab"),
+const mobileMenu =
+    document.getElementById("mobileMenu");
 
-    canvas: document.querySelector("#pl-shader"),
-    graph: document.querySelector("#pl-graph"),
 
-    fps: document.querySelector("#pl-fps"),
-    frame: document.querySelector("#pl-frame"),
+if (menuButton) {
 
-    avg: document.querySelector("#pl-avg"),
-    min: document.querySelector("#pl-min"),
-    max: document.querySelector("#pl-max"),
+    menuButton.addEventListener(
+        "click",
+        () => {
 
-    cpuScore: document.querySelector("#pl-cpu-score"),
-    cpuBig: document.querySelector("#pl-cpu-big"),
+            mobileMenu.classList.toggle(
+                "open"
+            );
 
-    device: document.querySelector("#pl-device"),
-    cores: document.querySelector("#pl-cores"),
-    memory: document.querySelector("#pl-memory"),
-    screen: document.querySelector("#pl-screen"),
+        }
+    );
 
-    status: document.querySelector("#pl-status"),
-    rating: document.querySelector("#pl-rating"),
+}
 
-    result: document.querySelector("#pl-result-score"),
-    resultText: document.querySelector("#pl-result-text"),
 
-    start: document.querySelector("#pl-start"),
-    stop: document.querySelector("#pl-stop"),
-    reset: document.querySelector("#pl-reset"),
+document
+    .querySelectorAll(".mobile-menu a")
+    .forEach(link => {
 
-    cpuTest: document.querySelector("#pl-cpu-test"),
-    sound: document.querySelector("#pl-sound"),
-    volume: document.querySelector("#pl-volume"),
-    full: document.querySelector("#pl-full")
+        link.addEventListener(
+            "click",
+            () => {
 
-};
+                mobileMenu.classList.remove(
+                    "open"
+                );
+
+            }
+        );
+
+    });
 
 
 /* =========================================================
-   DEVICE INFO
+   DEVICE INFORMATION
 ========================================================= */
 
 function detectDevice() {
 
-    const ua = navigator.userAgent;
+    const ua =
+        navigator.userAgent;
 
-    let device = "Desktop";
+    let device =
+        "Desktop Browser";
+
 
     if (/Android/i.test(ua)) {
-        device = "Android";
+
+        device =
+            "Android Device";
+
     }
 
-    else if (/iPhone|iPad|iPod/i.test(ua)) {
-        device = "iPhone / iPad";
+    else if (
+        /iPhone|iPad|iPod/i.test(ua)
+    ) {
+
+        device =
+            "Apple Mobile Device";
+
     }
 
     else if (/Windows/i.test(ua)) {
-        device = "Windows PC";
+
+        device =
+            "Windows PC";
+
     }
 
     else if (/Mac/i.test(ua)) {
-        device = "Mac";
+
+        device =
+            "Mac";
+
     }
 
     else if (/Linux/i.test(ua)) {
-        device = "Linux";
+
+        device =
+            "Linux Device";
+
     }
 
-    PL.device.textContent = device;
 
-    PL.cores.textContent =
-        navigator.hardwareConcurrency
-        ? navigator.hardwareConcurrency + " Threads"
-        : "N/A";
+    const deviceName =
+        document.getElementById(
+            "deviceName"
+        );
 
-    PL.memory.textContent =
-        navigator.deviceMemory
-        ? navigator.deviceMemory + " GB"
-        : "N/A";
+    const cpuCores =
+        document.getElementById(
+            "cpuCores"
+        );
 
-    PL.screen.textContent =
-        `${window.screen.width} × ${window.screen.height}`;
+    const memory =
+        document.getElementById(
+            "deviceMemory"
+        );
+
+    const screen =
+        document.getElementById(
+            "screenInfo"
+        );
+
+
+    if (deviceName)
+        deviceName.textContent =
+            device;
+
+
+    if (cpuCores)
+        cpuCores.textContent =
+            navigator.hardwareConcurrency
+            ? navigator.hardwareConcurrency +
+              " THREADS"
+            : "N/A";
+
+
+    if (memory)
+        memory.textContent =
+            navigator.deviceMemory
+            ? navigator.deviceMemory +
+              " GB"
+            : "N/A";
+
+
+    if (screen)
+        screen.textContent =
+            `${window.screen.width} × ${window.screen.height}`;
 
 }
+
 
 detectDevice();
 
 
 /* =========================================================
-   WEBGL
+   WEBGL SHADER
 ========================================================= */
 
-const gl =
-    PL.canvas.getContext("webgl2", {
-        antialias: false,
-        alpha: false,
-        powerPreference: "high-performance"
-    }) ||
-    PL.canvas.getContext("webgl", {
-        antialias: false,
-        alpha: false,
-        powerPreference: "high-performance"
-    });
+const canvas =
+    document.getElementById(
+        "shaderCanvas"
+    );
 
 
-/* =========================================================
-   SHADER SOURCE
-========================================================= */
+let gl = null;
 
-const vertexSource = `
+if (canvas) {
 
-attribute vec2 a_position;
+    gl =
+        canvas.getContext(
+            "webgl2",
+            {
+                antialias:false,
+                alpha:false,
+                powerPreference:
+                    "high-performance"
+            }
+        ) ||
 
-void main() {
+        canvas.getContext(
+            "webgl",
+            {
+                antialias:false,
+                alpha:false,
+                powerPreference:
+                    "high-performance"
+            }
+        );
+
+}
+
+
+const vertexShaderSource = `
+
+attribute vec2 position;
+
+void main(){
 
     gl_Position =
-        vec4(a_position, 0.0, 1.0);
+        vec4(
+            position,
+            0.0,
+            1.0
+        );
 
 }
 
 `;
 
 
-const fragmentSource = `
+const fragmentShaderSource = `
 
 precision highp float;
 
-uniform vec2 u_resolution;
-uniform float u_time;
-uniform vec2 u_mouse;
-uniform float u_workload;
+uniform vec2 resolution;
+uniform float time;
+uniform vec2 mouse;
+uniform float workload;
 
-#define MAX_STEPS 180
 
-float hash(vec3 p) {
+float hash(vec3 p){
 
-    p = fract(
-        p * 0.3183099
-        + vec3(0.1,0.2,0.3)
-    );
+    p =
+        fract(
+            p *
+            0.3183099
+            +
+            vec3(
+                0.1,
+                0.2,
+                0.3
+            )
+        );
 
     p *= 17.0;
 
     return fract(
-        p.x * p.y * p.z *
-        (p.x + p.y + p.z)
+        p.x *
+        p.y *
+        p.z *
+        (
+            p.x +
+            p.y +
+            p.z
+        )
     );
 
 }
 
 
-float noise(vec3 p) {
+float noise(vec3 p){
 
-    vec3 i = floor(p);
-    vec3 f = fract(p);
+    vec3 i =
+        floor(p);
 
-    f = f*f*(3.0-2.0*f);
+    vec3 f =
+        fract(p);
 
-    return mix(
-        mix(
-            mix(
-                hash(i + vec3(0,0,0)),
-                hash(i + vec3(1,0,0)),
-                f.x
-            ),
-            mix(
-                hash(i + vec3(0,1,0)),
-                hash(i + vec3(1,1,0)),
-                f.x
-            ),
-            f.y
-        ),
-        mix(
-            mix(
-                hash(i + vec3(0,0,1)),
-                hash(i + vec3(1,0,1)),
-                f.x
-            ),
-            mix(
-                hash(i + vec3(0,1,1)),
-                hash(i + vec3(1,1,1)),
-                f.x
-            ),
-            f.y
-        ),
-        f.z
-    );
-
-}
-
-
-float mapScene(vec3 p) {
-
-    float d =
-        length(p) - 1.25;
-
-    float n =
-        noise(
-            p * 2.4 +
-            vec3(u_time * .18)
+    f =
+        f*f*
+        (
+            3.0 -
+            2.0*f
         );
 
-    d +=
-        (n - .5)
-        * .32;
+    float a =
+        hash(i);
 
-    return d;
-
-}
-
-
-void main() {
-
-    vec2 uv =
-        (gl_FragCoord.xy * 2.0
-        - u_resolution.xy)
-        / min(
-            u_resolution.x,
-            u_resolution.y
-        );
-
-    vec2 mouse =
-        (u_mouse - .5) * 1.2;
-
-    float ca =
-        cos(mouse.x);
-
-    float sa =
-        sin(mouse.x);
-
-    mat2 rot =
-        mat2(
-            ca,-sa,
-            sa,ca
-        );
-
-    uv = rot * uv;
-
-    vec3 ro =
-        vec3(
-            0.0,
-            0.0,
-            3.8
-        );
-
-    vec3 rd =
-        normalize(
+    float b =
+        hash(
+            i +
             vec3(
-                uv,
-                -2.2
+                1.0,
+                0.0,
+                0.0
             )
         );
 
-    float total = 0.0;
+    float c =
+        hash(
+            i +
+            vec3(
+                0.0,
+                1.0,
+                0.0
+            )
+        );
 
-    float glow = 0.0;
+    float d =
+        hash(
+            i +
+            vec3(
+                1.0,
+                1.0,
+                0.0
+            )
+        );
+
+    return mix(
+        mix(a,b,f.x),
+        mix(c,d,f.x),
+        f.y
+    );
+
+}
+
+
+float scene(vec3 p){
+
+    float sphere =
+        length(p)
+        -
+        1.25;
+
+    float n =
+        noise(
+            p *
+            (
+                2.0 +
+                workload
+            )
+            +
+            time *
+            .15
+        );
+
+    sphere +=
+        (
+            n -
+            .5
+        )
+        *
+        .38;
+
+    return sphere;
+
+}
+
+
+void main(){
+
+    vec2 uv =
+        (
+            gl_FragCoord.xy *
+            2.0 -
+            resolution
+        )
+        /
+        min(
+            resolution.x,
+            resolution.y
+        );
+
+
+    vec2 m =
+        (
+            mouse -
+            .5
+        );
+
+
+    float angle =
+        m.x *
+        1.5;
+
+
+    float ca =
+        cos(angle);
+
+    float sa =
+        sin(angle);
+
+
+    uv =
+        mat2(
+            ca,-sa,
+            sa,ca
+        )
+        *
+        uv;
+
+
+    vec3 rayOrigin =
+        vec3(
+            0.0,
+            0.0,
+            4.0
+        );
+
+
+    vec3 rayDirection =
+        normalize(
+            vec3(
+                uv,
+                -2.4
+            )
+        );
+
+
+    float depth =
+        0.0;
+
+    float glow =
+        0.0;
+
 
     int steps =
         int(
             60.0 +
-            u_workload * 110.0
+            workload *
+            25.0
         );
 
-    for(int i=0;i<MAX_STEPS;i++) {
+
+    for(
+        int i=0;
+        i<130;
+        i++
+    ){
 
         if(i >= steps)
             break;
 
-        vec3 p =
-            ro + rd * total;
 
-        float d =
-            mapScene(p);
+        vec3 p =
+            rayOrigin +
+            rayDirection *
+            depth;
+
+
+        float distance =
+            scene(p);
+
 
         glow +=
             exp(
-                -abs(d) * 8.0
-            ) * .018;
+                -abs(distance)
+                * 9.0
+            )
+            *
+            .018;
 
-        total +=
+
+        depth +=
             max(
                 .012,
-                abs(d) * .65
+                abs(distance)
+                * .65
             );
 
-        if(total > 7.0)
+
+        if(depth > 7.0)
             break;
 
     }
 
-    vec3 col =
+
+    vec3 color =
         vec3(
-            0.01,
-            0.005,
-            0.03
+            .005,
+            .002,
+            .02
         );
 
-    col +=
+
+    color +=
         vec3(
             0.0,
-            0.9,
-            0.75
-        ) * glow;
+            .9,
+            .75
+        )
+        *
+        glow;
 
-    col +=
+
+    color +=
         vec3(
-            0.55,
-            0.15,
+            .55,
+            .1,
             1.0
         )
-        * pow(
+        *
+        pow(
             max(
                 0.0,
-                1.0 - total / 6.0
+                1.0 -
+                depth /
+                7.0
             ),
             2.0
         );
 
-    col +=
+
+    color +=
         vec3(
             1.0,
-            0.05,
-            0.7
+            .05,
+            .6
         )
-        * glow
-        * .35;
+        *
+        glow
+        *
+        .4;
+
 
     float vignette =
         1.0 -
         smoothstep(
-            .3,
+            .2,
             1.5,
             length(uv)
         );
 
-    col *=
-        .55 +
-        vignette * .7;
+
+    color *=
+        .6 +
+        vignette;
+
 
     gl_FragColor =
         vec4(
-            col,
+            color,
             1.0
         );
 
@@ -363,110 +531,144 @@ void main() {
 
 
 /* =========================================================
-   SHADER HELPERS
+   SHADER SETUP
 ========================================================= */
 
 let program = null;
-let buffer = null;
 
-let uResolution = null;
-let uTime = null;
-let uMouse = null;
-let uWorkload = null;
+let positionBuffer = null;
+
+let resolutionLocation = null;
+
+let timeLocation = null;
+
+let mouseLocation = null;
+
+let workloadLocation = null;
 
 
-function compileShader(type, source) {
+function compileShader(
+    type,
+    source
+) {
 
     const shader =
         gl.createShader(type);
+
 
     gl.shaderSource(
         shader,
         source
     );
 
+
     gl.compileShader(shader);
 
-    if (!gl.getShaderParameter(
-        shader,
-        gl.COMPILE_STATUS
-    )) {
+
+    if (
+        !gl.getShaderParameter(
+            shader,
+            gl.COMPILE_STATUS
+        )
+    ) {
 
         console.error(
-            gl.getShaderInfoLog(shader)
+            gl.getShaderInfoLog(
+                shader
+            )
         );
 
         return null;
+
     }
 
+
     return shader;
+
 }
 
 
-function createProgram() {
+function createShaderProgram() {
 
-    if (!gl) {
-
-        PL.status.textContent =
-            "WEBGL NOT AVAILABLE";
-
+    if (!gl)
         return false;
-    }
+
 
     const vertex =
         compileShader(
             gl.VERTEX_SHADER,
-            vertexSource
+            vertexShaderSource
         );
+
 
     const fragment =
         compileShader(
             gl.FRAGMENT_SHADER,
-            fragmentSource
+            fragmentShaderSource
         );
+
 
     if (!vertex || !fragment)
         return false;
 
+
     program =
         gl.createProgram();
+
 
     gl.attachShader(
         program,
         vertex
     );
 
+
     gl.attachShader(
         program,
         fragment
     );
 
-    gl.linkProgram(program);
 
-    if (!gl.getProgramParameter(
-        program,
-        gl.LINK_STATUS
-    )) {
+    gl.linkProgram(
+        program
+    );
+
+
+    if (
+        !gl.getProgramParameter(
+            program,
+            gl.LINK_STATUS
+        )
+    ) {
 
         console.error(
-            gl.getProgramInfoLog(program)
+            gl.getProgramInfoLog(
+                program
+            )
         );
 
         return false;
+
     }
 
-    gl.useProgram(program);
 
-    buffer =
+    gl.useProgram(
+        program
+    );
+
+
+    positionBuffer =
         gl.createBuffer();
+
 
     gl.bindBuffer(
         gl.ARRAY_BUFFER,
-        buffer
+        positionBuffer
     );
+
 
     gl.bufferData(
         gl.ARRAY_BUFFER,
+
         new Float32Array([
             -1,-1,
              1,-1,
@@ -476,18 +678,22 @@ function createProgram() {
              1,-1,
              1, 1
         ]),
+
         gl.STATIC_DRAW
     );
+
 
     const position =
         gl.getAttribLocation(
             program,
-            "a_position"
+            "position"
         );
+
 
     gl.enableVertexAttribArray(
         position
     );
+
 
     gl.vertexAttribPointer(
         position,
@@ -498,108 +704,64 @@ function createProgram() {
         0
     );
 
-    uResolution =
+
+    resolutionLocation =
         gl.getUniformLocation(
             program,
-            "u_resolution"
+            "resolution"
         );
 
-    uTime =
+
+    timeLocation =
         gl.getUniformLocation(
             program,
-            "u_time"
+            "time"
         );
 
-    uMouse =
+
+    mouseLocation =
         gl.getUniformLocation(
             program,
-            "u_mouse"
+            "mouse"
         );
 
-    uWorkload =
+
+    workloadLocation =
         gl.getUniformLocation(
             program,
-            "u_workload"
+            "workload"
         );
+
 
     return true;
+
 }
 
-createProgram();
+
+if (gl) {
+
+    createShaderProgram();
+
+}
 
 
 /* =========================================================
-   CANVAS SIZE
-========================================================= */
-
-function resizeShader() {
-
-    if (!gl)
-        return;
-
-    const rect =
-        PL.canvas.getBoundingClientRect();
-
-    const dpr =
-        Math.min(
-            window.devicePixelRatio || 1,
-            2
-        );
-
-    const width =
-        Math.max(
-            1,
-            Math.floor(rect.width * dpr)
-        );
-
-    const height =
-        Math.max(
-            1,
-            Math.floor(rect.height * dpr)
-        );
-
-    if (
-        PL.canvas.width !== width ||
-        PL.canvas.height !== height
-    ) {
-
-        PL.canvas.width = width;
-        PL.canvas.height = height;
-
-    }
-
-    gl.viewport(
-        0,
-        0,
-        PL.canvas.width,
-        PL.canvas.height
-    );
-}
-
-window.addEventListener(
-    "resize",
-    resizeShader
-);
-
-resizeShader();
-
-
-/* =========================================================
-   BENCHMARK STATE
+   SHADER STATE
 ========================================================= */
 
 let running = false;
 
-let animationID = null;
+let animationFrame = null;
 
-let stressLevel = 1;
+let workload = 1;
 
 let mouseX = .5;
+
 let mouseY = .5;
 
-let previousTime = performance.now();
+let previousFrame =
+    performance.now();
 
-let frameTimes = [];
 
 let fpsHistory = [];
 
@@ -609,186 +771,18 @@ let maxFPS = 0;
 
 
 /* =========================================================
-   MOUSE / TOUCH
+   CANVAS RESIZE
 ========================================================= */
 
-function updatePointer(clientX, clientY) {
+function resizeCanvas() {
 
-    const rect =
-        PL.canvas.getBoundingClientRect();
-
-    mouseX =
-        Math.max(
-            0,
-            Math.min(
-                1,
-                (clientX - rect.left) /
-                rect.width
-            )
-        );
-
-    mouseY =
-        1 -
-        Math.max(
-            0,
-            Math.min(
-                1,
-                (clientY - rect.top) /
-                rect.height
-            )
-        );
-}
-
-
-PL.canvas.addEventListener(
-    "pointermove",
-    e => {
-
-        updatePointer(
-            e.clientX,
-            e.clientY
-        );
-
-    }
-);
-
-
-/* =========================================================
-   SHADER RENDER
-========================================================= */
-
-function renderShader(time) {
-
-    if (!running)
+    if (!gl || !canvas)
         return;
 
-    resizeShader();
-
-    const now =
-        performance.now();
-
-    const delta =
-        now - previousTime;
-
-    previousTime = now;
-
-    const fps =
-        delta > 0
-        ? 1000 / delta
-        : 0;
-
-    const safeFPS =
-        Math.min(
-            240,
-            Math.max(
-                0,
-                fps
-            )
-        );
-
-    frameTimes.push(delta);
-
-    fpsHistory.push(safeFPS);
-
-    if (frameTimes.length > 100)
-        frameTimes.shift();
-
-    if (fpsHistory.length > 100)
-        fpsHistory.shift();
-
-    minFPS =
-        Math.min(
-            minFPS,
-            safeFPS
-        );
-
-    maxFPS =
-        Math.max(
-            maxFPS,
-            safeFPS
-        );
-
-    const average =
-        fpsHistory.length
-        ? fpsHistory.reduce(
-            (a,b) => a + b,
-            0
-        ) / fpsHistory.length
-        : 0;
-
-
-    PL.fps.textContent =
-        safeFPS.toFixed(0);
-
-    PL.frame.textContent =
-        delta.toFixed(1) + " ms";
-
-    PL.avg.textContent =
-        average.toFixed(0);
-
-    PL.min.textContent =
-        minFPS === Infinity
-        ? "0"
-        : minFPS.toFixed(0);
-
-    PL.max.textContent =
-        maxFPS.toFixed(0);
-
-
-    gl.useProgram(program);
-
-    gl.uniform2f(
-        uResolution,
-        PL.canvas.width,
-        PL.canvas.height
-    );
-
-    gl.uniform1f(
-        uTime,
-        time * .001
-    );
-
-    gl.uniform2f(
-        uMouse,
-        mouseX,
-        mouseY
-    );
-
-    gl.uniform1f(
-        uWorkload,
-        stressLevel
-    );
-
-    gl.drawArrays(
-        gl.TRIANGLES,
-        0,
-        6
-    );
-
-    drawGraph();
-
-    animationID =
-        requestAnimationFrame(
-            renderShader
-        );
-
-}
-
-
-/* =========================================================
-   GRAPH
-========================================================= */
-
-function drawGraph() {
-
-    const canvas =
-        PL.graph;
-
-    const ctx =
-        canvas.getContext("2d");
 
     const rect =
         canvas.getBoundingClientRect();
+
 
     const dpr =
         Math.min(
@@ -796,27 +790,225 @@ function drawGraph() {
             2
         );
 
+
     const width =
         Math.max(
             1,
-            Math.floor(rect.width * dpr)
+            Math.floor(
+                rect.width *
+                dpr
+            )
         );
+
 
     const height =
         Math.max(
             1,
-            Math.floor(rect.height * dpr)
+            Math.floor(
+                rect.height *
+                dpr
+            )
         );
+
 
     if (
         canvas.width !== width ||
         canvas.height !== height
     ) {
 
-        canvas.width = width;
-        canvas.height = height;
+        canvas.width =
+            width;
+
+        canvas.height =
+            height;
 
     }
+
+
+    gl.viewport(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
+
+}
+
+
+window.addEventListener(
+    "resize",
+    resizeCanvas
+);
+
+
+resizeCanvas();
+
+
+/* =========================================================
+   POINTER
+========================================================= */
+
+function pointerMove(
+    clientX,
+    clientY
+) {
+
+    const rect =
+        canvas.getBoundingClientRect();
+
+
+    mouseX =
+        Math.max(
+            0,
+            Math.min(
+                1,
+                (
+                    clientX -
+                    rect.left
+                ) /
+                rect.width
+            )
+        );
+
+
+    mouseY =
+        1 -
+        Math.max(
+            0,
+            Math.min(
+                1,
+                (
+                    clientY -
+                    rect.top
+                ) /
+                rect.height
+            )
+        );
+
+}
+
+
+if (canvas) {
+
+    canvas.addEventListener(
+        "pointermove",
+        event => {
+
+            pointerMove(
+                event.clientX,
+                event.clientY
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   FPS ELEMENTS
+========================================================= */
+
+const fpsValue =
+    document.getElementById(
+        "fpsValue"
+    );
+
+const frameValue =
+    document.getElementById(
+        "frameValue"
+    );
+
+const gpuLoad =
+    document.getElementById(
+        "gpuLoad"
+    );
+
+const avgFPS =
+    document.getElementById(
+        "avgFPS"
+    );
+
+const minFPS =
+    document.getElementById(
+        "minFPS"
+    );
+
+const maxFPS =
+    document.getElementById(
+        "maxFPS"
+    );
+
+const performanceRating =
+    document.getElementById(
+        "performanceRating"
+    );
+
+const labStatus =
+    document.getElementById(
+        "labStatus"
+    );
+
+
+/* =========================================================
+   GRAPH
+========================================================= */
+
+const graph =
+    document.getElementById(
+        "performanceGraph"
+    );
+
+
+function drawGraph() {
+
+    if (!graph)
+        return;
+
+
+    const ctx =
+        graph.getContext(
+            "2d"
+        );
+
+
+    const rect =
+        graph.getBoundingClientRect();
+
+
+    const dpr =
+        Math.min(
+            window.devicePixelRatio || 1,
+            2
+        );
+
+
+    graph.width =
+        Math.max(
+            1,
+            Math.floor(
+                rect.width *
+                dpr
+            )
+        );
+
+
+    graph.height =
+        Math.max(
+            1,
+            Math.floor(
+                rect.height *
+                dpr
+            )
+        );
+
+
+    const width =
+        graph.width;
+
+    const height =
+        graph.height;
+
 
     ctx.clearRect(
         0,
@@ -831,58 +1023,98 @@ function drawGraph() {
     ctx.strokeStyle =
         "rgba(255,255,255,.07)";
 
-    ctx.lineWidth = 1;
+    ctx.lineWidth =
+        1;
 
-    for (
-        let y = 0;
-        y < height;
-        y += height / 5
-    ) {
+
+    for(
+        let i=0;
+        i<=5;
+        i++
+    ){
+
+        const y =
+            i *
+            height /
+            5;
+
 
         ctx.beginPath();
 
-        ctx.moveTo(0,y);
+        ctx.moveTo(
+            0,
+            y
+        );
 
-        ctx.lineTo(width,y);
+        ctx.lineTo(
+            width,
+            y
+        );
 
         ctx.stroke();
 
     }
 
 
-    if (fpsHistory.length < 2)
+    if(
+        fpsHistory.length <
+        2
+    )
         return;
 
 
-    /* FPS LINE */
+    /* LINE */
 
     ctx.beginPath();
 
+
     fpsHistory.forEach(
-        (fps,index) => {
+        (
+            fps,
+            index
+        ) => {
+
 
             const x =
                 index /
-                (fpsHistory.length - 1) *
+                (
+                    fpsHistory.length -
+                    1
+                )
+                *
                 width;
+
 
             const normalized =
                 Math.min(
-                    fps / 144,
+                    fps /
+                    144,
                     1
                 );
+
 
             const y =
                 height -
                 normalized *
-                (height * .85) -
-                height * .075;
+                (
+                    height *
+                    .85
+                ) -
+                height *
+                .075;
 
-            if (index === 0)
-                ctx.moveTo(x,y);
+
+            if(index === 0)
+                ctx.moveTo(
+                    x,
+                    y
+                );
 
             else
-                ctx.lineTo(x,y);
+                ctx.lineTo(
+                    x,
+                    y
+                );
 
         }
     );
@@ -896,292 +1128,535 @@ function drawGraph() {
             0
         );
 
+
     gradient.addColorStop(
         0,
         "#00f5d4"
     );
+
 
     gradient.addColorStop(
         .5,
         "#8b5cf6"
     );
 
+
     gradient.addColorStop(
         1,
         "#ff2cdf"
     );
 
+
     ctx.strokeStyle =
         gradient;
 
+
     ctx.lineWidth =
-        3;
+        4;
+
 
     ctx.shadowBlur =
-        12;
+        15;
+
 
     ctx.shadowColor =
         "#8b5cf6";
 
+
     ctx.stroke();
+
 
     ctx.shadowBlur = 0;
 
 
-    /* RATING */
-
-    const avg =
+    const average =
         fpsHistory.reduce(
-            (a,b) => a+b,
+            (a,b) =>
+                a + b,
             0
-        ) / fpsHistory.length;
+        ) /
+        fpsHistory.length;
+
 
     let rating =
         "LOW";
 
-    if (avg >= 120)
-        rating = "ULTRA";
 
-    else if (avg >= 90)
-        rating = "HIGH";
+    if(average >= 120)
+        rating =
+            "ULTRA";
 
-    else if (avg >= 60)
-        rating = "GOOD";
 
-    else if (avg >= 30)
-        rating = "MEDIUM";
+    else if(average >= 90)
+        rating =
+            "HIGH";
 
-    PL.rating.textContent =
+
+    else if(average >= 60)
+        rating =
+            "GOOD";
+
+
+    else if(average >= 30)
+        rating =
+            "MEDIUM";
+
+
+    performanceRating.textContent =
         rating;
+
+
+    const graphRating =
+        document.getElementById(
+            "graphRating"
+        );
+
+
+    if(graphRating)
+        graphRating.textContent =
+            rating;
 
 }
 
 
 /* =========================================================
-   START
+   RENDER
 ========================================================= */
+
+function render(
+    time
+) {
+
+    if (!running)
+        return;
+
+
+    resizeCanvas();
+
+
+    const now =
+        performance.now();
+
+
+    const delta =
+        now -
+        previousFrame;
+
+
+    previousFrame =
+        now;
+
+
+    const fps =
+        delta > 0
+        ? 1000 /
+          delta
+        : 0;
+
+
+    const safeFPS =
+        Math.min(
+            240,
+            Math.max(
+                0,
+                fps
+            )
+        );
+
+
+    fpsHistory.push(
+        safeFPS
+    );
+
+
+    if(
+        fpsHistory.length >
+        100
+    )
+        fpsHistory.shift();
+
+
+    minFPS =
+        Math.min(
+            minFPS,
+            safeFPS
+        );
+
+
+    maxFPS =
+        Math.max(
+            maxFPS,
+            safeFPS
+        );
+
+
+    const average =
+        fpsHistory.reduce(
+            (a,b) =>
+                a + b,
+            0
+        ) /
+        fpsHistory.length;
+
+
+    fpsValue.textContent =
+        safeFPS.toFixed(0);
+
+
+    frameValue.textContent =
+        delta.toFixed(1)
+        +
+        " ms";
+
+
+    avgFPS.textContent =
+        average.toFixed(0);
+
+
+    minFPS.textContent =
+        minFPS === Infinity
+        ? "0"
+        : minFPS.toFixed(0);
+
+
+    maxFPS.textContent =
+        maxFPS.toFixed(0);
+
+
+    gpuLoad.textContent =
+        [
+            "LOW",
+            "MEDIUM",
+            "HIGH",
+            "EXTREME"
+        ][
+            workload -
+            1
+        ];
+
+
+    gl.useProgram(
+        program
+    );
+
+
+    gl.uniform2f(
+        resolutionLocation,
+        canvas.width,
+        canvas.height
+    );
+
+
+    gl.uniform1f(
+        timeLocation,
+        time *
+        .001
+    );
+
+
+    gl.uniform2f(
+        mouseLocation,
+        mouseX,
+        mouseY
+    );
+
+
+    gl.uniform1f(
+        workloadLocation,
+        workload
+    );
+
+
+    gl.drawArrays(
+        gl.TRIANGLES,
+        0,
+        6
+    );
+
+
+    drawGraph();
+
+
+    animationFrame =
+        requestAnimationFrame(
+            render
+        );
+
+}
+
+
+/* =========================================================
+   START / STOP / RESET
+========================================================= */
+
+const startButton =
+    document.getElementById(
+        "startTest"
+    );
+
+const stopButton =
+    document.getElementById(
+        "stopTest"
+    );
+
+const resetButton =
+    document.getElementById(
+        "resetTest"
+    );
+
 
 function startBenchmark() {
 
-    if (running)
+    if(!gl) {
+
+        labStatus.textContent =
+            "WEBGL ERROR";
+
         return;
+
+    }
+
+
+    if(running)
+        return;
+
 
     running = true;
 
-    PL.section.classList.add(
-        "pl-running"
-    );
 
-    PL.section.classList.remove(
-        "pl-stopped"
-    );
-
-    PL.status.textContent =
+    labStatus.textContent =
         "RUNNING";
 
-    previousTime =
+
+    previousFrame =
         performance.now();
 
-    if (animationID)
-        cancelAnimationFrame(
-            animationID
-        );
 
-    animationID =
+    animationFrame =
         requestAnimationFrame(
-            renderShader
+            render
         );
 
 }
 
-
-/* =========================================================
-   STOP
-========================================================= */
 
 function stopBenchmark() {
 
     running = false;
 
-    if (animationID) {
+
+    if(animationFrame) {
 
         cancelAnimationFrame(
-            animationID
+            animationFrame
         );
 
-        animationID = null;
+        animationFrame =
+            null;
 
     }
 
-    PL.section.classList.remove(
-        "pl-running"
-    );
 
-    PL.section.classList.add(
-        "pl-stopped"
-    );
-
-    PL.status.textContent =
+    labStatus.textContent =
         "STOPPED";
 
 }
 
 
-/* =========================================================
-   RESET
-========================================================= */
-
 function resetBenchmark() {
 
     stopBenchmark();
 
-    frameTimes = [];
 
     fpsHistory = [];
 
-    minFPS = Infinity;
+    minFPS =
+        Infinity;
 
-    maxFPS = 0;
+    maxFPS =
+        0;
 
-    PL.fps.textContent = "0";
-    PL.frame.textContent = "0 ms";
-    PL.avg.textContent = "0";
-    PL.min.textContent = "0";
-    PL.max.textContent = "0";
 
-    PL.status.textContent =
+    fpsValue.textContent =
+        "0";
+
+
+    frameValue.textContent =
+        "0 ms";
+
+
+    avgFPS.textContent =
+        "0";
+
+
+    minFPS.textContent =
+        "0";
+
+
+    maxFPS.textContent =
+        "0";
+
+
+    performanceRating.textContent =
         "READY";
 
-    PL.rating.textContent =
-        "WAITING";
 
-    PL.cpuScore.textContent =
-        "0";
+    gpuLoad.textContent =
+        "READY";
 
-    PL.cpuBig.textContent =
-        "0";
 
-    PL.result.textContent =
-        "0";
+    labStatus.textContent =
+        "READY";
 
-    PL.resultText.textContent =
-        "Start a test to see your result.";
 
     drawGraph();
 
 }
 
 
-/* =========================================================
-   LEVEL BUTTONS
-========================================================= */
-
-document
-    .querySelectorAll(".pl-level")
-    .forEach(button => {
-
-        button.addEventListener(
-            "click",
-            () => {
-
-                document
-                    .querySelectorAll(
-                        ".pl-level"
-                    )
-                    .forEach(
-                        b =>
-                        b.classList.remove(
-                            "active"
-                        )
-                    );
-
-                button.classList.add(
-                    "active"
-                );
-
-                stressLevel =
-                    Number(
-                        button.dataset.level
-                    );
-
-            }
-        );
-
-    });
-
-
-/* =========================================================
-   BUTTON EVENTS
-========================================================= */
-
-PL.start.addEventListener(
+startButton.addEventListener(
     "click",
     startBenchmark
 );
 
-PL.stop.addEventListener(
+
+stopButton.addEventListener(
     "click",
     stopBenchmark
 );
 
-PL.reset.addEventListener(
+
+resetButton.addEventListener(
     "click",
     resetBenchmark
 );
 
 
 /* =========================================================
+   STRESS LEVEL
+========================================================= */
+
+document
+    .querySelectorAll(
+        ".level"
+    )
+    .forEach(
+        button => {
+
+            button.addEventListener(
+                "click",
+                () => {
+
+                    document
+                        .querySelectorAll(
+                            ".level"
+                        )
+                        .forEach(
+                            item =>
+                                item.classList
+                                .remove(
+                                    "active"
+                                )
+                        );
+
+
+                    button.classList.add(
+                        "active"
+                    );
+
+
+                    workload =
+                        Number(
+                            button.dataset.level
+                        );
+
+                }
+            );
+
+        }
+    );
+
+
+/* =========================================================
    CPU BENCHMARK
 ========================================================= */
 
-let cpuRunning = false;
+let cpuTesting =
+    false;
+
+
+const cpuTestButton =
+    document.getElementById(
+        "cpuTest"
+    );
+
+
+const cpuScore =
+    document.getElementById(
+        "cpuScore"
+    );
 
 
 async function runCPUTest() {
 
-    if (cpuRunning)
+    if(cpuTesting)
         return;
 
-    cpuRunning = true;
 
-    PL.cpuBig.textContent =
+    cpuTesting =
+        true;
+
+
+    cpuScore.textContent =
         "...";
 
-    PL.cpuScore.textContent =
-        "...";
 
     const start =
         performance.now();
 
-    let value = 0;
 
-    /*
-       Bounded browser workload.
-       It is intentionally a benchmark,
-       not an attempt to damage the CPU.
-    */
+    let result =
+        0;
 
-    const rounds =
-        7000000;
 
-    for (
-        let i = 0;
-        i < rounds;
+    const loops =
+        6000000;
+
+
+    for(
+        let i=0;
+        i<loops;
         i++
-    ) {
+    ){
 
-        value +=
-            Math.sin(i * .0001) *
-            Math.cos(i * .00007);
+        result +=
+            Math.sin(
+                i *
+                .0001
+            )
+            *
+            Math.cos(
+                i *
+                .00007
+            );
 
-        value +=
+
+        result +=
             Math.sqrt(
-                (i % 1000) + 1
-            ) * .00001;
+                (
+                    i %
+                    1000
+                ) + 1
+            )
+            *
+            .00001;
 
-        if (
-            i % 250000 === 0
-        ) {
+
+        if(
+            i %
+            200000 ===
+            0
+        ){
 
             await new Promise(
                 resolve =>
@@ -1195,12 +1670,11 @@ async function runCPUTest() {
 
     }
 
-    const elapsed =
-        performance.now() - start;
 
-    /*
-       Higher score = faster execution.
-    */
+    const elapsed =
+        performance.now() -
+        start;
+
 
     const score =
         Math.round(
@@ -1211,41 +1685,58 @@ async function runCPUTest() {
             )
         );
 
-    PL.cpuBig.textContent =
+
+    cpuScore.textContent =
         score.toLocaleString();
 
-    PL.cpuScore.textContent =
-        score.toLocaleString();
 
-    cpuRunning = false;
+    cpuTesting =
+        false;
+
 
     return score;
 
 }
 
 
-PL.cpuTest.addEventListener(
+cpuTestButton.addEventListener(
     "click",
     runCPUTest
 );
 
 
 /* =========================================================
-   AUDIO ENGINE
+   AUDIO
 ========================================================= */
 
-let audioContext = null;
+let audioContext =
+    null;
 
-let masterGain = null;
+let gainNode =
+    null;
 
-let oscillator = null;
+let oscillator =
+    null;
 
-let audioRunning = false;
+let soundRunning =
+    false;
+
+
+const soundButton =
+    document.getElementById(
+        "soundButton"
+    );
+
+
+const volumeControl =
+    document.getElementById(
+        "volumeControl"
+    );
 
 
 function startSound() {
 
-    if (!audioContext) {
+    if(!audioContext){
 
         audioContext =
             new (
@@ -1253,46 +1744,60 @@ function startSound() {
                 window.webkitAudioContext
             )();
 
-        masterGain =
+
+        gainNode =
             audioContext.createGain();
 
-        masterGain.gain.value =
-            Number(
-                PL.volume.value
-            ) / 100;
 
-        masterGain.connect(
+        gainNode.gain.value =
+            Number(
+                volumeControl.value
+            ) /
+            100;
+
+
+        gainNode.connect(
             audioContext.destination
         );
 
     }
 
-    if (audioContext.state === "suspended")
+
+    if(
+        audioContext.state ===
+        "suspended"
+    ){
+
         audioContext.resume();
 
-
-    if (audioRunning)
-        return;
+    }
 
 
     oscillator =
         audioContext.createOscillator();
 
+
     oscillator.type =
         "sawtooth";
+
 
     oscillator.frequency.value =
         110;
 
+
     oscillator.connect(
-        masterGain
+        gainNode
     );
+
 
     oscillator.start();
 
-    audioRunning = true;
 
-    PL.sound.textContent =
+    soundRunning =
+        true;
+
+
+    soundButton.textContent =
         "■ STOP SOUND";
 
 }
@@ -1300,32 +1805,41 @@ function startSound() {
 
 function stopSound() {
 
-    if (!oscillator)
+    if(!oscillator)
         return;
 
+
     try {
+
         oscillator.stop();
+
     }
 
-    catch(e) {}
+    catch(error){}
+
 
     oscillator.disconnect();
 
-    oscillator = null;
 
-    audioRunning = false;
+    oscillator =
+        null;
 
-    PL.sound.textContent =
+
+    soundRunning =
+        false;
+
+
+    soundButton.textContent =
         "🔊 START SOUND";
 
 }
 
 
-PL.sound.addEventListener(
+soundButton.addEventListener(
     "click",
     () => {
 
-        if (audioRunning)
+        if(soundRunning)
             stopSound();
 
         else
@@ -1335,16 +1849,17 @@ PL.sound.addEventListener(
 );
 
 
-PL.volume.addEventListener(
+volumeControl.addEventListener(
     "input",
     () => {
 
-        if (masterGain) {
+        if(gainNode){
 
-            masterGain.gain.value =
+            gainNode.gain.value =
                 Number(
-                    PL.volume.value
-                ) / 100;
+                    volumeControl.value
+                ) /
+                100;
 
         }
 
@@ -1356,15 +1871,31 @@ PL.volume.addEventListener(
    FULL TEST
 ========================================================= */
 
-async function fullTest() {
+const fullTestButton =
+    document.getElementById(
+        "fullTest"
+    );
+
+
+const finalScore =
+    document.getElementById(
+        "finalScore"
+    );
+
+
+const finalMessage =
+    document.getElementById(
+        "finalMessage"
+    );
+
+
+async function runFullTest() {
 
     resetBenchmark();
 
+
     startBenchmark();
 
-    /*
-       Let GPU test collect data.
-    */
 
     await new Promise(
         resolve =>
@@ -1374,104 +1905,260 @@ async function fullTest() {
             )
     );
 
+
     stopBenchmark();
+
+
+    const gpuAverage =
+        fpsHistory.length
+        ? fpsHistory.reduce(
+            (a,b) =>
+                a + b,
+            0
+        ) /
+        fpsHistory.length
+        : 0;
+
 
     const cpu =
         await runCPUTest();
 
-    const average =
-        fpsHistory.length
-        ? fpsHistory.reduce(
-            (a,b) => a+b,
-            0
-        ) / fpsHistory.length
-        : 0;
-
 
     const gpuScore =
-        Math.round(
-            Math.min(
-                100,
-                average / 1.44
-            )
-        );
-
-
-    const cpuNormalized =
         Math.min(
             100,
-            cpu / 1000
+            gpuAverage /
+            1.44
         );
 
 
-    const finalScore =
+    const cpuScoreNormalized =
+        Math.min(
+            100,
+            cpu /
+            1000
+        );
+
+
+    const score =
         Math.round(
-            gpuScore * .6 +
-            cpuNormalized * .4
+            gpuScore *
+            .6
+            +
+            cpuScoreNormalized *
+            .4
         );
 
 
-    PL.result.textContent =
-        finalScore;
+    finalScore.textContent =
+        score;
 
 
-    let message =
-        "Entry-level performance.";
+    if(score >= 90){
 
-    if (finalScore >= 90)
-        message =
-            "🔥 ULTRA — Excellent performance!";
+        finalMessage.textContent =
+            "🔥 ULTRA PERFORMANCE — Your device handled the benchmark extremely well.";
 
-    else if (finalScore >= 75)
-        message =
-            "🚀 HIGH — Very strong performance.";
+    }
 
-    else if (finalScore >= 55)
-        message =
-            "⚡ GOOD — Solid everyday performance.";
+    else if(score >= 75){
 
-    else if (finalScore >= 35)
-        message =
-            "🟡 MEDIUM — Moderate performance.";
+        finalMessage.textContent =
+            "🚀 HIGH PERFORMANCE — Very strong browser performance.";
 
-    else
-        message =
-            "🔴 LOW — Performance is limited.";
+    }
 
+    else if(score >= 55){
 
-    PL.resultText.textContent =
-        message;
+        finalMessage.textContent =
+            "⚡ GOOD PERFORMANCE — Your device handled the test well.";
+
+    }
+
+    else if(score >= 35){
+
+        finalMessage.textContent =
+            "🟡 MEDIUM PERFORMANCE — Moderate performance detected.";
+
+    }
+
+    else {
+
+        finalMessage.textContent =
+            "🔴 LOW PERFORMANCE — The workload was demanding for this device.";
+
+    }
 
 }
 
 
-PL.full.addEventListener(
+fullTestButton.addEventListener(
     "click",
-    fullTest
+    runFullTest
 );
 
 
 /* =========================================================
-   INITIAL GRAPH
+   OPINION SYSTEM
 ========================================================= */
 
-drawGraph();
+const opinionButtons =
+    document.querySelectorAll(
+        ".opinion-card"
+    );
+
+
+const opinionResult =
+    document.getElementById(
+        "opinionResult"
+    );
+
+
+opinionButtons.forEach(
+    button => {
+
+        button.addEventListener(
+            "click",
+            () => {
+
+                opinionButtons
+                    .forEach(
+                        item =>
+                            item.classList
+                            .remove(
+                                "selected"
+                            )
+                    );
+
+
+                button.classList.add(
+                    "selected"
+                );
+
+
+                const opinion =
+                    button.dataset.opinion;
+
+
+                opinionResult.textContent =
+                    `❤️ You selected "${opinion}". Thanks for your opinion!`;
+
+            }
+        );
+
+    }
+);
 
 
 /* =========================================================
-   STOP TEST WHEN PAGE IS HIDDEN
+   SCROLL REVEAL
 ========================================================= */
+
+const revealObserver =
+    new IntersectionObserver(
+        entries => {
+
+            entries.forEach(
+                entry => {
+
+                    if(
+                        entry.isIntersecting
+                    ){
+
+                        entry.target.classList.add(
+                            "visible"
+                        );
+
+                    }
+
+                }
+            );
+
+        },
+        {
+            threshold:.12
+        }
+    );
+
+
+document
+    .querySelectorAll(
+        ".glass-panel, .skill-card, .project-card, .tool-card"
+    )
+    .forEach(
+        element => {
+
+            element.style.opacity =
+                "0";
+
+            element.style.transform =
+                "translateY(30px)";
+
+
+            element.style.transition =
+                "opacity .8s ease, transform .8s ease";
+
+
+            revealObserver.observe(
+                element
+            );
+
+        }
+    );
+
+
+const revealStyle =
+    document.createElement(
+        "style"
+    );
+
+
+revealStyle.textContent = `
+
+.glass-panel.visible,
+.skill-card.visible,
+.project-card.visible,
+.tool-card.visible{
+
+    opacity:1 !important;
+
+    transform:
+        translateY(0)
+        !important;
+
+}
+
+`;
+
+
+document.head.appendChild(
+    revealStyle
+);
+
+
+/* =========================================================
+   TAB TITLE EFFECT
+========================================================= */
+
+let originalTitle =
+    document.title;
+
 
 document.addEventListener(
     "visibilitychange",
     () => {
 
-        if (
-            document.hidden &&
-            running
-        ) {
+        if(document.hidden){
 
-            stopBenchmark();
+            document.title =
+                "⚡ Come back — AB THE PROMO";
+
+        }
+
+        else {
+
+            document.title =
+                originalTitle;
 
         }
 
@@ -1480,18 +2167,43 @@ document.addEventListener(
 
 
 /* =========================================================
-   PAGE LOAD
+   INITIAL
 ========================================================= */
+
+drawGraph();
+
+detectDevice();
+
 
 window.addEventListener(
     "load",
     () => {
 
-        detectDevice();
-
-        resizeShader();
+        resizeCanvas();
 
         drawGraph();
+
+    }
+);
+
+
+/* =========================================================
+   SAFETY:
+   STOP GRAPHICS TEST WHEN PAGE IS HIDDEN
+========================================================= */
+
+document.addEventListener(
+    "visibilitychange",
+    () => {
+
+        if(
+            document.hidden &&
+            running
+        ){
+
+            stopBenchmark();
+
+        }
 
     }
 );
