@@ -1,2209 +1,1164 @@
-/* =========================================================
+/* =========================================
    AB THE PROMO
-   FUTURISTIC WEBSITE ENGINE
-========================================================= */
-
-"use strict";
-
-
-/* =========================================================
-   MOBILE MENU
-========================================================= */
-
-const menuButton =
-    document.getElementById("menuButton");
-
-const mobileMenu =
-    document.getElementById("mobileMenu");
-
-
-if (menuButton) {
-
-    menuButton.addEventListener(
-        "click",
-        () => {
-
-            mobileMenu.classList.toggle(
-                "open"
-            );
-
-        }
-    );
-
-}
-
-
-document
-    .querySelectorAll(".mobile-menu a")
-    .forEach(link => {
-
-        link.addEventListener(
-            "click",
-            () => {
-
-                mobileMenu.classList.remove(
-                    "open"
-                );
-
-            }
-        );
-
-    });
-
-
-/* =========================================================
-   DEVICE INFORMATION
-========================================================= */
-
-function detectDevice() {
-
-    const ua =
-        navigator.userAgent;
-
-    let device =
-        "Desktop Browser";
-
-
-    if (/Android/i.test(ua)) {
-
-        device =
-            "Android Device";
-
-    }
-
-    else if (
-        /iPhone|iPad|iPod/i.test(ua)
-    ) {
-
-        device =
-            "Apple Mobile Device";
-
-    }
-
-    else if (/Windows/i.test(ua)) {
-
-        device =
-            "Windows PC";
-
-    }
-
-    else if (/Mac/i.test(ua)) {
-
-        device =
-            "Mac";
-
-    }
-
-    else if (/Linux/i.test(ua)) {
-
-        device =
-            "Linux Device";
-
-    }
-
-
-    const deviceName =
-        document.getElementById(
-            "deviceName"
-        );
-
-    const cpuCores =
-        document.getElementById(
-            "cpuCores"
-        );
-
-    const memory =
-        document.getElementById(
-            "deviceMemory"
-        );
-
-    const screen =
-        document.getElementById(
-            "screenInfo"
-        );
-
-
-    if (deviceName)
-        deviceName.textContent =
-            device;
-
-
-    if (cpuCores)
-        cpuCores.textContent =
-            navigator.hardwareConcurrency
-            ? navigator.hardwareConcurrency +
-              " THREADS"
-            : "N/A";
-
-
-    if (memory)
-        memory.textContent =
-            navigator.deviceMemory
-            ? navigator.deviceMemory +
-              " GB"
-            : "N/A";
-
-
-    if (screen)
-        screen.textContent =
-            `${window.screen.width} × ${window.screen.height}`;
-
-}
-
-
-detectDevice();
-
-
-/* =========================================================
-   WEBGL SHADER
-========================================================= */
-
-const canvas =
-    document.getElementById(
-        "shaderCanvas"
-    );
-
-
-let gl = null;
-
-if (canvas) {
-
-    gl =
-        canvas.getContext(
-            "webgl2",
-            {
-                antialias:false,
-                alpha:false,
-                powerPreference:
-                    "high-performance"
-            }
-        ) ||
-
-        canvas.getContext(
-            "webgl",
-            {
-                antialias:false,
-                alpha:false,
-                powerPreference:
-                    "high-performance"
-            }
-        );
-
-}
-
-
-const vertexShaderSource = `
-
-attribute vec2 position;
-
-void main(){
-
-    gl_Position =
-        vec4(
-            position,
-            0.0,
-            1.0
-        );
-
-}
-
-`;
-
-
-const fragmentShaderSource = `
-
-precision highp float;
-
-uniform vec2 resolution;
-uniform float time;
-uniform vec2 mouse;
-uniform float workload;
-
-
-float hash(vec3 p){
-
-    p =
-        fract(
-            p *
-            0.3183099
-            +
-            vec3(
-                0.1,
-                0.2,
-                0.3
-            )
-        );
-
-    p *= 17.0;
-
-    return fract(
-        p.x *
-        p.y *
-        p.z *
-        (
-            p.x +
-            p.y +
-            p.z
-        )
-    );
-
-}
-
-
-float noise(vec3 p){
-
-    vec3 i =
-        floor(p);
-
-    vec3 f =
-        fract(p);
-
-    f =
-        f*f*
-        (
-            3.0 -
-            2.0*f
-        );
-
-    float a =
-        hash(i);
-
-    float b =
-        hash(
-            i +
-            vec3(
-                1.0,
-                0.0,
-                0.0
-            )
-        );
-
-    float c =
-        hash(
-            i +
-            vec3(
-                0.0,
-                1.0,
-                0.0
-            )
-        );
-
-    float d =
-        hash(
-            i +
-            vec3(
-                1.0,
-                1.0,
-                0.0
-            )
-        );
-
-    return mix(
-        mix(a,b,f.x),
-        mix(c,d,f.x),
-        f.y
-    );
-
-}
-
-
-float scene(vec3 p){
-
-    float sphere =
-        length(p)
-        -
-        1.25;
-
-    float n =
-        noise(
-            p *
-            (
-                2.0 +
-                workload
-            )
-            +
-            time *
-            .15
-        );
-
-    sphere +=
-        (
-            n -
-            .5
-        )
-        *
-        .38;
-
-    return sphere;
-
-}
-
-
-void main(){
-
-    vec2 uv =
-        (
-            gl_FragCoord.xy *
-            2.0 -
-            resolution
-        )
-        /
-        min(
-            resolution.x,
-            resolution.y
-        );
-
-
-    vec2 m =
-        (
-            mouse -
-            .5
-        );
-
-
-    float angle =
-        m.x *
-        1.5;
-
-
-    float ca =
-        cos(angle);
-
-    float sa =
-        sin(angle);
-
-
-    uv =
-        mat2(
-            ca,-sa,
-            sa,ca
-        )
-        *
-        uv;
-
-
-    vec3 rayOrigin =
-        vec3(
-            0.0,
-            0.0,
-            4.0
-        );
-
-
-    vec3 rayDirection =
-        normalize(
-            vec3(
-                uv,
-                -2.4
-            )
-        );
-
-
-    float depth =
-        0.0;
-
-    float glow =
-        0.0;
-
-
-    int steps =
-        int(
-            60.0 +
-            workload *
-            25.0
-        );
-
-
-    for(
-        int i=0;
-        i<130;
-        i++
-    ){
-
-        if(i >= steps)
-            break;
-
-
-        vec3 p =
-            rayOrigin +
-            rayDirection *
-            depth;
-
-
-        float distance =
-            scene(p);
-
-
-        glow +=
-            exp(
-                -abs(distance)
-                * 9.0
-            )
-            *
-            .018;
-
-
-        depth +=
-            max(
-                .012,
-                abs(distance)
-                * .65
-            );
-
-
-        if(depth > 7.0)
-            break;
-
-    }
-
-
-    vec3 color =
-        vec3(
-            .005,
-            .002,
-            .02
-        );
-
-
-    color +=
-        vec3(
-            0.0,
-            .9,
-            .75
-        )
-        *
-        glow;
-
-
-    color +=
-        vec3(
-            .55,
-            .1,
-            1.0
-        )
-        *
-        pow(
-            max(
-                0.0,
-                1.0 -
-                depth /
-                7.0
-            ),
-            2.0
-        );
-
-
-    color +=
-        vec3(
-            1.0,
-            .05,
-            .6
-        )
-        *
-        glow
-        *
-        .4;
-
-
-    float vignette =
-        1.0 -
-        smoothstep(
-            .2,
-            1.5,
-            length(uv)
-        );
-
-
-    color *=
-        .6 +
-        vignette;
-
-
-    gl_FragColor =
-        vec4(
-            color,
-            1.0
-        );
-
-}
-
-`;
-
-
-/* =========================================================
-   SHADER SETUP
-========================================================= */
-
-let program = null;
-
-let positionBuffer = null;
-
-let resolutionLocation = null;
-
-let timeLocation = null;
-
-let mouseLocation = null;
-
-let workloadLocation = null;
-
-
-function compileShader(
-    type,
-    source
-) {
-
-    const shader =
-        gl.createShader(type);
-
-
-    gl.shaderSource(
-        shader,
-        source
-    );
-
-
-    gl.compileShader(shader);
-
-
-    if (
-        !gl.getShaderParameter(
-            shader,
-            gl.COMPILE_STATUS
-        )
-    ) {
-
-        console.error(
-            gl.getShaderInfoLog(
-                shader
-            )
-        );
-
-        return null;
-
-    }
-
-
-    return shader;
-
-}
-
-
-function createShaderProgram() {
-
-    if (!gl)
-        return false;
-
-
-    const vertex =
-        compileShader(
-            gl.VERTEX_SHADER,
-            vertexShaderSource
-        );
-
-
-    const fragment =
-        compileShader(
-            gl.FRAGMENT_SHADER,
-            fragmentShaderSource
-        );
-
-
-    if (!vertex || !fragment)
-        return false;
-
-
-    program =
-        gl.createProgram();
-
-
-    gl.attachShader(
-        program,
-        vertex
-    );
-
-
-    gl.attachShader(
-        program,
-        fragment
-    );
-
-
-    gl.linkProgram(
-        program
-    );
-
-
-    if (
-        !gl.getProgramParameter(
-            program,
-            gl.LINK_STATUS
-        )
-    ) {
-
-        console.error(
-            gl.getProgramInfoLog(
-                program
-            )
-        );
-
-        return false;
-
-    }
-
-
-    gl.useProgram(
-        program
-    );
-
-
-    positionBuffer =
-        gl.createBuffer();
-
-
-    gl.bindBuffer(
-        gl.ARRAY_BUFFER,
-        positionBuffer
-    );
-
-
-    gl.bufferData(
-        gl.ARRAY_BUFFER,
-
-        new Float32Array([
-            -1,-1,
-             1,-1,
-            -1, 1,
-
-            -1, 1,
-             1,-1,
-             1, 1
-        ]),
-
-        gl.STATIC_DRAW
-    );
-
-
-    const position =
-        gl.getAttribLocation(
-            program,
-            "position"
-        );
-
-
-    gl.enableVertexAttribArray(
-        position
-    );
-
-
-    gl.vertexAttribPointer(
-        position,
-        2,
-        gl.FLOAT,
-        false,
-        0,
-        0
-    );
-
-
-    resolutionLocation =
-        gl.getUniformLocation(
-            program,
-            "resolution"
-        );
-
-
-    timeLocation =
-        gl.getUniformLocation(
-            program,
-            "time"
-        );
-
-
-    mouseLocation =
-        gl.getUniformLocation(
-            program,
-            "mouse"
-        );
-
-
-    workloadLocation =
-        gl.getUniformLocation(
-            program,
-            "workload"
-        );
-
-
-    return true;
-
-}
-
-
-if (gl) {
-
-    createShaderProgram();
-
-}
-
-
-/* =========================================================
-   SHADER STATE
-========================================================= */
+   TANGAIL 3D BATTLE ROYALE
+========================================= */
+
+const game = document.getElementById("game");
+
+let scene;
+let camera;
+let renderer;
+let player;
+
+let bots = [];
+let bullets = [];
+let walls = [];
 
 let running = false;
+let currentGun = "MP40";
 
-let animationFrame = null;
+let hp = 100;
+let kills = 0;
+let ammo = 30;
 
-let workload = 1;
+let zoneRadius = 100;
+let zoneTimer = 120;
 
-let mouseX = .5;
+let keys = {};
 
-let mouseY = .5;
+let lastTime = performance.now();
+let frameCounter = 0;
+let fps = 0;
 
-let previousFrame =
+const guns = {
+
+  MP40:{
+    damage:12,
+    speed:.8,
+    ammo:30,
+    color:0xff4444
+  },
+
+  UMP:{
+    damage:16,
+    speed:1,
+    ammo:30,
+    color:0x44aaff
+  },
+
+  AWM:{
+    damage:100,
+    speed:1.8,
+    ammo:5,
+    color:0xffffff
+  },
+
+  M82B:{
+    damage:130,
+    speed:2,
+    ammo:5,
+    color:0xffcc44
+  }
+
+};
+
+
+/* =========================================
+   START GAME
+========================================= */
+
+document.getElementById("startGame")
+.addEventListener("click",()=>{
+
+  document.getElementById("lobby").style.display="none";
+
+  init();
+
+  setTimeout(()=>{
+    document.getElementById("loading").style.display="none";
+  },700);
+
+});
+
+
+/* =========================================
+   THREE.JS
+========================================= */
+
+function init(){
+
+  scene = new THREE.Scene();
+
+  scene.background = new THREE.Color(0x07101b);
+
+  scene.fog = new THREE.Fog(
+    0x07101b,
+    50,
+    500
+  );
+
+
+  camera = new THREE.PerspectiveCamera(
+    70,
+    innerWidth / innerHeight,
+    .1,
+    1000
+  );
+
+  camera.position.set(
+    0,
+    7,
+    12
+  );
+
+
+  renderer = new THREE.WebGLRenderer({
+    antialias:true,
+    powerPreference:"high-performance"
+  });
+
+  renderer.setSize(
+    innerWidth,
+    innerHeight
+  );
+
+  renderer.setPixelRatio(
+    Math.min(devicePixelRatio,1.5)
+  );
+
+  game.appendChild(
+    renderer.domElement
+  );
+
+
+  /* LIGHT */
+
+  const ambient =
+    new THREE.HemisphereLight(
+      0x9fc9ff,
+      0x101020,
+      1.2
+    );
+
+  scene.add(ambient);
+
+
+  const sun =
+    new THREE.DirectionalLight(
+      0xffffff,
+      1.5
+    );
+
+  sun.position.set(
+    100,
+    150,
+    80
+  );
+
+  scene.add(sun);
+
+
+  createMap();
+
+  createPlayer();
+
+  createBots(10);
+
+  createZone();
+
+  running=true;
+
+  animate();
+
+  startZone();
+
+}
+
+
+/* =========================================
+   MAP
+========================================= */
+
+function createMap(){
+
+  const groundGeo =
+    new THREE.PlaneGeometry(
+      500,
+      500
+    );
+
+  const groundMat =
+    new THREE.MeshStandardMaterial({
+      color:0x1d432b,
+      roughness:1
+    });
+
+  const ground =
+    new THREE.Mesh(
+      groundGeo,
+      groundMat
+    );
+
+  ground.rotation.x=-Math.PI/2;
+
+  scene.add(ground);
+
+
+  /* ROADS */
+
+  for(let i=-3;i<=3;i++){
+
+    const roadGeo =
+      new THREE.BoxGeometry(
+        500,
+        .08,
+        7
+      );
+
+    const roadMat =
+      new THREE.MeshStandardMaterial({
+        color:0x292929
+      });
+
+    const road =
+      new THREE.Mesh(
+        roadGeo,
+        roadMat
+      );
+
+    road.position.z=i*45;
+
+    scene.add(road);
+  }
+
+
+  /* HOUSES */
+
+  for(let i=0;i<70;i++){
+
+    const x =
+      (Math.random()-.5)*420;
+
+    const z =
+      (Math.random()-.5)*420;
+
+    if(
+      Math.abs(x)<30 &&
+      Math.abs(z)<30
+    ) continue;
+
+    createHouse(x,z);
+  }
+
+
+  /* TREES */
+
+  for(let i=0;i<150;i++){
+
+    const x =
+      (Math.random()-.5)*460;
+
+    const z =
+      (Math.random()-.5)*460;
+
+    createTree(x,z);
+  }
+
+}
+
+
+/* =========================================
+   HOUSE
+========================================= */
+
+function createHouse(x,z){
+
+  const group =
+    new THREE.Group();
+
+
+  const body =
+    new THREE.Mesh(
+      new THREE.BoxGeometry(
+        9,
+        6,
+        8
+      ),
+      new THREE.MeshStandardMaterial({
+        color:
+          new THREE.Color()
+          .setHSL(
+            Math.random(),
+            .35,
+            .35
+          )
+      })
+    );
+
+  body.position.y=3;
+
+  group.add(body);
+
+
+  const roof =
+    new THREE.Mesh(
+      new THREE.ConeGeometry(
+        7,
+        3,
+        4
+      ),
+      new THREE.MeshStandardMaterial({
+        color:0x4a2020
+      })
+    );
+
+  roof.position.y=7;
+
+  roof.rotation.y=Math.PI/4;
+
+  group.add(roof);
+
+  group.position.set(
+    x,
+    0,
+    z
+  );
+
+  scene.add(group);
+
+}
+
+
+/* =========================================
+   TREE
+========================================= */
+
+function createTree(x,z){
+
+  const tree =
+    new THREE.Group();
+
+
+  const trunk =
+    new THREE.Mesh(
+      new THREE.CylinderGeometry(
+        .7,
+        1,
+        5,
+        8
+      ),
+      new THREE.MeshStandardMaterial({
+        color:0x704020
+      })
+    );
+
+  trunk.position.y=2.5;
+
+  tree.add(trunk);
+
+
+  const crown =
+    new THREE.Mesh(
+      new THREE.SphereGeometry(
+        3.5,
+        8,
+        8
+      ),
+      new THREE.MeshStandardMaterial({
+        color:0x126b36
+      })
+    );
+
+  crown.position.y=6;
+
+  tree.add(crown);
+
+
+  tree.position.set(
+    x,
+    0,
+    z
+  );
+
+  scene.add(tree);
+
+}
+
+
+/* =========================================
+   PLAYER
+========================================= */
+
+function createPlayer(){
+
+  player =
+    new THREE.Group();
+
+
+  const body =
+    new THREE.Mesh(
+      new THREE.CapsuleGeometry(
+        1,
+        2,
+        5,
+        8
+      ),
+      new THREE.MeshStandardMaterial({
+        color:0x00aaff
+      })
+    );
+
+  body.position.y=2;
+
+  player.add(body);
+
+
+  const head =
+    new THREE.Mesh(
+      new THREE.SphereGeometry(
+        .75,
+        12,
+        12
+      ),
+      new THREE.MeshStandardMaterial({
+        color:0xffc59c
+      })
+    );
+
+  head.position.y=4;
+
+  player.add(head);
+
+
+  player.position.set(
+    0,
+    0,
+    0
+  );
+
+  scene.add(player);
+
+}
+
+
+/* =========================================
+   BOTS
+========================================= */
+
+function createBots(count){
+
+  for(let i=0;i<count;i++){
+
+    const bot =
+      new THREE.Group();
+
+
+    const body =
+      new THREE.Mesh(
+        new THREE.CapsuleGeometry(
+          1,
+          2,
+          5,
+          8
+        ),
+        new THREE.MeshStandardMaterial({
+          color:0xff3344
+        })
+      );
+
+    body.position.y=2;
+
+    bot.add(body);
+
+
+    const head =
+      new THREE.Mesh(
+        new THREE.SphereGeometry(
+          .7,
+          10,
+          10
+        ),
+        new THREE.MeshStandardMaterial({
+          color:0xffb08a
+        })
+      );
+
+    head.position.y=4;
+
+    bot.add(head);
+
+
+    bot.position.set(
+      (Math.random()-.5)*180,
+      0,
+      (Math.random()-.5)*180
+    );
+
+    bot.userData.hp=100;
+    bot.userData.speed=.015+Math.random()*.02;
+    bot.userData.nextShot=Date.now()+2000;
+
+    scene.add(bot);
+
+    bots.push(bot);
+
+  }
+
+}
+
+
+/* =========================================
+   ZONE
+========================================= */
+
+function createZone(){
+
+  const geometry =
+    new THREE.RingGeometry(
+      zoneRadius-1,
+      zoneRadius,
+      96
+    );
+
+  const material =
+    new THREE.MeshBasicMaterial({
+      color:0xff1744,
+      transparent:true,
+      opacity:.8,
+      side:THREE.DoubleSide
+    });
+
+  const ring =
+    new THREE.Mesh(
+      geometry,
+      material
+    );
+
+  ring.rotation.x=-Math.PI/2;
+
+  ring.position.y=.1;
+
+  ring.name="ZONE";
+
+  scene.add(ring);
+
+}
+
+
+function startZone(){
+
+  setInterval(()=>{
+
+    if(!running) return;
+
+    zoneTimer--;
+
+    document.getElementById(
+      "zoneTimer"
+    ).textContent=zoneTimer;
+
+    if(zoneTimer<=0){
+
+      zoneRadius=Math.max(
+        15,
+        zoneRadius-10
+      );
+
+      zoneTimer=60;
+
+      const zone =
+        scene.getObjectByName("ZONE");
+
+      if(zone){
+
+        zone.scale.set(
+          zoneRadius/100,
+          zoneRadius/100,
+          zoneRadius/100
+        );
+
+      }
+
+    }
+
+    const distance =
+      Math.sqrt(
+        player.position.x**2+
+        player.position.z**2
+      );
+
+    if(distance>zoneRadius){
+
+      hp-=1;
+
+      updateHUD();
+
+      if(hp<=0){
+        endGame();
+      }
+
+    }
+
+  },1000);
+
+}
+
+
+/* =========================================
+   WEAPONS
+========================================= */
+
+document
+.querySelectorAll("[data-gun]")
+.forEach(button=>{
+
+  button.addEventListener(
+    "click",
+    ()=>{
+
+      currentGun =
+        button.dataset.gun;
+
+      ammo =
+        guns[currentGun].ammo;
+
+      document.getElementById(
+        "weaponName"
+      ).textContent=currentGun;
+
+      updateHUD();
+
+    }
+  );
+
+});
+
+
+/* =========================================
+   SHOOT
+========================================= */
+
+document
+.getElementById("shootBtn")
+.addEventListener(
+  "click",
+  shoot
+);
+
+
+function shoot(){
+
+  if(!running) return;
+
+  if(ammo<=0){
+
+    ammo=guns[currentGun].ammo;
+
+  }
+
+  ammo--;
+
+  updateHUD();
+
+
+  const direction =
+    new THREE.Vector3(
+      0,
+      0,
+      -1
+    );
+
+  direction.applyQuaternion(
+    camera.quaternion
+  );
+
+
+  const bullet =
+    new THREE.Mesh(
+      new THREE.SphereGeometry(
+        .12,
+        6,
+        6
+      ),
+      new THREE.MeshBasicMaterial({
+        color:
+          guns[currentGun].color
+      })
+    );
+
+
+  bullet.position.copy(
+    camera.position
+  );
+
+  bullet.userData.direction =
+    direction;
+
+  bullet.userData.life=100;
+
+  scene.add(bullet);
+
+  bullets.push(bullet);
+
+}
+
+
+/* =========================================
+   GLOO WALL
+========================================= */
+
+document
+.getElementById("wallBtn")
+.addEventListener(
+  "click",
+  createWall
+);
+
+
+function createWall(){
+
+  const wall =
+    new THREE.Mesh(
+      new THREE.BoxGeometry(
+        6,
+        4,
+        .5
+      ),
+      new THREE.MeshStandardMaterial({
+        color:0x55ccff,
+        transparent:true,
+        opacity:.65
+      })
+    );
+
+
+  wall.position.copy(
+    player.position
+  );
+
+  wall.position.z-=5;
+
+  scene.add(wall);
+
+  walls.push(wall);
+
+}
+
+
+/* =========================================
+   CAR
+========================================= */
+
+let car=null;
+
+document
+.getElementById("carBtn")
+.addEventListener(
+  "click",
+  ()=>{
+
+    if(car){
+
+      player.position.copy(
+        car.position
+      );
+
+      return;
+
+    }
+
+    car =
+      new THREE.Group();
+
+
+    const body =
+      new THREE.Mesh(
+        new THREE.BoxGeometry(
+          5,
+          1.5,
+          8
+        ),
+        new THREE.MeshStandardMaterial({
+          color:0xff1744,
+          metalness:.4,
+          roughness:.3
+        })
+      );
+
+    body.position.y=1.5;
+
+    car.add(body);
+
+
+    const cabin =
+      new THREE.Mesh(
+        new THREE.BoxGeometry(
+          3.5,
+          1.5,
+          3
+        ),
+        new THREE.MeshStandardMaterial({
+          color:0x111827,
+          transparent:true,
+          opacity:.8
+        })
+      );
+
+    cabin.position.y=2.8;
+
+    car.add(cabin);
+
+
+    car.position.copy(
+      player.position
+    );
+
+    car.position.z-=8;
+
+    scene.add(car);
+
+  }
+);
+
+
+/* =========================================
+   SCOPE
+========================================= */
+
+let scoped=false;
+
+document
+.getElementById("scopeBtn")
+.addEventListener(
+  "click",
+  ()=>{
+
+    scoped=!scoped;
+
+    document.getElementById(
+      "scopeBtn"
+    ).textContent=
+      scoped?"ON":"OFF";
+
+    camera.fov=
+      scoped?25:70;
+
+    camera.updateProjectionMatrix();
+
+  }
+);
+
+
+/* =========================================
+   MOVEMENT
+========================================= */
+
+window.addEventListener(
+  "keydown",
+  e=>{
+    keys[e.key.toLowerCase()]=true;
+  }
+);
+
+window.addEventListener(
+  "keyup",
+  e=>{
+    keys[e.key.toLowerCase()]=false;
+  }
+);
+
+
+function movePlayer(delta){
+
+  if(!player) return;
+
+  const speed =
+    18*delta;
+
+  if(keys["w"] || keys["arrowup"])
+    player.position.z-=speed;
+
+  if(keys["s"] || keys["arrowdown"])
+    player.position.z+=speed;
+
+  if(keys["a"] || keys["arrowleft"])
+    player.position.x-=speed;
+
+  if(keys["d"] || keys["arrowright"])
+    player.position.x+=speed;
+
+
+  camera.position.x =
+    player.position.x;
+
+  camera.position.z =
+    player.position.z+12;
+
+  camera.lookAt(
+    player.position.x,
+    2,
+    player.position.z
+  );
+
+}
+
+
+/* =========================================
+   BULLETS
+========================================= */
+
+function updateBullets(){
+
+  for(let i=bullets.length-1;i>=0;i--){
+
+    const bullet=bullets[i];
+
+    bullet.position.add(
+      bullet.userData.direction
+      .clone()
+      .multiplyScalar(.8)
+    );
+
+    bullet.userData.life--;
+
+    for(let j=bots.length-1;j>=0;j--){
+
+      const bot=bots[j];
+
+      if(
+        bullet.position.distanceTo(
+          bot.position
+        )<2.5
+      ){
+
+        bot.userData.hp -=
+          guns[currentGun].damage;
+
+        bullet.userData.life=0;
+
+        if(bot.userData.hp<=0){
+
+          scene.remove(bot);
+
+          bots.splice(j,1);
+
+          kills++;
+
+          document.getElementById(
+            "kills"
+          ).textContent=kills;
+
+          document.getElementById(
+            "alive"
+          ).textContent=
+            bots.length+1;
+
+        }
+
+        break;
+
+      }
+
+    }
+
+
+    if(bullet.userData.life<=0){
+
+      scene.remove(bullet);
+
+      bullets.splice(i,1);
+
+    }
+
+  }
+
+}
+
+
+/* =========================================
+   BOT AI
+========================================= */
+
+function updateBots(){
+
+  bots.forEach(bot=>{
+
+    const distance =
+      bot.position.distanceTo(
+        player.position
+      );
+
+
+    if(distance<80){
+
+      bot.lookAt(
+        player.position.x,
+        2,
+        player.position.z
+      );
+
+      bot.translateZ(
+        bot.userData.speed
+      );
+
+
+      if(
+        Date.now()>
+        bot.userData.nextShot
+      ){
+
+        if(distance<35){
+
+          hp-=5;
+
+          updateHUD();
+
+          bot.userData.nextShot =
+            Date.now()+1500;
+
+          if(hp<=0){
+            endGame();
+          }
+
+        }
+
+      }
+
+    }else{
+
+      bot.rotation.y += .01;
+
+      bot.translateZ(
+        bot.userData.speed
+      );
+
+    }
+
+  });
+
+}
+
+
+/* =========================================
+   HUD
+========================================= */
+
+function updateHUD(){
+
+  document.getElementById(
+    "hp"
+  ).textContent=Math.max(0,hp);
+
+  document.getElementById(
+    "ammo"
+  ).textContent=ammo;
+
+}
+
+
+/* =========================================
+   FPS
+========================================= */
+
+function updateFPS(){
+
+  frameCounter++;
+
+  const now=performance.now();
+
+  if(now-lastTime>=1000){
+
+    fps=frameCounter;
+
+    frameCounter=0;
+
+    lastTime=now;
+
+    document.getElementById(
+      "fps"
+    ).textContent=fps;
+
+  }
+
+}
+
+
+/* =========================================
+   MAIN LOOP
+========================================= */
+
+function animate(){
+
+  if(!running) return;
+
+  requestAnimationFrame(
+    animate
+  );
+
+  const now =
     performance.now();
 
-
-let fpsHistory = [];
-
-let minFPS = Infinity;
-
-let maxFPS = 0;
-
-
-/* =========================================================
-   CANVAS RESIZE
-========================================================= */
-
-function resizeCanvas() {
-
-    if (!gl || !canvas)
-        return;
-
-
-    const rect =
-        canvas.getBoundingClientRect();
-
-
-    const dpr =
-        Math.min(
-            window.devicePixelRatio || 1,
-            2
-        );
-
-
-    const width =
-        Math.max(
-            1,
-            Math.floor(
-                rect.width *
-                dpr
-            )
-        );
-
-
-    const height =
-        Math.max(
-            1,
-            Math.floor(
-                rect.height *
-                dpr
-            )
-        );
-
-
-    if (
-        canvas.width !== width ||
-        canvas.height !== height
-    ) {
-
-        canvas.width =
-            width;
-
-        canvas.height =
-            height;
-
-    }
-
-
-    gl.viewport(
-        0,
-        0,
-        canvas.width,
-        canvas.height
+  const delta =
+    Math.min(
+      (now-lastTime)/1000,
+      .05
     );
+
+  movePlayer(delta);
+
+  updateBullets();
+
+  updateBots();
+
+  updateFPS();
+
+  renderer.render(
+    scene,
+    camera
+  );
 
 }
 
+
+/* =========================================
+   GAME OVER
+========================================= */
+
+function endGame(){
+
+  running=false;
+
+  document.getElementById(
+    "finalKills"
+  ).textContent=kills;
+
+  document.getElementById(
+    "gameOver"
+  ).style.display="flex";
+
+}
+
+
+/* =========================================
+   RESIZE
+========================================= */
 
 window.addEventListener(
-    "resize",
-    resizeCanvas
-);
+  "resize",
+  ()=>{
 
+    if(!camera || !renderer)
+      return;
 
-resizeCanvas();
+    camera.aspect =
+      innerWidth/innerHeight;
 
+    camera.updateProjectionMatrix();
 
-/* =========================================================
-   POINTER
-========================================================= */
-
-function pointerMove(
-    clientX,
-    clientY
-) {
-
-    const rect =
-        canvas.getBoundingClientRect();
-
-
-    mouseX =
-        Math.max(
-            0,
-            Math.min(
-                1,
-                (
-                    clientX -
-                    rect.left
-                ) /
-                rect.width
-            )
-        );
-
-
-    mouseY =
-        1 -
-        Math.max(
-            0,
-            Math.min(
-                1,
-                (
-                    clientY -
-                    rect.top
-                ) /
-                rect.height
-            )
-        );
-
-}
-
-
-if (canvas) {
-
-    canvas.addEventListener(
-        "pointermove",
-        event => {
-
-            pointerMove(
-                event.clientX,
-                event.clientY
-            );
-
-        }
+    renderer.setSize(
+      innerWidth,
+      innerHeight
     );
 
-}
-
-
-/* =========================================================
-   FPS ELEMENTS
-========================================================= */
-
-const fpsValue =
-    document.getElementById(
-        "fpsValue"
-    );
-
-const frameValue =
-    document.getElementById(
-        "frameValue"
-    );
-
-const gpuLoad =
-    document.getElementById(
-        "gpuLoad"
-    );
-
-const avgFPS =
-    document.getElementById(
-        "avgFPS"
-    );
-
-const minFPS =
-    document.getElementById(
-        "minFPS"
-    );
-
-const maxFPS =
-    document.getElementById(
-        "maxFPS"
-    );
-
-const performanceRating =
-    document.getElementById(
-        "performanceRating"
-    );
-
-const labStatus =
-    document.getElementById(
-        "labStatus"
-    );
-
-
-/* =========================================================
-   GRAPH
-========================================================= */
-
-const graph =
-    document.getElementById(
-        "performanceGraph"
-    );
-
-
-function drawGraph() {
-
-    if (!graph)
-        return;
-
-
-    const ctx =
-        graph.getContext(
-            "2d"
-        );
-
-
-    const rect =
-        graph.getBoundingClientRect();
-
-
-    const dpr =
-        Math.min(
-            window.devicePixelRatio || 1,
-            2
-        );
-
-
-    graph.width =
-        Math.max(
-            1,
-            Math.floor(
-                rect.width *
-                dpr
-            )
-        );
-
-
-    graph.height =
-        Math.max(
-            1,
-            Math.floor(
-                rect.height *
-                dpr
-            )
-        );
-
-
-    const width =
-        graph.width;
-
-    const height =
-        graph.height;
-
-
-    ctx.clearRect(
-        0,
-        0,
-        width,
-        height
-    );
-
-
-    /* GRID */
-
-    ctx.strokeStyle =
-        "rgba(255,255,255,.07)";
-
-    ctx.lineWidth =
-        1;
-
-
-    for(
-        let i=0;
-        i<=5;
-        i++
-    ){
-
-        const y =
-            i *
-            height /
-            5;
-
-
-        ctx.beginPath();
-
-        ctx.moveTo(
-            0,
-            y
-        );
-
-        ctx.lineTo(
-            width,
-            y
-        );
-
-        ctx.stroke();
-
-    }
-
-
-    if(
-        fpsHistory.length <
-        2
-    )
-        return;
-
-
-    /* LINE */
-
-    ctx.beginPath();
-
-
-    fpsHistory.forEach(
-        (
-            fps,
-            index
-        ) => {
-
-
-            const x =
-                index /
-                (
-                    fpsHistory.length -
-                    1
-                )
-                *
-                width;
-
-
-            const normalized =
-                Math.min(
-                    fps /
-                    144,
-                    1
-                );
-
-
-            const y =
-                height -
-                normalized *
-                (
-                    height *
-                    .85
-                ) -
-                height *
-                .075;
-
-
-            if(index === 0)
-                ctx.moveTo(
-                    x,
-                    y
-                );
-
-            else
-                ctx.lineTo(
-                    x,
-                    y
-                );
-
-        }
-    );
-
-
-    const gradient =
-        ctx.createLinearGradient(
-            0,
-            0,
-            width,
-            0
-        );
-
-
-    gradient.addColorStop(
-        0,
-        "#00f5d4"
-    );
-
-
-    gradient.addColorStop(
-        .5,
-        "#8b5cf6"
-    );
-
-
-    gradient.addColorStop(
-        1,
-        "#ff2cdf"
-    );
-
-
-    ctx.strokeStyle =
-        gradient;
-
-
-    ctx.lineWidth =
-        4;
-
-
-    ctx.shadowBlur =
-        15;
-
-
-    ctx.shadowColor =
-        "#8b5cf6";
-
-
-    ctx.stroke();
-
-
-    ctx.shadowBlur = 0;
-
-
-    const average =
-        fpsHistory.reduce(
-            (a,b) =>
-                a + b,
-            0
-        ) /
-        fpsHistory.length;
-
-
-    let rating =
-        "LOW";
-
-
-    if(average >= 120)
-        rating =
-            "ULTRA";
-
-
-    else if(average >= 90)
-        rating =
-            "HIGH";
-
-
-    else if(average >= 60)
-        rating =
-            "GOOD";
-
-
-    else if(average >= 30)
-        rating =
-            "MEDIUM";
-
-
-    performanceRating.textContent =
-        rating;
-
-
-    const graphRating =
-        document.getElementById(
-            "graphRating"
-        );
-
-
-    if(graphRating)
-        graphRating.textContent =
-            rating;
-
-}
-
-
-/* =========================================================
-   RENDER
-========================================================= */
-
-function render(
-    time
-) {
-
-    if (!running)
-        return;
-
-
-    resizeCanvas();
-
-
-    const now =
-        performance.now();
-
-
-    const delta =
-        now -
-        previousFrame;
-
-
-    previousFrame =
-        now;
-
-
-    const fps =
-        delta > 0
-        ? 1000 /
-          delta
-        : 0;
-
-
-    const safeFPS =
-        Math.min(
-            240,
-            Math.max(
-                0,
-                fps
-            )
-        );
-
-
-    fpsHistory.push(
-        safeFPS
-    );
-
-
-    if(
-        fpsHistory.length >
-        100
-    )
-        fpsHistory.shift();
-
-
-    minFPS =
-        Math.min(
-            minFPS,
-            safeFPS
-        );
-
-
-    maxFPS =
-        Math.max(
-            maxFPS,
-            safeFPS
-        );
-
-
-    const average =
-        fpsHistory.reduce(
-            (a,b) =>
-                a + b,
-            0
-        ) /
-        fpsHistory.length;
-
-
-    fpsValue.textContent =
-        safeFPS.toFixed(0);
-
-
-    frameValue.textContent =
-        delta.toFixed(1)
-        +
-        " ms";
-
-
-    avgFPS.textContent =
-        average.toFixed(0);
-
-
-    minFPS.textContent =
-        minFPS === Infinity
-        ? "0"
-        : minFPS.toFixed(0);
-
-
-    maxFPS.textContent =
-        maxFPS.toFixed(0);
-
-
-    gpuLoad.textContent =
-        [
-            "LOW",
-            "MEDIUM",
-            "HIGH",
-            "EXTREME"
-        ][
-            workload -
-            1
-        ];
-
-
-    gl.useProgram(
-        program
-    );
-
-
-    gl.uniform2f(
-        resolutionLocation,
-        canvas.width,
-        canvas.height
-    );
-
-
-    gl.uniform1f(
-        timeLocation,
-        time *
-        .001
-    );
-
-
-    gl.uniform2f(
-        mouseLocation,
-        mouseX,
-        mouseY
-    );
-
-
-    gl.uniform1f(
-        workloadLocation,
-        workload
-    );
-
-
-    gl.drawArrays(
-        gl.TRIANGLES,
-        0,
-        6
-    );
-
-
-    drawGraph();
-
-
-    animationFrame =
-        requestAnimationFrame(
-            render
-        );
-
-}
-
-
-/* =========================================================
-   START / STOP / RESET
-========================================================= */
-
-const startButton =
-    document.getElementById(
-        "startTest"
-    );
-
-const stopButton =
-    document.getElementById(
-        "stopTest"
-    );
-
-const resetButton =
-    document.getElementById(
-        "resetTest"
-    );
-
-
-function startBenchmark() {
-
-    if(!gl) {
-
-        labStatus.textContent =
-            "WEBGL ERROR";
-
-        return;
-
-    }
-
-
-    if(running)
-        return;
-
-
-    running = true;
-
-
-    labStatus.textContent =
-        "RUNNING";
-
-
-    previousFrame =
-        performance.now();
-
-
-    animationFrame =
-        requestAnimationFrame(
-            render
-        );
-
-}
-
-
-function stopBenchmark() {
-
-    running = false;
-
-
-    if(animationFrame) {
-
-        cancelAnimationFrame(
-            animationFrame
-        );
-
-        animationFrame =
-            null;
-
-    }
-
-
-    labStatus.textContent =
-        "STOPPED";
-
-}
-
-
-function resetBenchmark() {
-
-    stopBenchmark();
-
-
-    fpsHistory = [];
-
-    minFPS =
-        Infinity;
-
-    maxFPS =
-        0;
-
-
-    fpsValue.textContent =
-        "0";
-
-
-    frameValue.textContent =
-        "0 ms";
-
-
-    avgFPS.textContent =
-        "0";
-
-
-    minFPS.textContent =
-        "0";
-
-
-    maxFPS.textContent =
-        "0";
-
-
-    performanceRating.textContent =
-        "READY";
-
-
-    gpuLoad.textContent =
-        "READY";
-
-
-    labStatus.textContent =
-        "READY";
-
-
-    drawGraph();
-
-}
-
-
-startButton.addEventListener(
-    "click",
-    startBenchmark
-);
-
-
-stopButton.addEventListener(
-    "click",
-    stopBenchmark
-);
-
-
-resetButton.addEventListener(
-    "click",
-    resetBenchmark
-);
-
-
-/* =========================================================
-   STRESS LEVEL
-========================================================= */
-
-document
-    .querySelectorAll(
-        ".level"
-    )
-    .forEach(
-        button => {
-
-            button.addEventListener(
-                "click",
-                () => {
-
-                    document
-                        .querySelectorAll(
-                            ".level"
-                        )
-                        .forEach(
-                            item =>
-                                item.classList
-                                .remove(
-                                    "active"
-                                )
-                        );
-
-
-                    button.classList.add(
-                        "active"
-                    );
-
-
-                    workload =
-                        Number(
-                            button.dataset.level
-                        );
-
-                }
-            );
-
-        }
-    );
-
-
-/* =========================================================
-   CPU BENCHMARK
-========================================================= */
-
-let cpuTesting =
-    false;
-
-
-const cpuTestButton =
-    document.getElementById(
-        "cpuTest"
-    );
-
-
-const cpuScore =
-    document.getElementById(
-        "cpuScore"
-    );
-
-
-async function runCPUTest() {
-
-    if(cpuTesting)
-        return;
-
-
-    cpuTesting =
-        true;
-
-
-    cpuScore.textContent =
-        "...";
-
-
-    const start =
-        performance.now();
-
-
-    let result =
-        0;
-
-
-    const loops =
-        6000000;
-
-
-    for(
-        let i=0;
-        i<loops;
-        i++
-    ){
-
-        result +=
-            Math.sin(
-                i *
-                .0001
-            )
-            *
-            Math.cos(
-                i *
-                .00007
-            );
-
-
-        result +=
-            Math.sqrt(
-                (
-                    i %
-                    1000
-                ) + 1
-            )
-            *
-            .00001;
-
-
-        if(
-            i %
-            200000 ===
-            0
-        ){
-
-            await new Promise(
-                resolve =>
-                    setTimeout(
-                        resolve,
-                        0
-                    )
-            );
-
-        }
-
-    }
-
-
-    const elapsed =
-        performance.now() -
-        start;
-
-
-    const score =
-        Math.round(
-            100000000 /
-            Math.max(
-                elapsed,
-                1
-            )
-        );
-
-
-    cpuScore.textContent =
-        score.toLocaleString();
-
-
-    cpuTesting =
-        false;
-
-
-    return score;
-
-}
-
-
-cpuTestButton.addEventListener(
-    "click",
-    runCPUTest
-);
-
-
-/* =========================================================
-   AUDIO
-========================================================= */
-
-let audioContext =
-    null;
-
-let gainNode =
-    null;
-
-let oscillator =
-    null;
-
-let soundRunning =
-    false;
-
-
-const soundButton =
-    document.getElementById(
-        "soundButton"
-    );
-
-
-const volumeControl =
-    document.getElementById(
-        "volumeControl"
-    );
-
-
-function startSound() {
-
-    if(!audioContext){
-
-        audioContext =
-            new (
-                window.AudioContext ||
-                window.webkitAudioContext
-            )();
-
-
-        gainNode =
-            audioContext.createGain();
-
-
-        gainNode.gain.value =
-            Number(
-                volumeControl.value
-            ) /
-            100;
-
-
-        gainNode.connect(
-            audioContext.destination
-        );
-
-    }
-
-
-    if(
-        audioContext.state ===
-        "suspended"
-    ){
-
-        audioContext.resume();
-
-    }
-
-
-    oscillator =
-        audioContext.createOscillator();
-
-
-    oscillator.type =
-        "sawtooth";
-
-
-    oscillator.frequency.value =
-        110;
-
-
-    oscillator.connect(
-        gainNode
-    );
-
-
-    oscillator.start();
-
-
-    soundRunning =
-        true;
-
-
-    soundButton.textContent =
-        "■ STOP SOUND";
-
-}
-
-
-function stopSound() {
-
-    if(!oscillator)
-        return;
-
-
-    try {
-
-        oscillator.stop();
-
-    }
-
-    catch(error){}
-
-
-    oscillator.disconnect();
-
-
-    oscillator =
-        null;
-
-
-    soundRunning =
-        false;
-
-
-    soundButton.textContent =
-        "🔊 START SOUND";
-
-}
-
-
-soundButton.addEventListener(
-    "click",
-    () => {
-
-        if(soundRunning)
-            stopSound();
-
-        else
-            startSound();
-
-    }
-);
-
-
-volumeControl.addEventListener(
-    "input",
-    () => {
-
-        if(gainNode){
-
-            gainNode.gain.value =
-                Number(
-                    volumeControl.value
-                ) /
-                100;
-
-        }
-
-    }
-);
-
-
-/* =========================================================
-   FULL TEST
-========================================================= */
-
-const fullTestButton =
-    document.getElementById(
-        "fullTest"
-    );
-
-
-const finalScore =
-    document.getElementById(
-        "finalScore"
-    );
-
-
-const finalMessage =
-    document.getElementById(
-        "finalMessage"
-    );
-
-
-async function runFullTest() {
-
-    resetBenchmark();
-
-
-    startBenchmark();
-
-
-    await new Promise(
-        resolve =>
-            setTimeout(
-                resolve,
-                6000
-            )
-    );
-
-
-    stopBenchmark();
-
-
-    const gpuAverage =
-        fpsHistory.length
-        ? fpsHistory.reduce(
-            (a,b) =>
-                a + b,
-            0
-        ) /
-        fpsHistory.length
-        : 0;
-
-
-    const cpu =
-        await runCPUTest();
-
-
-    const gpuScore =
-        Math.min(
-            100,
-            gpuAverage /
-            1.44
-        );
-
-
-    const cpuScoreNormalized =
-        Math.min(
-            100,
-            cpu /
-            1000
-        );
-
-
-    const score =
-        Math.round(
-            gpuScore *
-            .6
-            +
-            cpuScoreNormalized *
-            .4
-        );
-
-
-    finalScore.textContent =
-        score;
-
-
-    if(score >= 90){
-
-        finalMessage.textContent =
-            "🔥 ULTRA PERFORMANCE — Your device handled the benchmark extremely well.";
-
-    }
-
-    else if(score >= 75){
-
-        finalMessage.textContent =
-            "🚀 HIGH PERFORMANCE — Very strong browser performance.";
-
-    }
-
-    else if(score >= 55){
-
-        finalMessage.textContent =
-            "⚡ GOOD PERFORMANCE — Your device handled the test well.";
-
-    }
-
-    else if(score >= 35){
-
-        finalMessage.textContent =
-            "🟡 MEDIUM PERFORMANCE — Moderate performance detected.";
-
-    }
-
-    else {
-
-        finalMessage.textContent =
-            "🔴 LOW PERFORMANCE — The workload was demanding for this device.";
-
-    }
-
-}
-
-
-fullTestButton.addEventListener(
-    "click",
-    runFullTest
-);
-
-
-/* =========================================================
-   OPINION SYSTEM
-========================================================= */
-
-const opinionButtons =
-    document.querySelectorAll(
-        ".opinion-card"
-    );
-
-
-const opinionResult =
-    document.getElementById(
-        "opinionResult"
-    );
-
-
-opinionButtons.forEach(
-    button => {
-
-        button.addEventListener(
-            "click",
-            () => {
-
-                opinionButtons
-                    .forEach(
-                        item =>
-                            item.classList
-                            .remove(
-                                "selected"
-                            )
-                    );
-
-
-                button.classList.add(
-                    "selected"
-                );
-
-
-                const opinion =
-                    button.dataset.opinion;
-
-
-                opinionResult.textContent =
-                    `❤️ You selected "${opinion}". Thanks for your opinion!`;
-
-            }
-        );
-
-    }
-);
-
-
-/* =========================================================
-   SCROLL REVEAL
-========================================================= */
-
-const revealObserver =
-    new IntersectionObserver(
-        entries => {
-
-            entries.forEach(
-                entry => {
-
-                    if(
-                        entry.isIntersecting
-                    ){
-
-                        entry.target.classList.add(
-                            "visible"
-                        );
-
-                    }
-
-                }
-            );
-
-        },
-        {
-            threshold:.12
-        }
-    );
-
-
-document
-    .querySelectorAll(
-        ".glass-panel, .skill-card, .project-card, .tool-card"
-    )
-    .forEach(
-        element => {
-
-            element.style.opacity =
-                "0";
-
-            element.style.transform =
-                "translateY(30px)";
-
-
-            element.style.transition =
-                "opacity .8s ease, transform .8s ease";
-
-
-            revealObserver.observe(
-                element
-            );
-
-        }
-    );
-
-
-const revealStyle =
-    document.createElement(
-        "style"
-    );
-
-
-revealStyle.textContent = `
-
-.glass-panel.visible,
-.skill-card.visible,
-.project-card.visible,
-.tool-card.visible{
-
-    opacity:1 !important;
-
-    transform:
-        translateY(0)
-        !important;
-
-}
-
-`;
-
-
-document.head.appendChild(
-    revealStyle
-);
-
-
-/* =========================================================
-   TAB TITLE EFFECT
-========================================================= */
-
-let originalTitle =
-    document.title;
-
-
-document.addEventListener(
-    "visibilitychange",
-    () => {
-
-        if(document.hidden){
-
-            document.title =
-                "⚡ Come back — AB THE PROMO";
-
-        }
-
-        else {
-
-            document.title =
-                originalTitle;
-
-        }
-
-    }
-);
-
-
-/* =========================================================
-   INITIAL
-========================================================= */
-
-drawGraph();
-
-detectDevice();
-
-
-window.addEventListener(
-    "load",
-    () => {
-
-        resizeCanvas();
-
-        drawGraph();
-
-    }
-);
-
-
-/* =========================================================
-   SAFETY:
-   STOP GRAPHICS TEST WHEN PAGE IS HIDDEN
-========================================================= */
-
-document.addEventListener(
-    "visibilitychange",
-    () => {
-
-        if(
-            document.hidden &&
-            running
-        ){
-
-            stopBenchmark();
-
-        }
-
-    }
+  }
 );
