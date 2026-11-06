@@ -1,726 +1,321 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>AB THE PROMO — IT TOPPER</title>
+<!-- =====================================================
+     AB THE PROMO — PERFORMANCE LAB
+===================================================== -->
 
-<style>
-*{margin:0;padding:0;box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{
-  font-family:Arial,sans-serif;
-  background:#03040b;
-  color:white;
-  overflow-x:hidden;
-}
-canvas#shader{
-  position:fixed;
-  inset:0;
-  width:100%;
-  height:100%;
-  z-index:-5;
-}
-.overlay{
-  position:fixed;
-  inset:0;
-  background:
-   radial-gradient(circle at 20% 20%,rgba(0,255,255,.12),transparent 25%),
-   radial-gradient(circle at 80% 70%,rgba(150,0,255,.12),transparent 30%);
-  pointer-events:none;
-  z-index:-4;
-}
-nav{
-  position:fixed;
-  top:18px;
-  left:50%;
-  transform:translateX(-50%);
-  width:min(92%,1000px);
-  padding:14px 22px;
-  border:1px solid rgba(255,255,255,.15);
-  background:rgba(10,10,20,.55);
-  backdrop-filter:blur(20px);
-  border-radius:50px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  z-index:100;
-}
-.logo{
-  font-weight:900;
-  letter-spacing:2px;
-}
-.logo span{color:#00ffff}
-nav a{
-  color:#fff;
-  text-decoration:none;
-  margin-left:18px;
-  font-size:14px;
-}
-.hero{
-  min-height:100vh;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  text-align:center;
-  padding:100px 20px;
-}
-.hero h1{
-  font-size:clamp(45px,9vw,110px);
-  line-height:.9;
-  text-transform:uppercase;
-  letter-spacing:-5px;
-  text-shadow:0 0 30px rgba(0,255,255,.5);
-}
-.hero h1 span{color:#00ffff}
-.hero p{
-  max-width:650px;
-  margin:28px auto;
-  color:#aaa;
-  font-size:18px;
-}
-.btn{
-  display:inline-block;
-  padding:14px 25px;
-  border-radius:30px;
-  border:1px solid #00ffff;
-  color:#00ffff;
-  text-decoration:none;
-  margin:7px;
-  transition:.3s;
-}
-.btn:hover{
-  background:#00ffff;
-  color:#000;
-  box-shadow:0 0 35px #00ffff;
-}
-section{
-  width:min(1100px,92%);
-  margin:0 auto;
-  padding:100px 0;
-}
-.title{
-  font-size:42px;
-  margin-bottom:40px;
-}
-.grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-  gap:20px;
-}
-.card{
-  padding:30px;
-  min-height:180px;
-  border:1px solid rgba(255,255,255,.12);
-  border-radius:25px;
-  background:rgba(255,255,255,.055);
-  backdrop-filter:blur(18px);
-  transform-style:preserve-3d;
-  transition:.15s;
-}
-.card:hover{
-  border-color:#00ffff;
-  box-shadow:0 0 35px rgba(0,255,255,.15);
-}
-.card h3{
-  color:#00ffff;
-  margin-bottom:15px;
-}
-.stat{
-  font-size:45px;
-  font-weight:900;
-}
-#fps{
-  color:#00ff88;
-}
-.terminal{
-  background:#050509;
-  border:1px solid #222;
-  border-radius:20px;
-  padding:25px;
-  font-family:monospace;
-  min-height:260px;
-  box-shadow:0 0 40px rgba(0,255,255,.08);
-}
-.green{color:#00ff88}
-.cyan{color:#00ffff}
-.purple{color:#b76cff}
+<section id="performance-lab" class="performance-lab">
 
-.game{
-  background:#050509;
-  border:1px solid rgba(0,255,255,.25);
-  border-radius:25px;
-  overflow:hidden;
-}
-.gameTop{
-  padding:15px 20px;
-  display:flex;
-  justify-content:space-between;
-}
-#game{
-  width:100%;
-  height:320px;
-  display:block;
-  background:linear-gradient(#07091a,#02030a);
-}
-.gameInfo{
-  padding:15px;
-  color:#aaa;
-}
-footer{
-  text-align:center;
-  padding:70px 20px;
-  color:#777;
-}
-.badge{
-  display:inline-block;
-  padding:7px 12px;
-  border:1px solid rgba(255,255,255,.15);
-  border-radius:20px;
-  color:#aaa;
-  margin:5px;
-}
-@media(max-width:600px){
- nav a{display:none}
- .hero h1{letter-spacing:-3px}
- section{padding:70px 0}
-}
-</style>
-</head>
-
-<body>
-
-<canvas id="shader"></canvas>
-<div class="overlay"></div>
-
-<nav>
-  <div class="logo">AB<span>THE</span>PROMO</div>
-  <div>
-    <a href="#lab">LAB</a>
-    <a href="#games">GAME</a>
-    <a href="#skills">SKILLS</a>
-  </div>
-</nav>
-
-<header class="hero">
-  <div>
-    <div class="badge">⚡ FUTURISTIC IT PORTFOLIO</div>
-
-    <h1>AB <span>THE</span><br>PROMO</h1>
-
-    <p>
-      Gaming • AI • Graphics • Web Technology
-      <br>
-      Welcome to my interactive digital universe.
-    </p>
-
-    <a class="btn" href="#lab">ENTER THE LAB</a>
-    <a class="btn" href="#games">PLAY GAME</a>
-  </div>
-</header>
-
-<section id="lab">
-  <h2 class="title">⚡ Interactive Tech Lab</h2>
-
-  <div class="grid">
-
-    <div class="card tilt">
-      <h3>🎯 LIVE FPS</h3>
-      <div class="stat"><span id="fps">0</span></div>
-      <p>Browser rendering performance</p>
+    <div class="section-title">
+        <span class="mini">AB THE PROMO LAB</span>
+        <h2>⚡ Performance Lab</h2>
+        <p>
+            Test your browser, CPU, GPU, FPS and graphics performance
+            with an interactive 3D workload.
+        </p>
     </div>
 
-    <div class="card tilt">
-      <h3>🧠 SYSTEM</h3>
-      <div class="stat" id="cores">--</div>
-      <p>Logical CPU cores</p>
+    <!-- DEVICE INFO -->
+
+    <div class="card lab-device">
+
+        <div>
+            <small>DEVICE</small>
+            <h3 id="deviceName">Detecting...</h3>
+        </div>
+
+        <div>
+            <small>CORES</small>
+            <h3 id="cpuCores">--</h3>
+        </div>
+
+        <div>
+            <small>SCREEN</small>
+            <h3 id="screenInfo">--</h3>
+        </div>
+
+        <div>
+            <small>MEMORY</small>
+            <h3 id="memoryInfo">--</h3>
+        </div>
+
     </div>
 
-    <div class="card tilt">
-      <h3>🌐 ONLINE</h3>
-      <div class="stat" id="online">YES</div>
-      <p>Connection status</p>
+
+    <!-- 3D SHADER -->
+
+    <div class="card shader-card">
+
+        <div class="lab-header">
+
+            <div>
+                <span class="mini">GPU / WEBGL</span>
+                <h3>🌀 3D Volume Shader</h3>
+            </div>
+
+            <span id="webglStatus">
+                Checking...
+            </span>
+
+        </div>
+
+        <canvas id="shaderCanvas"></canvas>
+
+        <div class="shader-overlay">
+
+            <div>
+                <strong id="fpsValue">0</strong>
+                <small>FPS</small>
+            </div>
+
+            <div>
+                <strong id="frameTime">0</strong>
+                <small>MS</small>
+            </div>
+
+            <div>
+                <strong id="avgFPS">0</strong>
+                <small>AVG FPS</small>
+            </div>
+
+        </div>
+
+        <div class="lab-controls">
+
+            <button
+                class="btn btn-primary"
+                id="startShader">
+                ▶ Start Test
+            </button>
+
+            <button
+                class="btn btn-secondary"
+                id="stopShader">
+                ■ Stop
+            </button>
+
+            <button
+                class="btn btn-secondary"
+                id="resetShader">
+                ↻ Reset
+            </button>
+
+        </div>
+
+        <p class="touch-help">
+            🖱️ Mouse drag / 📱 Touch drag — interact with the 3D shader
+        </p>
+
     </div>
 
-    <div class="card tilt">
-      <h3>🚀 ENGINE</h3>
-      <div class="stat">WEBGL</div>
-      <p>Interactive graphics engine</p>
+
+    <!-- PERFORMANCE MODE -->
+
+    <div class="card test-control">
+
+        <div class="lab-header">
+
+            <div>
+                <span class="mini">STRESS LEVEL</span>
+                <h3>🔥 Performance Mode</h3>
+            </div>
+
+        </div>
+
+        <div class="mode-buttons">
+
+            <button data-level="1">LIGHT</button>
+            <button data-level="2">MEDIUM</button>
+            <button data-level="3">HEAVY</button>
+            <button data-level="4">EXTREME</button>
+
+        </div>
+
+        <p id="modeDescription">
+            Select a workload level.
+        </p>
+
     </div>
 
-  </div>
+
+    <!-- LIVE PERFORMANCE -->
+
+    <div class="performance-grid">
+
+        <div class="card metric-card">
+
+            <span>🎮 LIVE FPS</span>
+
+            <strong id="liveFPS">
+                0
+            </strong>
+
+            <small>
+                Frames per second
+            </small>
+
+        </div>
+
+
+        <div class="card metric-card">
+
+            <span>🧠 CPU SCORE</span>
+
+            <strong id="cpuScore">
+                0
+            </strong>
+
+            <small>
+                Browser benchmark score
+            </small>
+
+        </div>
+
+
+        <div class="card metric-card">
+
+            <span>⚡ FRAME TIME</span>
+
+            <strong id="liveFrameTime">
+                0 ms
+            </strong>
+
+            <small>
+                Average frame time
+            </small>
+
+        </div>
+
+
+        <div class="card metric-card">
+
+            <span>🏆 RATING</span>
+
+            <strong id="performanceRating">
+                READY
+            </strong>
+
+            <small>
+                Performance level
+            </small>
+
+        </div>
+
+    </div>
+
+
+    <!-- GRAPH -->
+
+    <div class="card graph-card">
+
+        <div class="lab-header">
+
+            <div>
+                <span class="mini">REAL TIME</span>
+                <h3>📈 Performance Graph</h3>
+            </div>
+
+            <span id="graphFPS">
+                0 FPS
+            </span>
+
+        </div>
+
+        <canvas
+            id="performanceGraph">
+        </canvas>
+
+    </div>
+
+
+    <!-- CPU TEST -->
+
+    <div class="card cpu-test">
+
+        <div class="lab-header">
+
+            <div>
+                <span class="mini">PROCESSOR</span>
+                <h3>🧠 CPU Speed Test</h3>
+            </div>
+
+        </div>
+
+        <p>
+            This browser benchmark creates a temporary CPU workload
+            and calculates a relative performance score.
+        </p>
+
+        <div class="cpu-result">
+
+            <strong id="cpuResult">
+                READY
+            </strong>
+
+            <div
+                class="cpu-progress">
+                <span
+                    id="cpuProgress">
+                </span>
+            </div>
+
+        </div>
+
+        <button
+            class="btn btn-primary"
+            id="cpuTestButton">
+            🚀 Start CPU Test
+        </button>
+
+    </div>
+
+
+    <!-- GAMING SOUND -->
+
+    <div class="card sound-card">
+
+        <div class="lab-header">
+
+            <div>
+                <span class="mini">AUDIO</span>
+                <h3>🎧 Gaming Sound Test</h3>
+            </div>
+
+        </div>
+
+        <p>
+            Generate a simple browser audio test tone.
+        </p>
+
+        <button
+            class="btn btn-secondary"
+            id="soundButton">
+            🔊 Start Sound
+        </button>
+
+    </div>
+
+
+    <!-- FINAL RESULT -->
+
+    <div class="card final-score">
+
+        <span class="mini">
+            FINAL RESULT
+        </span>
+
+        <h2 id="finalScore">
+            READY
+        </h2>
+
+        <p id="finalMessage">
+            Run the tests to calculate your browser performance.
+        </p>
+
+        <button
+            class="btn btn-primary"
+            id="fullTest">
+            ⚡ RUN FULL TEST
+        </button>
+
+    </div>
+
 </section>
-
-<section>
-  <h2 class="title">🖥️ AI Terminal</h2>
-
-  <div class="terminal" id="terminal"></div>
-</section>
-
-<section id="skills">
-  <h2 class="title">💎 Skills</h2>
-
-  <div class="grid">
-
-    <div class="card tilt">
-      <h3>🤖 AI</h3>
-      <p>AI tools, assistants and intelligent interfaces.</p>
-    </div>
-
-    <div class="card tilt">
-      <h3>🎨 Graphics</h3>
-      <p>Creative visual design, editing and digital art.</p>
-    </div>
-
-    <div class="card tilt">
-      <h3>🌐 Web</h3>
-      <p>HTML, CSS, JavaScript and interactive web experiences.</p>
-    </div>
-
-    <div class="card tilt">
-      <h3>🎮 Gaming</h3>
-      <p>Gaming, performance testing and interactive experiments.</p>
-    </div>
-
-  </div>
-</section>
-
-<section id="games">
-  <h2 class="title">🦖 AB Dino Runner</h2>
-
-  <div class="game">
-
-    <div class="gameTop">
-      <b>AB RUNNER</b>
-      <b>SCORE: <span id="score">0</span></b>
-    </div>
-
-    <canvas id="game"></canvas>
-
-    <div class="gameInfo">
-      Press <b>SPACE</b> or tap the game to jump.
-    </div>
-
-  </div>
-</section>
-
-<section>
-  <h2 class="title">🏆 AB THE PROMO</h2>
-
-  <div class="card">
-    <h3>Built Different.</h3>
-    <p>
-      This isn't just a portfolio.
-      It's a small interactive technology playground
-      built for gaming, graphics, AI and web experiments.
-    </p>
-  </div>
-</section>
-
-<footer>
-  <h2>AB THE PROMO</h2>
-  <p>© 2026 • Futuristic Digital Experience</p>
-</footer>
-
-<script>
-
-/* =========================
-   WEBGL SHADER BACKGROUND
-========================= */
-
-const shader=document.getElementById("shader");
-const gl=shader.getContext("webgl");
-
-function resize(){
- shader.width=innerWidth*devicePixelRatio;
- shader.height=innerHeight*devicePixelRatio;
- gl.viewport(0,0,shader.width,shader.height);
-}
-resize();
-addEventListener("resize",resize);
-
-const vs=`
-attribute vec2 p;
-void main(){
- gl_Position=vec4(p,0.,1.);
-}`;
-
-const fs=`
-precision highp float;
-
-uniform float t;
-uniform vec2 r;
-
-void main(){
-
- vec2 uv=(gl_FragCoord.xy-.5*r)/r.y;
-
- float d=length(uv);
-
- float a=sin(uv.x*8.0+t);
- float b=cos(uv.y*7.0-t);
- float c=sin((uv.x+uv.y)*10.0+t*.7);
-
- float glow=0.08/(abs(a+b+c)+0.5);
-
- vec3 col=vec3(
-   glow*.1,
-   glow*.7,
-   glow
- );
-
- col += vec3(.01,.01,.04);
-
- gl_FragColor=vec4(col,1.);
-}`;
-
-function compile(type,src){
- const s=gl.createShader(type);
- gl.shaderSource(s,src);
- gl.compileShader(s);
- return s;
-}
-
-const program=gl.createProgram();
-gl.attachShader(program,compile(gl.VERTEX_SHADER,vs));
-gl.attachShader(program,compile(gl.FRAGMENT_SHADER,fs));
-gl.linkProgram(program);
-gl.useProgram(program);
-
-const buffer=gl.createBuffer();
-gl.bindBuffer(gl.ARRAY_BUFFER,buffer);
-
-gl.bufferData(
- gl.ARRAY_BUFFER,
- new Float32Array([
-  -1,-1, 1,-1, -1,1,
-  -1,1, 1,-1, 1,1
- ]),
- gl.STATIC_DRAW
-);
-
-const pos=gl.getAttribLocation(program,"p");
-gl.enableVertexAttribArray(pos);
-gl.vertexAttribPointer(pos,2,gl.FLOAT,false,0,0);
-
-const timeLoc=gl.getUniformLocation(program,"t");
-const resLoc=gl.getUniformLocation(program,"r");
-
-let start=performance.now();
-
-function shaderLoop(){
-
- let t=(performance.now()-start)/1000;
-
- gl.uniform1f(timeLoc,t);
- gl.uniform2f(resLoc,shader.width,shader.height);
-
- gl.drawArrays(gl.TRIANGLES,0,6);
-
- requestAnimationFrame(shaderLoop);
-}
-
-shaderLoop();
-
-
-/* =========================
-   FPS MONITOR
-========================= */
-
-let frames=0;
-let last=performance.now();
-
-function fpsLoop(){
-
- frames++;
-
- let now=performance.now();
-
- if(now-last>=1000){
-
-   document.getElementById("fps").textContent=frames;
-
-   frames=0;
-   last=now;
- }
-
- requestAnimationFrame(fpsLoop);
-}
-
-fpsLoop();
-
-
-/* =========================
-   SYSTEM INFO
-========================= */
-
-document.getElementById("cores").textContent=
- navigator.hardwareConcurrency || "N/A";
-
-document.getElementById("online").textContent=
- navigator.onLine ? "YES" : "NO";
-
-
-/* =========================
-   3D CARD TILT
-========================= */
-
-document.querySelectorAll(".tilt").forEach(card=>{
-
- card.addEventListener("mousemove",e=>{
-
-   const rect=card.getBoundingClientRect();
-
-   const x=e.clientX-rect.left;
-   const y=e.clientY-rect.top;
-
-   const rx=(y/rect.height-.5)*-12;
-   const ry=(x/rect.width-.5)*12;
-
-   card.style.transform=
-    `perspective(700px)
-     rotateX(${rx}deg)
-     rotateY(${ry}deg)
-     translateZ(8px)`;
- });
-
- card.addEventListener("mouseleave",()=>{
-   card.style.transform="";
- });
-
-});
-
-
-/* =========================
-   TERMINAL
-========================= */
-
-const lines=[
-"> INITIALIZING AB THE PROMO...",
-"> Loading neural interface...",
-"> Checking WebGL...",
-"> Starting shader engine...",
-"> Measuring browser FPS...",
-"> Loading gaming module...",
-"> SYSTEM READY.",
-"> Welcome, digital explorer."
-];
-
-const terminal=document.getElementById("terminal");
-
-let li=0;
-let ci=0;
-
-function typeTerminal(){
-
- if(li>=lines.length)return;
-
- if(ci<lines[li].length){
-
-   terminal.innerHTML+=lines[li][ci];
-   ci++;
-
-   setTimeout(typeTerminal,25);
-
- }else{
-
-   terminal.innerHTML+="<br>";
-   li++;
-   ci=0;
-
-   setTimeout(typeTerminal,300);
- }
-}
-
-typeTerminal();
-
-
-/* =========================
-   DINO RUNNER
-========================= */
-
-const game=document.getElementById("game");
-const ctx=game.getContext("2d");
-
-function resizeGame(){
- game.width=game.clientWidth*devicePixelRatio;
- game.height=320*devicePixelRatio;
- ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);
-}
-
-resizeGame();
-
-addEventListener("resize",resizeGame);
-
-let dino={
- x:60,
- y:245,
- w:35,
- h:45,
- vy:0,
- jump:false
-};
-
-let obstacles=[];
-let score=0;
-let speed=5;
-let gameOver=false;
-let lastObstacle=0;
-
-function jump(){
-
- if(!dino.jump && !gameOver){
-
-   dino.vy=-12;
-   dino.jump=true;
-
- }else if(gameOver){
-
-   obstacles=[];
-   score=0;
-   speed=5;
-   gameOver=false;
- }
-}
-
-addEventListener("keydown",e=>{
- if(e.code==="Space"){
-   e.preventDefault();
-   jump();
- }
-});
-
-game.addEventListener("pointerdown",jump);
-
-function drawDino(){
-
- ctx.fillStyle="#00ffff";
-
- ctx.fillRect(
-   dino.x,
-   dino.y,
-   dino.w,
-   dino.h
- );
-
- ctx.fillStyle="#000";
-
- ctx.fillRect(
-   dino.x+23,
-   dino.y+8,
-   5,
-   5
- );
-}
-
-function spawnObstacle(){
-
- obstacles.push({
-   x:game.clientWidth+30,
-   y:255,
-   w:25+Math.random()*20,
-   h:35+Math.random()*20
- });
-}
-
-function collision(a,b){
-
- return(
-   a.x < b.x+b.w &&
-   a.x+a.w > b.x &&
-   a.y < b.y+b.h &&
-   a.y+a.h > b.y
- );
-}
-
-function gameLoop(t){
-
- ctx.clearRect(
-   0,0,
-   game.clientWidth,
-   320
- );
-
- /* ground */
-
- ctx.fillStyle="#222";
- ctx.fillRect(
-   0,290,
-   game.clientWidth,
-   2
- );
-
- /* gravity */
-
- dino.vy+=.6;
- dino.y+=dino.vy;
-
- if(dino.y>=245){
-   dino.y=245;
-   dino.vy=0;
-   dino.jump=false;
- }
-
- drawDino();
-
- /* obstacles */
-
- if(t-lastObstacle>1200){
-
-   spawnObstacle();
-   lastObstacle=t;
- }
-
- obstacles.forEach(o=>{
-
-   o.x-=speed;
-
-   ctx.fillStyle="#ff00aa";
-
-   ctx.fillRect(
-     o.x,
-     o.y,
-     o.w,
-     o.h
-   );
-
-   if(collision(dino,o)){
-     gameOver=true;
-   }
-
- });
-
- obstacles=obstacles.filter(o=>o.x>-100);
-
- if(!gameOver){
-
-   score++;
-   speed+=0.001;
-
-   document.getElementById("score").textContent=
-    Math.floor(score/10);
-
- }else{
-
-   ctx.fillStyle="white";
-   ctx.font="28px Arial";
-   ctx.textAlign="center";
-
-   ctx.fillText(
-     "GAME OVER — TAP / SPACE",
-     game.clientWidth/2,
-     150
-   );
-
-   ctx.textAlign="left";
- }
-
- requestAnimationFrame(gameLoop);
-}
-
-requestAnimationFrame(gameLoop);
-
-</script>
-
-</body>
-</html>
