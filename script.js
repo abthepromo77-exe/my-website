@@ -1,7 +1,7 @@
 /* Copy to Clipboard Helper */
 function copyText(text) {
     navigator.clipboard.writeText(text);
-    alert('Copied: ' + text);
+    alert('Copied to clipboard: ' + text);
 }
 
 /* Chat Modal Control */
@@ -10,7 +10,7 @@ function toggleChat() {
     chat.style.display = (chat.style.display === 'flex') ? 'none' : 'flex';
 }
 
-/* Dynamic AI Helpline Logic */
+/* Dynamic AI Helpline Assistant Logic */
 function sendMessage() {
     const input = document.getElementById('chat-input');
     const message = input.value.trim();
@@ -25,7 +25,7 @@ function sendMessage() {
     chatMessages.appendChild(userMsg);
     input.value = '';
 
-    // Auto AI Bot Answer
+    // Auto AI Response Logic
     setTimeout(() => {
         const aiMsg = document.createElement('div');
         aiMsg.className = 'msg msg-ai';
@@ -42,7 +42,7 @@ function sendMessage() {
         } else if (q.includes('address') || q.includes('tangail') || q.includes('ঠিকানা')) {
             aiMsg.innerHTML = "ঠিকানা: <b>Tangail, Bangladesh</b> (SSC Batch 2K27)।";
         } else if (q.includes('fps') || q.includes('lag') || q.includes('3d')) {
-            aiMsg.innerHTML = "৩ডি ভলিউম শেডার টেস্টের মাধ্যমে আপনার ডিভাইসের GPU পারফরম্যান্স যাচাই করা যায়। Slider বাড়িয়ে লোড বাড়াতে পারেন।";
+            aiMsg.innerHTML = "৩ডি ভলিউম শেডার টেস্টের মাধ্যমে আপনার ডিভাইসের GPU পারফরম্যান্স যাচাই করা যায়। Slider বাড়িয়ে লোড বাড়াতে পারেন।";
         } else {
             aiMsg.innerHTML = "ধন্যবাদ মেসেজের জন্য! যেকোনো সহযোগিতার জন্য কল করুন 01944882736 অথবা ইমেইল করুন abthepromo2.0@gmail.com-এ।";
         }
@@ -142,25 +142,33 @@ function animate() {
 
     renderer.render(scene, camera);
 
-    // FPS Diagnostic Counter
+    // FPS Diagnostic Counter & Score Meter Updates
     frameCount++;
     const now = performance.now();
     if (now >= lastTime + 500) {
         const fps = Math.round((frameCount * 1000) / (now - lastTime));
         const fpsCounter = document.getElementById('fps-counter');
         const stressStatus = document.getElementById('stress-status');
+        const gpuScore = document.getElementById('gpu-score');
+        const presetScore = document.getElementById('preset-score');
 
         fpsCounter.innerText = `${fps} FPS`;
 
         if (fps >= 50) {
             fpsCounter.style.color = '#00ff66';
             stressStatus.innerText = 'Status: Excellent GPU Performance';
+            if (gpuScore) gpuScore.innerText = 'Ultra Smooth (High End)';
+            if (presetScore) presetScore.innerText = 'Max / Ultra Graphics';
         } else if (fps >= 30) {
             fpsCounter.style.color = '#ffb700';
             stressStatus.innerText = 'Status: Moderate Load';
+            if (gpuScore) gpuScore.innerText = 'Balanced GPU';
+            if (presetScore) presetScore.innerText = 'Medium / Standard';
         } else {
             fpsCounter.style.color = '#ff0055';
             stressStatus.innerText = 'Status: Stressed / Lagging';
+            if (gpuScore) gpuScore.innerText = 'Low Rendering Capacity';
+            if (presetScore) presetScore.innerText = 'Smooth / Smooth FPS Preset';
         }
 
         frameCount = 0;
