@@ -1,605 +1,189 @@
-```javascript
-const canvas = document.getElementById("shader");
-const gl = canvas.getContext("webgl");
+/* Copy to Clipboard Helper */
+function copyText(text) {
+    navigator.clipboard.writeText(text);
+    alert('Copied: ' + text);
+}
 
-const fpsText = document.getElementById("fps");
-const frameText = document.getElementById("frame");
-const quality = document.getElementById("quality");
-const heavyBtn = document.getElementById("heavyBtn");
+/* Chat Modal Control */
+function toggleChat() {
+    const chat = document.getElementById('chat-modal');
+    chat.style.display = (chat.style.display === 'flex') ? 'none' : 'flex';
+}
 
-let scale = .8;
-let heavy = false;
-let frame = 0;
+/* Dynamic AI Helpline Logic */
+function sendMessage() {
+    const input = document.getElementById('chat-input');
+    const message = input.value.trim();
+    if (!message) return;
+
+    const chatMessages = document.getElementById('chat-messages');
+
+    // Add User Message
+    const userMsg = document.createElement('div');
+    userMsg.className = 'msg msg-user';
+    userMsg.innerText = message;
+    chatMessages.appendChild(userMsg);
+    input.value = '';
+
+    // Auto AI Bot Answer
+    setTimeout(() => {
+        const aiMsg = document.createElement('div');
+        aiMsg.className = 'msg msg-ai';
+        
+        const q = message.toLowerCase();
+        if (q.includes('uid') || q.includes('freefire') || q.includes('ff') || q.includes('id')) {
+            aiMsg.innerHTML = "Abdul Ahad-এর Free Fire UID: <b>2139735924</b> (Nickname: ABDUL AHAD)।";
+        } else if (q.includes('phone') || q.includes('number') || q.includes('কল') || q.includes('ফোন')) {
+            aiMsg.innerHTML = "যোগাযোগের ফোন নম্বর: <b>01944882736</b>।";
+        } else if (q.includes('gmail') || q.includes('email') || q.includes('মেইল')) {
+            aiMsg.innerHTML = "অফিসিয়াল জিমেইল: <b>abthepromo2.0@gmail.com</b>।";
+        } else if (q.includes('instagram') || q.includes('ig')) {
+            aiMsg.innerHTML = "Instagram Profile: <b>@ab.the_promo</b>।";
+        } else if (q.includes('address') || q.includes('tangail') || q.includes('ঠিকানা')) {
+            aiMsg.innerHTML = "ঠিকানা: <b>Tangail, Bangladesh</b> (SSC Batch 2K27)।";
+        } else if (q.includes('fps') || q.includes('lag') || q.includes('3d')) {
+            aiMsg.innerHTML = "৩ডি ভলিউম শেডার টেস্টের মাধ্যমে আপনার ডিভাইসের GPU পারফরম্যান্স যাচাই করা যায়। Slider বাড়িয়ে লোড বাড়াতে পারেন।";
+        } else {
+            aiMsg.innerHTML = "ধন্যবাদ মেসেজের জন্য! যেকোনো সহযোগিতার জন্য কল করুন 01944882736 অথবা ইমেইল করুন abthepromo2.0@gmail.com-এ।";
+        }
+
+        chatMessages.appendChild(aiMsg);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }, 500);
+}
+
+function handleKeyPress(e) {
+    if (e.key === 'Enter') sendMessage();
+}
+
+/* Three.js 3D Volume Shader Performance Tester */
+let scene, camera, renderer, instancedMesh, dummy;
+let count = 4000;
+let rotSpeed = 0.015;
 let lastTime = performance.now();
-let fpsFrames = 0;
-let fpsTime = performance.now();
+let frameCount = 0;
 
-let pointerX = 0;
-let pointerY = 0;
+function init3D() {
+    const container = document.getElementById('canvas-container');
+    scene = new THREE.Scene();
 
-function resize(){
+    camera = new THREE.PerspectiveCamera(60, container.clientWidth / container.clientHeight, 0.1, 1000);
+    camera.position.z = 45;
 
-    canvas.width = innerWidth * scale;
-    canvas.height = innerHeight * scale;
+    renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    renderer.setSize(container.clientWidth, container.clientHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    container.appendChild(renderer.domElement);
 
-    gl.viewport(
-        0,
-        0,
-        canvas.width,
-        canvas.height
-    );
+    dummy = new THREE.Object3D();
+    createVolumeShaderMesh(count);
+
+    // Lights Setup
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+    scene.add(ambientLight);
+
+    const pointLight1 = new THREE.PointLight(0x00f0ff, 2, 100);
+    pointLight1.position.set(15, 20, 20);
+    scene.add(pointLight1);
+
+    const pointLight2 = new THREE.PointLight(0xff007f, 2, 100);
+    pointLight2.position.set(-15, -20, -20);
+    scene.add(pointLight2);
+
+    animate();
 }
 
-addEventListener("resize",resize);
+function createVolumeShaderMesh(total) {
+    if (instancedMesh) scene.remove(instancedMesh);
 
-quality.onchange=()=>{
-    scale=parseFloat(quality.value);
-    resize();
-};
+    const geometry = new THREE.BoxGeometry(0.8, 0.8, 0.8);
+    const material = new THREE.MeshPhongMaterial({
+        color: 0xffffff,
+        shininess: 90
+    });
 
-resize();
+    instancedMesh = new THREE.InstancedMesh(geometry, material, total);
+    const radius = 20;
+    const color = new THREE.Color();
 
-const vertexShaderSource=`
+    for (let i = 0; i < total; i++) {
+        const u = Math.random();
+        const v = Math.random();
+        const theta = u * 2.0 * Math.PI;
+        const phi = Math.acos(2.0 * v - 1.0);
+        const r = Math.cbrt(Math.random()) * radius;
 
-attribute vec2 position;
+        const x = r * Math.sin(phi) * Math.cos(theta);
+        const y = r * Math.sin(phi) * Math.sin(theta);
+        const z = r * Math.cos(phi);
 
-void main(){
+        dummy.position.set(x, y, z);
+        dummy.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, 0);
+        dummy.updateMatrix();
 
-    gl_Position=vec4(position,0.0,1.0);
+        instancedMesh.setMatrixAt(i, dummy.matrix);
 
-}
-`;
-
-const fragmentShaderSource=`
-
-precision highp float;
-
-uniform vec2 resolution;
-uniform float time;
-uniform vec2 mouse;
-uniform float qualityLevel;
-uniform float heavyMode;
-
-#define MAX_STEPS 95
-
-float hash(vec3 p){
-
-    p=fract(p*0.3183099+.1);
-    p*=17.0;
-
-    return fract(
-        p.x*p.y*p.z*(p.x+p.y+p.z)
-    );
-}
-
-float noise(vec3 p){
-
-    vec3 i=floor(p);
-    vec3 f=fract(p);
-
-    f=f*f*(3.0-2.0*f);
-
-    return mix(
-        mix(
-            mix(hash(i+vec3(0,0,0)),
-                hash(i+vec3(1,0,0)),f.x),
-
-            mix(hash(i+vec3(0,1,0)),
-                hash(i+vec3(1,1,0)),f.x),
-
-            f.y
-        ),
-
-        mix(
-            mix(hash(i+vec3(0,0,1)),
-                hash(i+vec3(1,0,1)),f.x),
-
-            mix(hash(i+vec3(0,1,1)),
-                hash(i+vec3(1,1,1)),f.x),
-
-            f.y
-        ),
-
-        f.z
-    );
-}
-
-float fbm(vec3 p){
-
-    float v=0.0;
-    float a=.5;
-
-    for(int i=0;i<5;i++){
-
-        v+=a*noise(p);
-        p*=2.03;
-        a*=.5;
-
+        color.setHSL((x + radius) / (2 * radius), 0.9, 0.5);
+        instancedMesh.setColorAt(i, color);
     }
 
-    return v;
+    instancedMesh.instanceMatrix.needsUpdate = true;
+    if (instancedMesh.instanceColor) instancedMesh.instanceColor.needsUpdate = true;
+    scene.add(instancedMesh);
 }
 
-void main(){
+function animate() {
+    requestAnimationFrame(animate);
 
-    vec2 uv=gl_FragCoord.xy/resolution.xy;
+    if (instancedMesh) {
+        instancedMesh.rotation.y += rotSpeed;
+        instancedMesh.rotation.x += rotSpeed * 0.5;
+    }
 
-    uv=uv*2.0-1.0;
+    renderer.render(scene, camera);
 
-    uv.x*=resolution.x/resolution.y;
+    // FPS Diagnostic Counter
+    frameCount++;
+    const now = performance.now();
+    if (now >= lastTime + 500) {
+        const fps = Math.round((frameCount * 1000) / (now - lastTime));
+        const fpsCounter = document.getElementById('fps-counter');
+        const stressStatus = document.getElementById('stress-status');
 
-    vec3 ro=vec3(0.0,0.0,-4.5);
+        fpsCounter.innerText = `${fps} FPS`;
 
-    vec3 rd=normalize(
-        vec3(
-            uv,
-            1.7
-        )
-    );
-
-    rd.x+=mouse.x*.18;
-    rd.y+=mouse.y*.18;
-
-    float total=0.0;
-
-    vec3 color=vec3(0.0);
-
-    float steps=float(MAX_STEPS);
-
-    for(int i=0;i<95;i++){
-
-        float fi=float(i);
-
-        if(fi>=steps) break;
-
-        vec3 p=ro+rd*(fi*.055);
-
-        float d=length(p);
-
-        float cloud=
-            fbm(
-                p*1.25+
-                vec3(
-                    time*.035,
-                    -time*.025,
-                    time*.02
-                )
-            );
-
-        float density=
-            smoothstep(
-                .75,
-                .1,
-                d
-            )*cloud;
-
-        float glow=
-            exp(-d*1.7);
-
-        color+=density*
-            vec3(
-                .18+glow*.25,
-                .03+glow*.18,
-                .55+glow*.45
-            )*.045;
-
-        if(heavyMode>.5){
-
-            color+=
-                noise(p*3.0+time)*
-                vec3(.0,.08,.13)*
-                .018;
+        if (fps >= 50) {
+            fpsCounter.style.color = '#00ff66';
+            stressStatus.innerText = 'Status: Excellent GPU Performance';
+        } else if (fps >= 30) {
+            fpsCounter.style.color = '#ffb700';
+            stressStatus.innerText = 'Status: Moderate Load';
+        } else {
+            fpsCounter.style.color = '#ff0055';
+            stressStatus.innerText = 'Status: Stressed / Lagging';
         }
 
-        total+=density*.035;
-
-    }
-
-    float center=
-        exp(
-            -length(uv)*3.0
-        );
-
-    color+=vec3(
-        .02,
-        .10,
-        .15
-    )*center;
-
-    color+=vec3(
-        .08,
-        .02,
-        .25
-    )*pow(center,3.0);
-
-    color*=1.0+total*1.8;
-
-    gl_FragColor=
-        vec4(
-            color,
-            1.0
-        );
-
-}
-`;
-
-function shader(type,source){
-
-    const s=gl.createShader(type);
-
-    gl.shaderSource(s,source);
-    gl.compileShader(s);
-
-    if(!gl.getShaderParameter(
-        s,
-        gl.COMPILE_STATUS
-    )){
-        console.error(
-            gl.getShaderInfoLog(s)
-        );
-    }
-
-    return s;
-}
-
-const program=gl.createProgram();
-
-gl.attachShader(
-    program,
-    shader(
-        gl.VERTEX_SHADER,
-        vertexShaderSource
-    )
-);
-
-gl.attachShader(
-    program,
-    shader(
-        gl.FRAGMENT_SHADER,
-        fragmentShaderSource
-    )
-);
-
-gl.linkProgram(program);
-gl.useProgram(program);
-
-const buffer=gl.createBuffer();
-
-gl.bindBuffer(
-    gl.ARRAY_BUFFER,
-    buffer
-);
-
-gl.bufferData(
-    gl.ARRAY_BUFFER,
-    new Float32Array([
-        -1,-1,
-         1,-1,
-        -1, 1,
-        -1, 1,
-         1,-1,
-         1, 1
-    ]),
-    gl.STATIC_DRAW
-);
-
-const position=gl.getAttribLocation(
-    program,
-    "position"
-);
-
-gl.enableVertexAttribArray(position);
-
-gl.vertexAttribPointer(
-    position,
-    2,
-    gl.FLOAT,
-    false,
-    0,
-    0
-);
-
-const resolutionLocation=
-    gl.getUniformLocation(
-        program,
-        "resolution"
-    );
-
-const timeLocation=
-    gl.getUniformLocation(
-        program,
-        "time"
-    );
-
-const mouseLocation=
-    gl.getUniformLocation(
-        program,
-        "mouse"
-    );
-
-const heavyLocation=
-    gl.getUniformLocation(
-        program,
-        "heavyMode"
-    );
-
-canvas.addEventListener(
-    "pointermove",
-    e=>{
-
-        pointerX=
-            e.clientX/innerWidth*2-1;
-
-        pointerY=
-            -(e.clientY/innerHeight*2-1);
-
-    }
-);
-
-canvas.addEventListener(
-    "touchmove",
-    e=>{
-
-        const t=e.touches[0];
-
-        pointerX=
-            t.clientX/innerWidth*2-1;
-
-        pointerY=
-            -(t.clientY/innerHeight*2-1);
-
-    },
-    {passive:true}
-);
-
-heavyBtn.onclick=()=>{
-
-    heavy=!heavy;
-
-    heavyBtn.textContent=
-        heavy
-        ? "🔥 HEAVY GPU MODE: ON"
-        : "🔥 HEAVY GPU MODE: OFF";
-
-};
-
-function render(now){
-
-    frame++;
-
-    const seconds=now/1000;
-
-    gl.uniform2f(
-        resolutionLocation,
-        canvas.width,
-        canvas.height
-    );
-
-    gl.uniform1f(
-        timeLocation,
-        seconds
-    );
-
-    gl.uniform2f(
-        mouseLocation,
-        pointerX,
-        pointerY
-    );
-
-    gl.uniform1f(
-        heavyLocation,
-        heavy?1:0
-    );
-
-    gl.drawArrays(
-        gl.TRIANGLES,
-        0,
-        6
-    );
-
-    fpsFrames++;
-
-    if(now-fpsTime>=500){
-
-        const fps=
-            Math.round(
-                fpsFrames*1000/
-                (now-fpsTime)
-            );
-
-        fpsText.textContent=fps;
-
-        frameText.textContent=frame;
-
-        fpsFrames=0;
-        fpsTime=now;
-    }
-
-    requestAnimationFrame(render);
-
-}
-
-requestAnimationFrame(render);
-
-
-/* =========================
-   AI CHAT
-========================= */
-
-const chat=document.getElementById("chat");
-const prompt=document.getElementById("prompt");
-const send=document.getElementById("send");
-
-function addMessage(text,type){
-
-    const msg=document.createElement("div");
-
-    msg.className=
-        "msg "+
-        (type==="user"?"user":"bot");
-
-    const icon=
-        type==="user"
-        ?"👤"
-        :"🤖";
-
-    const bubble=
-        document.createElement("div");
-
-    bubble.textContent=text;
-
-    const span=
-        document.createElement("span");
-
-    span.textContent=icon;
-
-    msg.appendChild(span);
-    msg.appendChild(bubble);
-
-    chat.appendChild(msg);
-
-    chat.scrollTop=chat.scrollHeight;
-}
-
-async function sendMessage(){
-
-    const text=
-        prompt.value.trim();
-
-    if(!text)return;
-
-    addMessage(text,"user");
-
-    prompt.value="";
-
-    addMessage(
-        "Thinking... ⏳",
-        "bot"
-    );
-
-    const loading=
-        chat.lastElementChild;
-
-    try{
-
-        const response=
-            await fetch(
-                "/api/chat",
-                {
-                    method:"POST",
-                    headers:{
-                        "Content-Type":
-                            "application/json"
-                    },
-                    body:JSON.stringify({
-                        message:text
-                    })
-                }
-            );
-
-        const data=
-            await response.json();
-
-        loading.remove();
-
-        if(!response.ok){
-
-            throw new Error(
-                data.error ||
-                "AI request failed"
-            );
-        }
-
-        addMessage(
-            data.reply,
-            "bot"
-        );
-
-    }catch(error){
-
-        loading.remove();
-
-        addMessage(
-            "❌ AI connection error: "+
-            error.message+
-            "\n\nCheck that your backend is running.",
-            "bot"
-        );
+        frameCount = 0;
+        lastTime = now;
     }
 }
 
-send.onclick=sendMessage;
+/* Event Listeners */
+document.getElementById('particle-slider').addEventListener('input', (e) => {
+    count = parseInt(e.target.value);
+    createVolumeShaderMesh(count);
+});
 
-prompt.addEventListener(
-    "keydown",
-    e=>{
+document.getElementById('speed-slider').addEventListener('input', (e) => {
+    rotSpeed = parseFloat(e.target.value);
+});
 
-        if(
-            e.key==="Enter" &&
-            !e.shiftKey
-        ){
+window.addEventListener('resize', () => {
+    const container = document.getElementById('canvas-container');
+    if (!container) return;
+    camera.aspect = container.clientWidth / container.clientHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(container.clientWidth, container.clientHeight);
+});
 
-            e.preventDefault();
-
-            sendMessage();
-
-        }
-
-    }
-);
-
-function quick(text){
-
-    prompt.value=text;
-
-    sendMessage();
-
-}
-
-function clearChat(){
-
-    chat.innerHTML="";
-
-    addMessage(
-        "Chat cleared. Ready again 🚀",
-        "bot"
-    );
-
-}
-
-
-/* VOICE */
-
-document.getElementById(
-    "voice"
-).onclick=()=>{
-
-    const Recognition=
-        window.SpeechRecognition ||
-        window.webkitSpeechRecognition;
-
-    if(!Recognition){
-
-        alert(
-            "Voice recognition is not supported."
-        );
-
-        return;
-    }
-
-    const recognition=
-        new Recognition();
-
-    recognition.lang="bn-BD";
-
-    recognition.start();
-
-    recognition.onresult=e=>{
-
-        prompt.value=
-            e.results[0][0].transcript;
-
-    };
-
-};
-```9
+window.onload = init3D;
