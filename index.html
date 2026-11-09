@@ -1,158 +1,176 @@
-```html
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>AB THE PROMO AI</title>
-<link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ab the promo | Tech & Gaming Hub</title>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Hind+Siliguri:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- CSS File Link -->
+    <link rel="stylesheet" href="style.css">
+    <!-- Three.js for 3D Volume Shader -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
-
 <body>
 
-<canvas id="shader"></canvas>
+    <div class="bg-canvas"></div>
 
-<header>
-    <div class="brand">
-        <div class="brandIcon">AB</div>
-        <div>
-            <b>AB THE PROMO</b>
-            <small>AI SYSTEM</small>
-        </div>
-    </div>
+    <!-- Header Navbar -->
+    <header>
+        <div class="brand-logo">ab the promo</div>
+        <div class="badge-ssc"><i class="fa-solid fa-graduation-cap"></i> SSC BATCH 2K27</div>
+    </header>
 
-    <div class="online">
-        <i></i> ONLINE
-    </div>
-</header>
+    <!-- Main Container -->
+    <div class="main-container">
 
-<main>
+        <!-- 3D Volume Shader Benchmark Section -->
+        <div class="glass-card shader-section">
+            <div class="section-title">
+                <i class="fa-solid fa-microchip"></i> 3D Volume Shader GPU Performance Test
+            </div>
+            <p class="section-desc">
+                আপনার ফোন বা পিসির পারফরম্যান্স এবং জিপিইউ (GPU) সক্ষমতা পরীক্ষা করার জন্য নিচের ৩ডি ভলিউম শেডার স্ট্রেস টেস্টটি ব্যবহার করুন।
+            </p>
 
-<section class="hero">
-    <div class="badge">⚡ NEXT GENERATION AI</div>
-
-    <h1>
-        AB THE<br>
-        <span>PROMO AI</span>
-    </h1>
-
-    <p>
-        AI Assistant • WebGL • Volume Shader • Performance Lab
-    </p>
-</section>
-
-<section class="dashboard">
-
-    <div class="performance">
-        <div class="perfTitle">
-            <b>⚙ PERFORMANCE LAB</b>
-            <select id="quality">
-                <option value="0.5">LOW</option>
-                <option value="0.8" selected>MEDIUM</option>
-                <option value="1">HIGH</option>
-                <option value="1.5">ULTRA</option>
-            </select>
-        </div>
-
-        <div class="stats">
-            <div>
-                <small>FPS</small>
-                <strong id="fps">--</strong>
+            <div id="canvas-container">
+                <div class="fps-overlay">
+                    <div id="fps-counter" class="fps-val">60 FPS</div>
+                    <div id="stress-status" class="fps-status">Status: Checking...</div>
+                </div>
             </div>
 
-            <div>
-                <small>FRAME</small>
-                <strong id="frame">--</strong>
-            </div>
-
-            <div>
-                <small>GPU MODE</small>
-                <strong id="gpu">WEBGL</strong>
-            </div>
-        </div>
-
-        <button id="heavyBtn">
-            🔥 HEAVY GPU MODE: OFF
-        </button>
-    </div>
-
-    <div class="ai">
-
-        <div class="aiHeader">
-            <div class="botIcon">🤖</div>
-            <div>
-                <b>AB THE PROMO AI</b>
-                <small>Real AI Assistant</small>
-            </div>
-            <button onclick="clearChat()">CLEAR</button>
-        </div>
-
-        <div id="chat" class="chat">
-            <div class="msg bot">
-                <span>🤖</span>
-                <div>
-                    Hello! আমি <b>AB THE PROMO AI</b>।<br><br>
-                    আমাকে যেকোনো প্রশ্ন করতে পারো।
+            <div class="shader-controls">
+                <div class="control-group">
+                    <label for="particle-slider">Voxel Mesh Density (Stress Level):</label>
+                    <input type="range" id="particle-slider" min="500" max="20000" step="500" value="4000">
+                </div>
+                <div class="control-group">
+                    <label for="speed-slider">Rotation Speed:</label>
+                    <input type="range" id="speed-slider" min="0" max="0.05" step="0.005" value="0.015">
                 </div>
             </div>
         </div>
 
-        <div class="inputArea">
+        <!-- Info Grid -->
+        <div class="info-grid">
+            
+            <!-- Gamer Profile Card -->
+            <div class="glass-card profile-card">
+                <h3><i class="fa-solid fa-gamepad"></i> Free Fire Gamer Profile</h3>
+                
+                <div class="info-item">
+                    <div class="info-left">
+                        <div class="info-icon"><i class="fa-solid fa-id-card"></i></div>
+                        <div class="info-text">
+                            <label>Free Fire UID</label>
+                            <span>2139735924</span>
+                        </div>
+                    </div>
+                    <button class="btn-copy" onclick="copyText('2139735924')">Copy</button>
+                </div>
 
-            <div class="quick">
-                <button onclick="quick('Write a modern website code')">🌐 Website</button>
-                <button onclick="quick('Explain JavaScript simply')">💻 JavaScript</button>
-                <button onclick="quick('Give me a creative idea')">💡 Idea</button>
+                <div class="info-item">
+                    <div class="info-left">
+                        <div class="info-icon"><i class="fa-solid fa-user-ninja"></i></div>
+                        <div class="info-text">
+                            <label>In-Game Nickname</label>
+                            <span>ABDUL AHAD</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-item">
+                    <div class="info-left">
+                        <div class="info-icon"><i class="fa-solid fa-award"></i></div>
+                        <div class="info-text">
+                            <label>Academic Status</label>
+                            <span>SSC BATCH 2K27</span>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <div class="inputBox">
-                <button id="voice">🎤</button>
+            <!-- Contact Details Card -->
+            <div class="glass-card contact-card">
+                <h3><i class="fa-solid fa-address-book"></i> Official Contact Info</h3>
 
-                <textarea
-                    id="prompt"
-                    placeholder="Ask AB THE PROMO AI..."
-                ></textarea>
+                <div class="info-item">
+                    <div class="info-left">
+                        <div class="info-icon"><i class="fa-solid fa-envelope"></i></div>
+                        <div class="info-text">
+                            <label>Gmail Address</label>
+                            <span>abthepromo2.0@gmail.com</span>
+                        </div>
+                    </div>
+                    <button class="btn-copy" onclick="copyText('abthepromo2.0@gmail.com')">Copy</button>
+                </div>
 
-                <button id="send">➤</button>
+                <div class="info-item">
+                    <div class="info-left">
+                        <div class="info-icon"><i class="fa-solid fa-phone"></i></div>
+                        <div class="info-text">
+                            <label>Phone Number</label>
+                            <span>01944882736</span>
+                        </div>
+                    </div>
+                    <a href="tel:01944882736" class="btn-action">Call</a>
+                </div>
+
+                <div class="info-item">
+                    <div class="info-left">
+                        <div class="info-icon"><i class="fa-brands fa-instagram"></i></div>
+                        <div class="info-text">
+                            <label>Instagram</label>
+                            <span>@ab.the_promo</span>
+                        </div>
+                    </div>
+                    <a href="https://instagram.com/ab.the_promo" target="_blank" class="btn-action">Visit</a>
+                </div>
+
+                <div class="info-item">
+                    <div class="info-left">
+                        <div class="info-icon"><i class="fa-solid fa-location-dot"></i></div>
+                        <div class="info-text">
+                            <label>Location</label>
+                            <span>Tangail, Bangladesh</span>
+                        </div>
+                    </div>
+                </div>
+
             </div>
 
         </div>
 
     </div>
 
-</section>
+    <!-- AI Floating Helpline Button -->
+    <button class="ai-fab" onclick="toggleChat()"><i class="fa-solid fa-robot"></i></button>
 
-<section class="features">
-
-    <div class="feature">
-        <b>🤖 REAL AI</b>
-        <p>Secure backend API connection.</p>
+    <!-- AI Chat Modal -->
+    <div class="chat-modal" id="chat-modal">
+        <div class="chat-header">
+            <span><i class="fa-solid fa-brain"></i> AI Tech Helpline</span>
+            <button onclick="toggleChat()"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="chat-messages" id="chat-messages">
+            <div class="msg msg-ai">
+                হ্যালো! আমি <b>ab the promo</b>-র AI Assistant। আপনার ডিভাইস পারফরম্যান্স, ফ্রি ফায়ার আইডি বা যোগাযোগের তথ্যের জন্য যেকোনো প্রশ্ন করতে পারেন।
+            </div>
+        </div>
+        <div class="chat-input-area">
+            <input type="text" id="chat-input" placeholder="প্রশ্ন টাইপ করুন..." onkeypress="handleKeyPress(event)">
+            <button onclick="sendMessage()"><i class="fa-solid fa-paper-plane"></i></button>
+        </div>
     </div>
 
-    <div class="feature">
-        <b>🌌 VOLUME SHADER</b>
-        <p>Animated WebGL volumetric effect.</p>
-    </div>
+    <footer>
+        &copy; 2026 ab the promo | High Performance 3D Benchmark Engine
+    </footer>
 
-    <div class="feature">
-        <b>🔥 GPU TEST</b>
-        <p>Heavy rendering performance mode.</p>
-    </div>
-
-    <div class="feature">
-        <b>👆 TOUCH</b>
-        <p>Touch and mouse interaction.</p>
-    </div>
-
-</section>
-
-</main>
-
-<footer>
-    © 2026 <b>AB THE PROMO</b> • AI PERFORMANCE LAB
-</footer>
-
-<script src="app.js"></script>
+    <!-- JS File Link -->
+    <script src="script.js"></script>
 </body>
 </html>
-```
