@@ -1,1164 +1,1253 @@
 /* =========================================
-   AB THE PROMO
-   TANGAIL 3D BATTLE ROYALE
+   ABDUL AHAD
+   ADVANCED PORTFOLIO ENGINE
 ========================================= */
-
-const game = document.getElementById("game");
-
-let scene;
-let camera;
-let renderer;
-let player;
-
-let bots = [];
-let bullets = [];
-let walls = [];
-
-let running = false;
-let currentGun = "MP40";
-
-let hp = 100;
-let kills = 0;
-let ammo = 30;
-
-let zoneRadius = 100;
-let zoneTimer = 120;
-
-let keys = {};
-
-let lastTime = performance.now();
-let frameCounter = 0;
-let fps = 0;
-
-const guns = {
-
-  MP40:{
-    damage:12,
-    speed:.8,
-    ammo:30,
-    color:0xff4444
-  },
-
-  UMP:{
-    damage:16,
-    speed:1,
-    ammo:30,
-    color:0x44aaff
-  },
-
-  AWM:{
-    damage:100,
-    speed:1.8,
-    ammo:5,
-    color:0xffffff
-  },
-
-  M82B:{
-    damage:130,
-    speed:2,
-    ammo:5,
-    color:0xffcc44
-  }
-
-};
 
 
 /* =========================================
-   START GAME
+   PARTICLES
 ========================================= */
 
-document.getElementById("startGame")
-.addEventListener("click",()=>{
+const particleContainer =
+    document.getElementById("particles");
 
-  document.getElementById("lobby").style.display="none";
+for(let i=0;i<90;i++){
 
-  init();
+    const particle =
+        document.createElement("div");
 
-  setTimeout(()=>{
-    document.getElementById("loading").style.display="none";
-  },700);
+    particle.className =
+        "particle";
 
-});
+    particle.style.left =
+        Math.random()*100 + "%";
 
+    particle.style.animationDuration =
+        (5 + Math.random()*15) + "s";
 
-/* =========================================
-   THREE.JS
-========================================= */
+    particle.style.animationDelay =
+        (-Math.random()*15) + "s";
 
-function init(){
+    particle.style.opacity =
+        .15 + Math.random()*.6;
 
-  scene = new THREE.Scene();
-
-  scene.background = new THREE.Color(0x07101b);
-
-  scene.fog = new THREE.Fog(
-    0x07101b,
-    50,
-    500
-  );
-
-
-  camera = new THREE.PerspectiveCamera(
-    70,
-    innerWidth / innerHeight,
-    .1,
-    1000
-  );
-
-  camera.position.set(
-    0,
-    7,
-    12
-  );
-
-
-  renderer = new THREE.WebGLRenderer({
-    antialias:true,
-    powerPreference:"high-performance"
-  });
-
-  renderer.setSize(
-    innerWidth,
-    innerHeight
-  );
-
-  renderer.setPixelRatio(
-    Math.min(devicePixelRatio,1.5)
-  );
-
-  game.appendChild(
-    renderer.domElement
-  );
-
-
-  /* LIGHT */
-
-  const ambient =
-    new THREE.HemisphereLight(
-      0x9fc9ff,
-      0x101020,
-      1.2
+    particleContainer.appendChild(
+        particle
     );
-
-  scene.add(ambient);
-
-
-  const sun =
-    new THREE.DirectionalLight(
-      0xffffff,
-      1.5
-    );
-
-  sun.position.set(
-    100,
-    150,
-    80
-  );
-
-  scene.add(sun);
-
-
-  createMap();
-
-  createPlayer();
-
-  createBots(10);
-
-  createZone();
-
-  running=true;
-
-  animate();
-
-  startZone();
-
 }
 
 
 /* =========================================
-   MAP
+   SCROLL PROGRESS
 ========================================= */
 
-function createMap(){
-
-  const groundGeo =
-    new THREE.PlaneGeometry(
-      500,
-      500
-    );
-
-  const groundMat =
-    new THREE.MeshStandardMaterial({
-      color:0x1d432b,
-      roughness:1
-    });
-
-  const ground =
-    new THREE.Mesh(
-      groundGeo,
-      groundMat
-    );
-
-  ground.rotation.x=-Math.PI/2;
-
-  scene.add(ground);
-
-
-  /* ROADS */
-
-  for(let i=-3;i<=3;i++){
-
-    const roadGeo =
-      new THREE.BoxGeometry(
-        500,
-        .08,
-        7
-      );
-
-    const roadMat =
-      new THREE.MeshStandardMaterial({
-        color:0x292929
-      });
-
-    const road =
-      new THREE.Mesh(
-        roadGeo,
-        roadMat
-      );
-
-    road.position.z=i*45;
-
-    scene.add(road);
-  }
-
-
-  /* HOUSES */
-
-  for(let i=0;i<70;i++){
-
-    const x =
-      (Math.random()-.5)*420;
-
-    const z =
-      (Math.random()-.5)*420;
-
-    if(
-      Math.abs(x)<30 &&
-      Math.abs(z)<30
-    ) continue;
-
-    createHouse(x,z);
-  }
-
-
-  /* TREES */
-
-  for(let i=0;i<150;i++){
-
-    const x =
-      (Math.random()-.5)*460;
-
-    const z =
-      (Math.random()-.5)*460;
-
-    createTree(x,z);
-  }
-
-}
-
-
-/* =========================================
-   HOUSE
-========================================= */
-
-function createHouse(x,z){
-
-  const group =
-    new THREE.Group();
-
-
-  const body =
-    new THREE.Mesh(
-      new THREE.BoxGeometry(
-        9,
-        6,
-        8
-      ),
-      new THREE.MeshStandardMaterial({
-        color:
-          new THREE.Color()
-          .setHSL(
-            Math.random(),
-            .35,
-            .35
-          )
-      })
-    );
-
-  body.position.y=3;
-
-  group.add(body);
-
-
-  const roof =
-    new THREE.Mesh(
-      new THREE.ConeGeometry(
-        7,
-        3,
-        4
-      ),
-      new THREE.MeshStandardMaterial({
-        color:0x4a2020
-      })
-    );
-
-  roof.position.y=7;
-
-  roof.rotation.y=Math.PI/4;
-
-  group.add(roof);
-
-  group.position.set(
-    x,
-    0,
-    z
-  );
-
-  scene.add(group);
-
-}
-
-
-/* =========================================
-   TREE
-========================================= */
-
-function createTree(x,z){
-
-  const tree =
-    new THREE.Group();
-
-
-  const trunk =
-    new THREE.Mesh(
-      new THREE.CylinderGeometry(
-        .7,
-        1,
-        5,
-        8
-      ),
-      new THREE.MeshStandardMaterial({
-        color:0x704020
-      })
-    );
-
-  trunk.position.y=2.5;
-
-  tree.add(trunk);
-
-
-  const crown =
-    new THREE.Mesh(
-      new THREE.SphereGeometry(
-        3.5,
-        8,
-        8
-      ),
-      new THREE.MeshStandardMaterial({
-        color:0x126b36
-      })
-    );
-
-  crown.position.y=6;
-
-  tree.add(crown);
-
-
-  tree.position.set(
-    x,
-    0,
-    z
-  );
-
-  scene.add(tree);
-
-}
-
-
-/* =========================================
-   PLAYER
-========================================= */
-
-function createPlayer(){
-
-  player =
-    new THREE.Group();
-
-
-  const body =
-    new THREE.Mesh(
-      new THREE.CapsuleGeometry(
-        1,
-        2,
-        5,
-        8
-      ),
-      new THREE.MeshStandardMaterial({
-        color:0x00aaff
-      })
-    );
-
-  body.position.y=2;
-
-  player.add(body);
-
-
-  const head =
-    new THREE.Mesh(
-      new THREE.SphereGeometry(
-        .75,
-        12,
-        12
-      ),
-      new THREE.MeshStandardMaterial({
-        color:0xffc59c
-      })
-    );
-
-  head.position.y=4;
-
-  player.add(head);
-
-
-  player.position.set(
-    0,
-    0,
-    0
-  );
-
-  scene.add(player);
-
-}
-
-
-/* =========================================
-   BOTS
-========================================= */
-
-function createBots(count){
-
-  for(let i=0;i<count;i++){
-
-    const bot =
-      new THREE.Group();
-
-
-    const body =
-      new THREE.Mesh(
-        new THREE.CapsuleGeometry(
-          1,
-          2,
-          5,
-          8
-        ),
-        new THREE.MeshStandardMaterial({
-          color:0xff3344
-        })
-      );
-
-    body.position.y=2;
-
-    bot.add(body);
-
-
-    const head =
-      new THREE.Mesh(
-        new THREE.SphereGeometry(
-          .7,
-          10,
-          10
-        ),
-        new THREE.MeshStandardMaterial({
-          color:0xffb08a
-        })
-      );
-
-    head.position.y=4;
-
-    bot.add(head);
-
-
-    bot.position.set(
-      (Math.random()-.5)*180,
-      0,
-      (Math.random()-.5)*180
-    );
-
-    bot.userData.hp=100;
-    bot.userData.speed=.015+Math.random()*.02;
-    bot.userData.nextShot=Date.now()+2000;
-
-    scene.add(bot);
-
-    bots.push(bot);
-
-  }
-
-}
-
-
-/* =========================================
-   ZONE
-========================================= */
-
-function createZone(){
-
-  const geometry =
-    new THREE.RingGeometry(
-      zoneRadius-1,
-      zoneRadius,
-      96
-    );
-
-  const material =
-    new THREE.MeshBasicMaterial({
-      color:0xff1744,
-      transparent:true,
-      opacity:.8,
-      side:THREE.DoubleSide
-    });
-
-  const ring =
-    new THREE.Mesh(
-      geometry,
-      material
-    );
-
-  ring.rotation.x=-Math.PI/2;
-
-  ring.position.y=.1;
-
-  ring.name="ZONE";
-
-  scene.add(ring);
-
-}
-
-
-function startZone(){
-
-  setInterval(()=>{
-
-    if(!running) return;
-
-    zoneTimer--;
-
+const progress =
     document.getElementById(
-      "zoneTimer"
-    ).textContent=zoneTimer;
+        "scrollProgress"
+    );
 
-    if(zoneTimer<=0){
-
-      zoneRadius=Math.max(
-        15,
-        zoneRadius-10
-      );
-
-      zoneTimer=60;
-
-      const zone =
-        scene.getObjectByName("ZONE");
-
-      if(zone){
-
-        zone.scale.set(
-          zoneRadius/100,
-          zoneRadius/100,
-          zoneRadius/100
-        );
-
-      }
-
-    }
-
-    const distance =
-      Math.sqrt(
-        player.position.x**2+
-        player.position.z**2
-      );
-
-    if(distance>zoneRadius){
-
-      hp-=1;
-
-      updateHUD();
-
-      if(hp<=0){
-        endGame();
-      }
-
-    }
-
-  },1000);
-
-}
-
-
-/* =========================================
-   WEAPONS
-========================================= */
-
-document
-.querySelectorAll("[data-gun]")
-.forEach(button=>{
-
-  button.addEventListener(
-    "click",
+window.addEventListener(
+    "scroll",
     ()=>{
 
-      currentGun =
-        button.dataset.gun;
+        const scrollTop =
+            window.scrollY;
 
-      ammo =
-        guns[currentGun].ammo;
+        const height =
+            document.documentElement
+            .scrollHeight -
+            window.innerHeight;
 
-      document.getElementById(
-        "weaponName"
-      ).textContent=currentGun;
+        const percent =
+            height > 0
+            ? scrollTop / height * 100
+            : 0;
 
-      updateHUD();
+        progress.style.width =
+            percent + "%";
 
+    },
+    {passive:true}
+);
+
+
+/* =========================================
+   MOBILE MENU
+========================================= */
+
+const menuBtn =
+    document.getElementById(
+        "menuBtn"
+    );
+
+const navMenu =
+    document.getElementById(
+        "navMenu"
+    );
+
+menuBtn.addEventListener(
+    "click",
+    ()=>{
+        navMenu.classList.toggle(
+            "active"
+        );
     }
-  );
+);
+
+document
+.querySelectorAll("#navMenu a")
+.forEach(link=>{
+
+    link.addEventListener(
+        "click",
+        ()=>{
+            navMenu.classList.remove(
+                "active"
+            );
+        }
+    );
 
 });
 
 
 /* =========================================
-   SHOOT
+   SCROLL REVEAL
 ========================================= */
 
-document
-.getElementById("shootBtn")
-.addEventListener(
-  "click",
-  shoot
-);
+const observer =
+    new IntersectionObserver(
+        entries=>{
 
+            entries.forEach(
+                entry=>{
 
-function shoot(){
+                    if(
+                        entry.isIntersecting
+                    ){
 
-  if(!running) return;
+                        entry.target
+                            .classList
+                            .add("visible");
 
-  if(ammo<=0){
+                    }
 
-    ammo=guns[currentGun].ammo;
+                }
+            );
 
-  }
-
-  ammo--;
-
-  updateHUD();
-
-
-  const direction =
-    new THREE.Vector3(
-      0,
-      0,
-      -1
+        },
+        {
+            threshold:.12
+        }
     );
-
-  direction.applyQuaternion(
-    camera.quaternion
-  );
-
-
-  const bullet =
-    new THREE.Mesh(
-      new THREE.SphereGeometry(
-        .12,
-        6,
-        6
-      ),
-      new THREE.MeshBasicMaterial({
-        color:
-          guns[currentGun].color
-      })
-    );
-
-
-  bullet.position.copy(
-    camera.position
-  );
-
-  bullet.userData.direction =
-    direction;
-
-  bullet.userData.life=100;
-
-  scene.add(bullet);
-
-  bullets.push(bullet);
-
-}
-
-
-/* =========================================
-   GLOO WALL
-========================================= */
 
 document
-.getElementById("wallBtn")
-.addEventListener(
-  "click",
-  createWall
-);
-
-
-function createWall(){
-
-  const wall =
-    new THREE.Mesh(
-      new THREE.BoxGeometry(
-        6,
-        4,
-        .5
-      ),
-      new THREE.MeshStandardMaterial({
-        color:0x55ccff,
-        transparent:true,
-        opacity:.65
-      })
-    );
-
-
-  wall.position.copy(
-    player.position
-  );
-
-  wall.position.z-=5;
-
-  scene.add(wall);
-
-  walls.push(wall);
-
-}
-
-
-/* =========================================
-   CAR
-========================================= */
-
-let car=null;
-
-document
-.getElementById("carBtn")
-.addEventListener(
-  "click",
-  ()=>{
-
-    if(car){
-
-      player.position.copy(
-        car.position
-      );
-
-      return;
-
-    }
-
-    car =
-      new THREE.Group();
-
-
-    const body =
-      new THREE.Mesh(
-        new THREE.BoxGeometry(
-          5,
-          1.5,
-          8
-        ),
-        new THREE.MeshStandardMaterial({
-          color:0xff1744,
-          metalness:.4,
-          roughness:.3
-        })
-      );
-
-    body.position.y=1.5;
-
-    car.add(body);
-
-
-    const cabin =
-      new THREE.Mesh(
-        new THREE.BoxGeometry(
-          3.5,
-          1.5,
-          3
-        ),
-        new THREE.MeshStandardMaterial({
-          color:0x111827,
-          transparent:true,
-          opacity:.8
-        })
-      );
-
-    cabin.position.y=2.8;
-
-    car.add(cabin);
-
-
-    car.position.copy(
-      player.position
-    );
-
-    car.position.z-=8;
-
-    scene.add(car);
-
-  }
+.querySelectorAll(".reveal")
+.forEach(
+    element=>
+        observer.observe(element)
 );
 
 
 /* =========================================
-   SCOPE
+   BACK TO TOP
 ========================================= */
 
-let scoped=false;
-
-document
-.getElementById("scopeBtn")
-.addEventListener(
-  "click",
-  ()=>{
-
-    scoped=!scoped;
-
+const topBtn =
     document.getElementById(
-      "scopeBtn"
-    ).textContent=
-      scoped?"ON":"OFF";
-
-    camera.fov=
-      scoped?25:70;
-
-    camera.updateProjectionMatrix();
-
-  }
-);
-
-
-/* =========================================
-   MOVEMENT
-========================================= */
-
-window.addEventListener(
-  "keydown",
-  e=>{
-    keys[e.key.toLowerCase()]=true;
-  }
-);
-
-window.addEventListener(
-  "keyup",
-  e=>{
-    keys[e.key.toLowerCase()]=false;
-  }
-);
-
-
-function movePlayer(delta){
-
-  if(!player) return;
-
-  const speed =
-    18*delta;
-
-  if(keys["w"] || keys["arrowup"])
-    player.position.z-=speed;
-
-  if(keys["s"] || keys["arrowdown"])
-    player.position.z+=speed;
-
-  if(keys["a"] || keys["arrowleft"])
-    player.position.x-=speed;
-
-  if(keys["d"] || keys["arrowright"])
-    player.position.x+=speed;
-
-
-  camera.position.x =
-    player.position.x;
-
-  camera.position.z =
-    player.position.z+12;
-
-  camera.lookAt(
-    player.position.x,
-    2,
-    player.position.z
-  );
-
-}
-
-
-/* =========================================
-   BULLETS
-========================================= */
-
-function updateBullets(){
-
-  for(let i=bullets.length-1;i>=0;i--){
-
-    const bullet=bullets[i];
-
-    bullet.position.add(
-      bullet.userData.direction
-      .clone()
-      .multiplyScalar(.8)
+        "topBtn"
     );
 
-    bullet.userData.life--;
+window.addEventListener(
+    "scroll",
+    ()=>{
 
-    for(let j=bots.length-1;j>=0;j--){
+        if(window.scrollY > 600){
 
-      const bot=bots[j];
+            topBtn.classList.add(
+                "show"
+            );
 
-      if(
-        bullet.position.distanceTo(
-          bot.position
-        )<2.5
-      ){
+        }else{
 
-        bot.userData.hp -=
-          guns[currentGun].damage;
-
-        bullet.userData.life=0;
-
-        if(bot.userData.hp<=0){
-
-          scene.remove(bot);
-
-          bots.splice(j,1);
-
-          kills++;
-
-          document.getElementById(
-            "kills"
-          ).textContent=kills;
-
-          document.getElementById(
-            "alive"
-          ).textContent=
-            bots.length+1;
+            topBtn.classList.remove(
+                "show"
+            );
 
         }
 
-        break;
+    },
+    {passive:true}
+);
 
-      }
+topBtn.addEventListener(
+    "click",
+    ()=>{
+        window.scrollTo({
+            top:0,
+            behavior:"smooth"
+        });
+    }
+);
+
+
+/* =========================================
+   FPS ENGINE
+========================================= */
+
+const fpsValue =
+    document.getElementById(
+        "fpsValue"
+    );
+
+const fpsStatus =
+    document.getElementById(
+        "fpsStatus"
+    );
+
+let frames = 0;
+
+let lastFPSUpdate =
+    performance.now();
+
+let currentFPS = 0;
+
+function fpsLoop(time){
+
+    frames++;
+
+    if(
+        time -
+        lastFPSUpdate
+        >= 1000
+    ){
+
+        currentFPS =
+            frames;
+
+        frames = 0;
+
+        lastFPSUpdate =
+            time;
+
+        fpsValue.textContent =
+            currentFPS;
+
+        updateFPSStatus(
+            currentFPS
+        );
+
+        addFPSPoint(
+            currentFPS
+        );
+    }
+
+    requestAnimationFrame(
+        fpsLoop
+    );
+}
+
+requestAnimationFrame(
+    fpsLoop
+);
+
+
+/* =========================================
+   FPS STATUS
+========================================= */
+
+function updateFPSStatus(fps){
+
+    if(fps >= 55){
+
+        fpsStatus.textContent =
+            "EXCELLENT";
+
+        fpsStatus.style.color =
+            "#00ff9d";
+
+    }
+    else if(fps >= 35){
+
+        fpsStatus.textContent =
+            "GOOD";
+
+        fpsStatus.style.color =
+            "#ffe600";
+
+    }
+    else{
+
+        fpsStatus.textContent =
+            "HEAVY LOAD";
+
+        fpsStatus.style.color =
+            "#ff4d6d";
+    }
+}
+
+
+/* =========================================
+   FPS GRAPH
+========================================= */
+
+const graph =
+    document.getElementById(
+        "fpsGraph"
+    );
+
+const ctx =
+    graph.getContext("2d");
+
+let fpsData = [];
+
+function resizeGraph(){
+
+    const ratio =
+        window.devicePixelRatio || 1;
+
+    const rect =
+        graph.getBoundingClientRect();
+
+    graph.width =
+        rect.width * ratio;
+
+    graph.height =
+        rect.height * ratio;
+
+    ctx.scale(
+        ratio,
+        ratio
+    );
+}
+
+resizeGraph();
+
+window.addEventListener(
+    "resize",
+    ()=>{
+        resizeGraph();
+        drawGraph();
+    }
+);
+
+function addFPSPoint(value){
+
+    fpsData.push(value);
+
+    if(
+        fpsData.length > 80
+    ){
+        fpsData.shift();
+    }
+
+    drawGraph();
+}
+
+function drawGraph(){
+
+    const width =
+        graph.clientWidth;
+
+    const height =
+        graph.clientHeight;
+
+    ctx.clearRect(
+        0,
+        0,
+        width,
+        height
+    );
+
+
+    /* GRID */
+
+    ctx.strokeStyle =
+        "rgba(255,255,255,.05)";
+
+    ctx.lineWidth = 1;
+
+    for(
+        let i=0;
+        i<6;
+        i++
+    ){
+
+        const y =
+            i *
+            height / 5;
+
+        ctx.beginPath();
+
+        ctx.moveTo(
+            0,
+            y
+        );
+
+        ctx.lineTo(
+            width,
+            y
+        );
+
+        ctx.stroke();
 
     }
 
 
-    if(bullet.userData.life<=0){
+    /* LINE */
 
-      scene.remove(bullet);
+    if(fpsData.length < 2)
+        return;
 
-      bullets.splice(i,1);
+    ctx.beginPath();
 
-    }
+    fpsData.forEach(
+        (value,index)=>{
 
-  }
+            const x =
+                index *
+                width /
+                79;
+
+            const safeValue =
+                Math.min(
+                    value,
+                    120
+                );
+
+            const y =
+                height -
+                safeValue /
+                120 *
+                height;
+
+            if(index === 0){
+
+                ctx.moveTo(
+                    x,
+                    y
+                );
+
+            }else{
+
+                ctx.lineTo(
+                    x,
+                    y
+                );
+
+            }
+
+        }
+    );
+
+    ctx.strokeStyle =
+        "#00eaff";
+
+    ctx.lineWidth = 3;
+
+    ctx.shadowBlur = 15;
+
+    ctx.shadowColor =
+        "#00eaff";
+
+    ctx.stroke();
+
+    ctx.shadowBlur = 0;
 
 }
 
 
 /* =========================================
-   BOT AI
+   MEMORY
 ========================================= */
 
-function updateBots(){
+const memoryValue =
+    document.getElementById(
+        "memoryValue"
+    );
 
-  bots.forEach(bot=>{
+function updateMemory(){
 
-    const distance =
-      bot.position.distanceTo(
-        player.position
-      );
+    if(
+        performance.memory
+    ){
 
+        const used =
+            performance
+            .memory
+            .usedJSHeapSize /
+            1024 /
+            1024;
 
-    if(distance<80){
-
-      bot.lookAt(
-        player.position.x,
-        2,
-        player.position.z
-      );
-
-      bot.translateZ(
-        bot.userData.speed
-      );
-
-
-      if(
-        Date.now()>
-        bot.userData.nextShot
-      ){
-
-        if(distance<35){
-
-          hp-=5;
-
-          updateHUD();
-
-          bot.userData.nextShot =
-            Date.now()+1500;
-
-          if(hp<=0){
-            endGame();
-          }
-
-        }
-
-      }
+        memoryValue.textContent =
+            used.toFixed(0) +
+            " MB";
 
     }else{
 
-      bot.rotation.y += .01;
+        memoryValue.textContent =
+            "N/A";
+    }
+}
 
-      bot.translateZ(
-        bot.userData.speed
-      );
+setInterval(
+    updateMemory,
+    1000
+);
+
+updateMemory();
+
+
+/* =========================================
+   SCREEN INFO
+========================================= */
+
+const screenValue =
+    document.getElementById(
+        "screenValue"
+    );
+
+function updateScreen(){
+
+    screenValue.textContent =
+        window.innerWidth +
+        "×" +
+        window.innerHeight;
+}
+
+updateScreen();
+
+window.addEventListener(
+    "resize",
+    updateScreen
+);
+
+
+/* =========================================
+   CPU BENCHMARK
+========================================= */
+
+const cpuBtn =
+    document.getElementById(
+        "cpuTest"
+    );
+
+const cpuValue =
+    document.getElementById(
+        "cpuValue"
+    );
+
+cpuBtn.addEventListener(
+    "click",
+    async ()=>{
+
+        cpuBtn.disabled =
+            true;
+
+        cpuBtn.textContent =
+            "⚡ TESTING...";
+
+        cpuValue.textContent =
+            "...";
+
+        await new Promise(
+            resolve=>
+                setTimeout(
+                    resolve,
+                    100
+                )
+        );
+
+        const start =
+            performance.now();
+
+        let result = 0;
+
+        const loops =
+            20000000;
+
+        for(
+            let i=0;
+            i<loops;
+            i++
+        ){
+
+            result +=
+                Math.sqrt(i) *
+                Math.sin(i) *
+                Math.cos(i);
+
+        }
+
+        const elapsed =
+            performance.now() -
+            start;
+
+        const score =
+            Math.round(
+                loops /
+                elapsed
+            );
+
+        cpuValue.textContent =
+            score;
+
+        cpuBtn.textContent =
+            "⚡ CPU TEST COMPLETE";
+
+        setTimeout(
+            ()=>{
+                cpuBtn.textContent =
+                    "⚡ CPU PERFORMANCE TEST";
+
+                cpuBtn.disabled =
+                    false;
+
+            },
+            2500
+        );
+
+    }
+);
+
+
+/* =========================================
+   3D ROTATION CONTROL
+========================================= */
+
+const cube =
+    document.getElementById(
+        "cube"
+    );
+
+const rotateBtn =
+    document.getElementById(
+        "rotateBtn"
+    );
+
+let cubeSpeed = 8;
+
+rotateBtn.addEventListener(
+    "click",
+    ()=>{
+
+        cubeSpeed -= 2;
+
+        if(cubeSpeed <= 0)
+            cubeSpeed = 12;
+
+        cube.style.animationDuration =
+            cubeSpeed + "s";
+
+    }
+);
+
+
+/* =========================================
+   MOUSE PARALLAX
+========================================= */
+
+document.addEventListener(
+    "mousemove",
+    event=>{
+
+        if(
+            document.body
+            .classList
+            .contains("low-mode")
+        ){
+            return;
+        }
+
+        const x =
+            (event.clientX /
+            window.innerWidth -
+            .5);
+
+        const y =
+            (event.clientY /
+            window.innerHeight -
+            .5);
+
+        const scene =
+            document.querySelector(
+                ".scene"
+            );
+
+        if(scene){
+
+            scene.style.transform =
+                `rotateX(${-y*5}deg)
+                 rotateY(${x*5}deg)`;
+
+        }
+
+    }
+);
+
+
+/* =========================================
+   TOUCH RIPPLE
+========================================= */
+
+function createTouchEffect(
+    x,
+    y
+){
+
+    const ripple =
+        document.createElement(
+            "div"
+        );
+
+    ripple.style.position =
+        "fixed";
+
+    ripple.style.left =
+        x + "px";
+
+    ripple.style.top =
+        y + "px";
+
+    ripple.style.width =
+        "25px";
+
+    ripple.style.height =
+        "25px";
+
+    ripple.style.borderRadius =
+        "50%";
+
+    ripple.style.border =
+        "2px solid #00eaff";
+
+    ripple.style.boxShadow =
+        "0 0 25px #00eaff";
+
+    ripple.style.pointerEvents =
+        "none";
+
+    ripple.style.zIndex =
+        "99999";
+
+    ripple.style.transform =
+        "translate(-50%,-50%) scale(.2)";
+
+    ripple.style.transition =
+        "transform .7s ease, opacity .7s ease";
+
+    document.body.appendChild(
+        ripple
+    );
+
+    requestAnimationFrame(
+        ()=>{
+            ripple.style.transform =
+                "translate(-50%,-50%) scale(5)";
+
+            ripple.style.opacity =
+                "0";
+        }
+    );
+
+    setTimeout(
+        ()=>{
+            ripple.remove();
+        },
+        750
+    );
+}
+
+document.addEventListener(
+    "click",
+    event=>{
+        createTouchEffect(
+            event.clientX,
+            event.clientY
+        );
+    }
+);
+
+document.addEventListener(
+    "touchstart",
+    event=>{
+
+        const touch =
+            event.touches[0];
+
+        createTouchEffect(
+            touch.clientX,
+            touch.clientY
+        );
+
+    },
+    {passive:true}
+);
+
+
+/* =========================================
+   LOW POWER MODE
+========================================= */
+
+const lowModeBtn =
+    document.getElementById(
+        "lowMode"
+    );
+
+lowModeBtn.addEventListener(
+    "click",
+    ()=>{
+
+        document.body
+            .classList
+            .toggle(
+                "low-mode"
+            );
+
+        if(
+            document.body
+            .classList
+            .contains("low-mode")
+        ){
+
+            lowModeBtn.textContent =
+                "☀️ NORMAL MODE";
+
+        }else{
+
+            lowModeBtn.textContent =
+                "🌙 LOW POWER MODE";
+
+        }
+
+    }
+);
+
+
+/* =========================================
+   WEBGL VOLUME-SHADER STRESS ENGINE
+========================================= */
+
+const stressCanvas =
+    document.getElementById(
+        "stressCanvas"
+    );
+
+const gl =
+    stressCanvas.getContext(
+        "webgl",
+        {
+            antialias:false,
+            powerPreference:
+                "high-performance"
+        }
+    );
+
+let stressRunning = false;
+
+let stressAnimation;
+
+
+/* RESIZE */
+
+function resizeStress(){
+
+    stressCanvas.width =
+        window.innerWidth;
+
+    stressCanvas.height =
+        window.innerHeight;
+
+    if(gl){
+
+        gl.viewport(
+            0,
+            0,
+            stressCanvas.width,
+            stressCanvas.height
+        );
 
     }
 
-  });
-
 }
 
-
-/* =========================================
-   HUD
-========================================= */
-
-function updateHUD(){
-
-  document.getElementById(
-    "hp"
-  ).textContent=Math.max(0,hp);
-
-  document.getElementById(
-    "ammo"
-  ).textContent=ammo;
-
-}
-
-
-/* =========================================
-   FPS
-========================================= */
-
-function updateFPS(){
-
-  frameCounter++;
-
-  const now=performance.now();
-
-  if(now-lastTime>=1000){
-
-    fps=frameCounter;
-
-    frameCounter=0;
-
-    lastTime=now;
-
-    document.getElementById(
-      "fps"
-    ).textContent=fps;
-
-  }
-
-}
-
-
-/* =========================================
-   MAIN LOOP
-========================================= */
-
-function animate(){
-
-  if(!running) return;
-
-  requestAnimationFrame(
-    animate
-  );
-
-  const now =
-    performance.now();
-
-  const delta =
-    Math.min(
-      (now-lastTime)/1000,
-      .05
-    );
-
-  movePlayer(delta);
-
-  updateBullets();
-
-  updateBots();
-
-  updateFPS();
-
-  renderer.render(
-    scene,
-    camera
-  );
-
-}
-
-
-/* =========================================
-   GAME OVER
-========================================= */
-
-function endGame(){
-
-  running=false;
-
-  document.getElementById(
-    "finalKills"
-  ).textContent=kills;
-
-  document.getElementById(
-    "gameOver"
-  ).style.display="flex";
-
-}
-
-
-/* =========================================
-   RESIZE
-========================================= */
+resizeStress();
 
 window.addEventListener(
-  "resize",
-  ()=>{
+    "resize",
+    resizeStress
+);
 
-    if(!camera || !renderer)
-      return;
 
-    camera.aspect =
-      innerWidth/innerHeight;
+/* SHADERS */
 
-    camera.updateProjectionMatrix();
+if(gl){
 
-    renderer.setSize(
-      innerWidth,
-      innerHeight
+const vertexSource = `
+
+attribute vec2 position;
+
+void main(){
+
+    gl_Position =
+        vec4(
+            position,
+            0.0,
+            1.0
+        );
+
+}
+
+`;
+
+const fragmentSource = `
+
+precision highp float;
+
+uniform float time;
+uniform vec2 resolution;
+
+float volume(
+    vec3 p
+){
+
+    float density = 0.0;
+
+    for(
+        int i=0;
+        i<45;
+        i++
+    ){
+
+        p =
+            abs(p)
+            /
+            dot(p,p)
+            -
+            0.72;
+
+        density +=
+            exp(
+                -8.0 *
+                abs(
+                    length(p)
+                    -
+                    0.45
+                )
+            );
+
+    }
+
+    return density;
+}
+
+void main(){
+
+    vec2 uv =
+        (
+            gl_FragCoord.xy
+            -
+            resolution*.5
+        )
+        /
+        resolution.y;
+
+    vec3 ray =
+        vec3(
+            uv,
+            -2.0
+        );
+
+    float total = 0.0;
+
+    for(
+        int i=0;
+        i<100;
+        i++
+    ){
+
+        ray.z += .035;
+
+        total +=
+            volume(
+                ray +
+                vec3(
+                    sin(time*.4),
+                    cos(time*.3),
+                    time*.1
+                )
+            )
+            * .003;
+
+    }
+
+    vec3 color =
+        vec3(
+            total*2.0,
+            total*.5,
+            total*3.0
+        );
+
+    gl_FragColor =
+        vec4(
+            color,
+            1.0
+        );
+
+}
+
+`;
+
+
+/* SHADER COMPILER */
+
+function createShader(
+    type,
+    source
+){
+
+    const shader =
+        gl.createShader(type);
+
+    gl.shaderSource(
+        shader,
+        source
     );
 
-  }
+    gl.compileShader(
+        shader
+    );
+
+    return shader;
+}
+
+
+const vertexShader =
+    createShader(
+        gl.VERTEX_SHADER,
+        vertexSource
+    );
+
+const fragmentShader =
+    createShader(
+        gl.FRAGMENT_SHADER,
+        fragmentSource
+    );
+
+
+const program =
+    gl.createProgram();
+
+gl.attachShader(
+    program,
+    vertexShader
+);
+
+gl.attachShader(
+    program,
+    fragmentShader
+);
+
+gl.linkProgram(
+    program
+);
+
+
+/* BUFFER */
+
+const buffer =
+    gl.createBuffer();
+
+gl.bindBuffer(
+    gl.ARRAY_BUFFER,
+    buffer
+);
+
+gl.bufferData(
+    gl.ARRAY_BUFFER,
+    new Float32Array([
+        -1,-1,
+         1,-1,
+        -1, 1,
+         1, 1
+    ]),
+    gl.STATIC_DRAW
+);
+
+
+/* STRESS LOOP */
+
+function stressLoop(time){
+
+    if(!stressRunning)
+        return;
+
+    gl.useProgram(
+        program
+    );
+
+    gl.bindBuffer(
+        gl.ARRAY_BUFFER,
+        buffer
+    );
+
+    const position =
+        gl.getAttribLocation(
+            program,
+            "position"
+        );
+
+    gl.enableVertexAttribArray(
+        position
+    );
+
+    gl.vertexAttribPointer(
+        position,
+        2,
+        gl.FLOAT,
+        false,
+        0,
+        0
+    );
+
+
+    const timeLocation =
+        gl.getUniformLocation(
+            program,
+            "time"
+        );
+
+    const resolutionLocation =
+        gl.getUniformLocation(
+            program,
+            "resolution"
+        );
+
+
+    gl.uniform1f(
+        timeLocation,
+        time*.001
+    );
+
+    gl.uniform2f(
+        resolutionLocation,
+        stressCanvas.width,
+        stressCanvas.height
+    );
+
+
+    gl.drawArrays(
+        gl.TRIANGLE_STRIP,
+        0,
+        4
+    );
+
+
+    stressAnimation =
+        requestAnimationFrame(
+            stressLoop
+        );
+
+}
+
+
+/* =========================================
+   START STRESS
+========================================= */
+
+document
+.getElementById(
+    "startStress"
+)
+.addEventListener(
+    "click",
+    ()=>{
+
+        if(!gl){
+
+            alert(
+                "WebGL is not supported."
+            );
+
+            return;
+
+        }
+
+        if(stressRunning)
+            return;
+
+        stressRunning =
+            true;
+
+        document.body
+            .classList
+            .add("stress-mode");
+
+        stressLoop(0);
+
+    }
+);
+
+
+/* =========================================
+   STOP STRESS
+========================================= */
+
+document
+.getElementById(
+    "stopStress"
+)
+.addEventListener(
+    "click",
+    ()=>{
+
+        stressRunning =
+            false;
+
+        cancelAnimationFrame(
+            stressAnimation
+        );
+
+        document.body
+            .classList
+            .remove(
+                "stress-mode"
+            );
+
+        if(gl){
+
+            gl.clearColor(
+                0,
+                0,
+                0,
+                0
+            );
+
+            gl.clear(
+                gl.COLOR_BUFFER_BIT
+            );
+
+        }
+
+    }
+);
+
+
+/* =========================================
+   INITIAL MESSAGE
+========================================= */
+
+console.log(
+`
+╔════════════════════════════════╗
+║       ABDUL AHAD SYSTEM        ║
+║          SSC 2K27              ║
+║                                ║
+║ FPS Monitor       : ACTIVE     ║
+║ CPU Benchmark     : READY      ║
+║ 3D Engine         : ACTIVE     ║
+║ Touch Response    : ACTIVE     ║
+║ WebGL Stress      : READY      ║
+║ Low Power Mode    : READY      ║
+╚════════════════════════════════╝
+`
 );
