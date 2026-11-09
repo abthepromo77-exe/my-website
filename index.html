@@ -6,597 +6,143 @@
 
 <title>ABDUL AHAD | SSC 2K27</title>
 
-<style>
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-}
-
-html{
-    scroll-behavior:smooth;
-}
-
-body{
-    font-family:Arial,Helvetica,sans-serif;
-    color:white;
-    overflow-x:hidden;
-    background:
-        radial-gradient(circle at 10% 20%,#ff00cc55,transparent 25%),
-        radial-gradient(circle at 90% 20%,#00eaff55,transparent 25%),
-        radial-gradient(circle at 50% 80%,#7b00ff55,transparent 30%),
-        linear-gradient(135deg,#050014,#09001f,#00182b,#16001d);
-}
-
-/* COLORFUL MOVING BACKGROUND */
-
-.background{
-    position:fixed;
-    inset:0;
-    z-index:-10;
-    overflow:hidden;
-}
-
-.orb{
-    position:absolute;
-    border-radius:50%;
-    filter:blur(30px);
-    opacity:.45;
-    animation:float 10s infinite alternate ease-in-out;
-}
-
-.orb1{
-    width:280px;
-    height:280px;
-    background:#ff00cc;
-    left:-80px;
-    top:10%;
-}
-
-.orb2{
-    width:350px;
-    height:350px;
-    background:#00eaff;
-    right:-100px;
-    top:30%;
-    animation-delay:2s;
-}
-
-.orb3{
-    width:250px;
-    height:250px;
-    background:#8b00ff;
-    left:40%;
-    bottom:-80px;
-    animation-delay:4s;
-}
-
-@keyframes float{
-    from{
-        transform:translate(0,0) scale(1);
-    }
-    to{
-        transform:translate(80px,-60px) scale(1.2);
-    }
-}
-
-/* NAVBAR */
-
-nav{
-    position:fixed;
-    top:0;
-    left:0;
-    width:100%;
-    z-index:1000;
-    padding:15px 6%;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    background:rgba(0,0,0,.35);
-    backdrop-filter:blur(15px);
-    border-bottom:1px solid rgba(255,255,255,.12);
-}
-
-.logo{
-    font-size:22px;
-    font-weight:900;
-    letter-spacing:2px;
-    background:linear-gradient(90deg,#ff00cc,#00eaff,#ffe600);
-    -webkit-background-clip:text;
-    color:transparent;
-}
-
-nav a{
-    color:white;
-    text-decoration:none;
-    margin-left:20px;
-    font-size:14px;
-    transition:.3s;
-}
-
-nav a:hover{
-    color:#00eaff;
-}
-
-/* HERO */
-
-section{
-    min-height:100vh;
-    padding:120px 7% 70px;
-}
-
-.hero{
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    text-align:center;
-    flex-direction:column;
-}
-
-.small-title{
-    font-size:16px;
-    letter-spacing:5px;
-    color:#00eaff;
-    margin-bottom:15px;
-}
-
-.hero h1{
-    font-size:clamp(50px,11vw,130px);
-    line-height:.9;
-    font-weight:1000;
-    background:
-        linear-gradient(
-            90deg,
-            #ff00cc,
-            #ffea00,
-            #00eaff,
-            #8b5cff,
-            #ff00cc
-        );
-    background-size:300% auto;
-    -webkit-background-clip:text;
-    color:transparent;
-    animation:gradientMove 5s linear infinite;
-}
-
-@keyframes gradientMove{
-    to{
-        background-position:300% center;
-    }
-}
-
-.nickname{
-    margin-top:25px;
-    font-size:28px;
-    font-weight:800;
-}
-
-.ssc{
-    margin-top:20px;
-    padding:16px 30px;
-    border-radius:50px;
-    font-size:clamp(20px,4vw,38px);
-    font-weight:1000;
-    background:linear-gradient(
-        90deg,
-        #ff006e,
-        #ffea00,
-        #00ffcc,
-        #008cff,
-        #b000ff
-    );
-    background-size:300%;
-    animation:gradientMove 4s linear infinite;
-    color:white;
-    box-shadow:
-        0 0 20px #ff00cc88,
-        0 0 50px #00eaff44;
-}
-
-/* NOTICE */
-
-.notice{
-    max-width:900px;
-    margin:50px auto 0;
-    padding:20px 25px;
-    border:1px solid #00eaff66;
-    background:rgba(0,0,0,.35);
-    border-radius:20px;
-    backdrop-filter:blur(12px);
-    box-shadow:0 0 30px #00eaff22;
-}
-
-.notice strong{
-    color:#ffe600;
-}
-
-.notice p{
-    line-height:1.7;
-    color:#ddd;
-}
-
-/* BIO */
-
-.bio-grid{
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:20px;
-    max-width:1100px;
-    margin:40px auto;
-}
-
-.bio-card{
-    padding:30px;
-    min-height:170px;
-    border-radius:25px;
-    background:rgba(255,255,255,.06);
-    border:1px solid rgba(255,255,255,.13);
-    backdrop-filter:blur(12px);
-    transition:.4s;
-}
-
-.bio-card:hover{
-    transform:translateY(-10px);
-    box-shadow:0 15px 50px #00eaff22;
-}
-
-.bio-card h3{
-    margin-bottom:15px;
-    color:#00eaff;
-}
-
-.bio-card p{
-    color:#ddd;
-    line-height:1.7;
-}
-
-/* PERFORMANCE */
-
-.title{
-    text-align:center;
-    font-size:clamp(35px,6vw,70px);
-    margin-bottom:40px;
-    background:linear-gradient(90deg,#ff00cc,#00eaff,#ffe600);
-    -webkit-background-clip:text;
-    color:transparent;
-}
-
-.performance{
-    max-width:1100px;
-    margin:auto;
-}
-
-.stats{
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:20px;
-}
-
-.stat{
-    padding:25px;
-    text-align:center;
-    border-radius:22px;
-    background:rgba(0,0,0,.4);
-    border:1px solid #ffffff18;
-}
-
-.stat h3{
-    color:#aaa;
-    font-size:14px;
-    margin-bottom:12px;
-}
-
-.stat strong{
-    font-size:40px;
-    color:#00ffcc;
-}
-
-canvas{
-    width:100%;
-    height:260px;
-    margin-top:25px;
-    border-radius:20px;
-    background:#02020a;
-    border:1px solid #ffffff15;
-}
-
-/* BUTTON */
-
-.buttons{
-    display:flex;
-    justify-content:center;
-    flex-wrap:wrap;
-    gap:15px;
-    margin:30px 0;
-}
-
-button,
-.social{
-    border:none;
-    text-decoration:none;
-    color:white;
-    padding:15px 25px;
-    border-radius:50px;
-    font-weight:800;
-    cursor:pointer;
-    background:linear-gradient(90deg,#ff00cc,#7b00ff,#00eaff);
-    transition:.3s;
-}
-
-button:hover,
-.social:hover{
-    transform:translateY(-4px) scale(1.03);
-    box-shadow:0 10px 35px #00eaff33;
-}
-
-.stop{
-    background:linear-gradient(90deg,#ff003c,#ff7b00);
-}
-
-/* 3D */
-
-.scene{
-    width:min(450px,90vw);
-    height:450px;
-    margin:50px auto;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    perspective:900px;
-}
-
-.cube{
-    width:180px;
-    height:180px;
-    position:relative;
-    transform-style:preserve-3d;
-    animation:rotateCube 7s linear infinite;
-}
-
-.face{
-    position:absolute;
-    width:180px;
-    height:180px;
-    border:2px solid #fff;
-    background:linear-gradient(
-        135deg,
-        #ff00cc66,
-        #00eaff66
-    );
-    box-shadow:
-        inset 0 0 40px #00eaff55,
-        0 0 40px #ff00cc44;
-}
-
-.front{transform:translateZ(90px)}
-.back{transform:rotateY(180deg) translateZ(90px)}
-.right{transform:rotateY(90deg) translateZ(90px)}
-.left{transform:rotateY(-90deg) translateZ(90px)}
-.top{transform:rotateX(90deg) translateZ(90px)}
-.bottom{transform:rotateX(-90deg) translateZ(90px)}
-
-@keyframes rotateCube{
-    from{
-        transform:rotateX(0deg) rotateY(0deg);
-    }
-    to{
-        transform:rotateX(360deg) rotateY(360deg);
-    }
-}
-
-/* STRESS */
-
-.stress-box{
-    max-width:900px;
-    margin:40px auto;
-    padding:30px;
-    border-radius:25px;
-    background:rgba(0,0,0,.5);
-    border:1px solid #ff00cc33;
-    text-align:center;
-}
-
-#stressCanvas{
-    position:fixed;
-    inset:0;
-    width:100%;
-    height:100%;
-    z-index:-5;
-    pointer-events:none;
-    opacity:0;
-}
-
-body.stress-active #stressCanvas{
-    opacity:.35;
-}
-
-/* CONTACT */
-
-.contact{
-    text-align:center;
-}
-
-.contact-box{
-    max-width:800px;
-    margin:auto;
-    padding:40px;
-    border-radius:30px;
-    background:rgba(255,255,255,.06);
-    backdrop-filter:blur(15px);
-}
-
-.contact-box p{
-    margin:14px;
-    font-size:18px;
-}
-
-.contact-box a{
-    color:#00eaff;
-    text-decoration:none;
-}
-
-/* FOOTER */
-
-footer{
-    padding:35px;
-    text-align:center;
-    background:#00000055;
-    color:#aaa;
-}
-
-/* TOUCH RESPONSE */
-
-.touch-effect{
-    position:fixed;
-    width:25px;
-    height:25px;
-    border-radius:50%;
-    pointer-events:none;
-    transform:translate(-50%,-50%);
-    background:#00eaff;
-    box-shadow:
-        0 0 15px #00eaff,
-        0 0 35px #ff00cc;
-    animation:touch .7s ease-out forwards;
-    z-index:9999;
-}
-
-@keyframes touch{
-    0%{
-        opacity:1;
-        transform:translate(-50%,-50%) scale(.3);
-    }
-    100%{
-        opacity:0;
-        transform:translate(-50%,-50%) scale(4);
-    }
-}
-
-/* MOBILE */
-
-@media(max-width:800px){
-
-    nav{
-        padding:13px 4%;
-    }
-
-    nav div:last-child{
-        display:none;
-    }
-
-    section{
-        padding-left:5%;
-        padding-right:5%;
-    }
-
-    .bio-grid,
-    .stats{
-        grid-template-columns:1fr;
-    }
-
-    .scene{
-        height:350px;
-    }
-
-    .cube,
-    .face{
-        width:140px;
-        height:140px;
-    }
-
-    .front{transform:translateZ(70px)}
-    .back{transform:rotateY(180deg) translateZ(70px)}
-    .right{transform:rotateY(90deg) translateZ(70px)}
-    .left{transform:rotateY(-90deg) translateZ(70px)}
-    .top{transform:rotateX(90deg) translateZ(70px)}
-    .bottom{transform:rotateX(-90deg) translateZ(70px)}
-}
-</style>
+<link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<div class="background">
-    <div class="orb orb1"></div>
-    <div class="orb orb2"></div>
-    <div class="orb orb3"></div>
-</div>
+<!-- BACKGROUND -->
+<div id="particles"></div>
+<div class="aurora aurora-1"></div>
+<div class="aurora aurora-2"></div>
+<div class="aurora aurora-3"></div>
 
-<!-- PERFORMANCE STRESS CANVAS -->
-<canvas id="stressCanvas"></canvas>
+<!-- SCROLL PROGRESS -->
+<div id="scrollProgress"></div>
 
-<nav>
-    <div class="logo">AB THE PROMO</div>
+<!-- NAVIGATION -->
+<header class="navbar">
 
-    <div>
+    <div class="brand">
+        <span>AB</span>
+        <b>THE PROMO</b>
+    </div>
+
+    <button class="menu-btn" id="menuBtn">☰</button>
+
+    <nav id="navMenu">
         <a href="#home">HOME</a>
-        <a href="#bio">BIO</a>
+        <a href="#about">ABOUT</a>
+        <a href="#3d">3D</a>
         <a href="#performance">PERFORMANCE</a>
         <a href="#contact">CONTACT</a>
-    </div>
-</nav>
+    </nav>
+
+</header>
 
 
-<!-- HOME -->
+<!-- HERO -->
+<section id="home" class="hero section">
 
-<section class="hero" id="home">
+    <div class="hero-content reveal">
 
-    <div class="small-title">
-        WELCOME TO MY DIGITAL WORLD
-    </div>
+        <div class="eyebrow">
+            WELCOME TO MY DIGITAL WORLD
+        </div>
 
-    <h1>ABDUL AHAD</h1>
+        <h1 class="main-title">
+            ABDUL <span>AHAD</span>
+        </h1>
 
-    <div class="nickname">
-        NICKNAME : ABDUL AHAD
-    </div>
+        <div class="nickname">
+            NICKNAME : <strong>ABDUL AHAD</strong>
+        </div>
 
-    <div class="ssc">
-        SSC BATCH 2K27
-    </div>
+        <div class="ssc-badge">
+            SSC BATCH <span>2K27</span>
+        </div>
 
-    <div class="notice">
-        <strong>⚠ PERFORMANCE NOTICE</strong>
-        <p>
-            This website contains an interactive 3D object, real-time FPS
-            monitoring, CPU benchmark and an optional graphics stress test.
-            The stress mode may reduce FPS, increase CPU/GPU usage and make
-            your phone, tablet or PC warm. Stop the test if your device
-            becomes unusually hot or unstable.
+        <p class="hero-description">
+            Creative mind • Digital explorer • Future builder
         </p>
+
+        <div class="hero-buttons">
+            <a href="#performance" class="btn primary">
+                CHECK PERFORMANCE
+            </a>
+
+            <a href="#contact" class="btn secondary">
+                CONNECT WITH ME
+            </a>
+        </div>
+
     </div>
 
 </section>
 
 
-<!-- BIO -->
+<!-- NOTICE -->
+<section class="notice-section">
 
-<section id="bio">
+    <div class="notice-card reveal">
 
-    <h2 class="title">MY BIO</h2>
+        <div class="notice-icon">⚠️</div>
+
+        <div>
+            <h2>PERFORMANCE NOTICE</h2>
+
+            <p>
+                This website contains interactive 3D graphics,
+                real-time FPS monitoring, CPU benchmarking and
+                an optional WebGL graphics stress test.
+                Stress mode can increase CPU/GPU usage,
+                reduce FPS and make your device warm.
+            </p>
+
+            <p class="warning">
+                Stop the stress test if your device becomes
+                unusually hot or unstable.
+            </p>
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ABOUT -->
+<section id="about" class="section">
+
+    <div class="section-heading reveal">
+        <span>01</span>
+        <h2>MY <strong>BIO</strong></h2>
+    </div>
 
     <div class="bio-grid">
 
-        <div class="bio-card">
-            <h3>01 — WORTH</h3>
+        <article class="bio-card reveal">
+            <div class="number">01</div>
+            <h3>MY WORTH</h3>
             <p>
                 I know my worth, don’t negotiate it.
             </p>
-        </div>
+        </article>
 
-        <div class="bio-card">
-            <h3>02 — GRACE</h3>
+        <article class="bio-card reveal">
+            <div class="number">02</div>
+            <h3>MY GRACE</h3>
             <p>
                 Grace in my words, purpose in my actions.
             </p>
-        </div>
+        </article>
 
-        <div class="bio-card">
-            <h3>03 — HISTORY</h3>
+        <article class="bio-card reveal">
+            <div class="number">03</div>
+            <h3>MY HISTORY</h3>
             <p>
                 Making history out of my mistakes.
             </p>
-        </div>
+        </article>
 
     </div>
 
@@ -604,21 +150,66 @@ footer{
 
 
 <!-- 3D -->
+<section id="3d" class="section three-section">
 
-<section>
+    <div class="section-heading reveal">
+        <span>02</span>
+        <h2>INTERACTIVE <strong>3D</strong></h2>
+    </div>
 
-    <h2 class="title">3D OBJECT</h2>
+    <div class="three-layout">
 
-    <div class="scene">
+        <div class="scene reveal">
 
-        <div class="cube">
+            <div class="cube" id="cube">
 
-            <div class="face front"></div>
-            <div class="face back"></div>
-            <div class="face right"></div>
-            <div class="face left"></div>
-            <div class="face top"></div>
-            <div class="face bottom"></div>
+                <div class="cube-face front">
+                    AB
+                </div>
+
+                <div class="cube-face back">
+                    2K27
+                </div>
+
+                <div class="cube-face right">
+                    AHAD
+                </div>
+
+                <div class="cube-face left">
+                    PROMO
+                </div>
+
+                <div class="cube-face top">
+                    SSC
+                </div>
+
+                <div class="cube-face bottom">
+                    2026
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="three-info reveal">
+
+            <span class="mini-label">
+                WEBGL / CSS 3D
+            </span>
+
+            <h3>
+                Interactive<br>
+                Digital Object
+            </h3>
+
+            <p>
+                Move your mouse or touch the screen to interact
+                with the visual environment.
+            </p>
+
+            <button class="btn primary" id="rotateBtn">
+                CHANGE ROTATION
+            </button>
 
         </div>
 
@@ -628,48 +219,149 @@ footer{
 
 
 <!-- PERFORMANCE -->
+<section id="performance" class="section">
 
-<section id="performance">
+    <div class="section-heading reveal">
+        <span>03</span>
+        <h2>DEVICE <strong>PERFORMANCE</strong></h2>
+    </div>
 
-    <h2 class="title">DEVICE PERFORMANCE</h2>
 
-    <div class="performance">
+    <!-- STATS -->
+    <div class="stats-grid">
 
-        <div class="stats">
+        <div class="stat-card reveal">
+            <span>REAL-TIME FPS</span>
+            <strong id="fpsValue">--</strong>
+            <small>frames / second</small>
+        </div>
 
-            <div class="stat">
-                <h3>FPS</h3>
-                <strong id="fps">--</strong>
+        <div class="stat-card reveal">
+            <span>CPU SCORE</span>
+            <strong id="cpuValue">--</strong>
+            <small>benchmark score</small>
+        </div>
+
+        <div class="stat-card reveal">
+            <span>MEMORY</span>
+            <strong id="memoryValue">--</strong>
+            <small>browser memory</small>
+        </div>
+
+        <div class="stat-card reveal">
+            <span>SCREEN</span>
+            <strong id="screenValue">--</strong>
+            <small>resolution</small>
+        </div>
+
+    </div>
+
+
+    <!-- GRAPH -->
+    <div class="graph-card reveal">
+
+        <div class="graph-header">
+
+            <div>
+                <span>LIVE MONITOR</span>
+                <h3>FPS PERFORMANCE GRAPH</h3>
             </div>
 
-            <div class="stat">
-                <h3>CPU BENCHMARK</h3>
-                <strong id="cpu">--</strong>
-            </div>
-
-            <div class="stat">
-                <h3>DEVICE MEMORY</h3>
-                <strong id="memory">--</strong>
+            <div id="fpsStatus" class="status">
+                WAITING
             </div>
 
         </div>
 
-        <canvas id="graph" width="1000" height="260"></canvas>
+        <canvas id="fpsGraph"></canvas>
 
-        <div class="buttons">
+    </div>
 
-            <button onclick="runCPU()">
-                ⚡ CPU PERFORMANCE TEST
-            </button>
 
-            <button onclick="startStress()">
-                🔥 START STRESS TEST
-            </button>
+    <!-- CONTROLS -->
+    <div class="control-panel reveal">
 
-            <button class="stop" onclick="stopStress()">
-                ■ STOP STRESS
-            </button>
+        <button class="btn primary" id="cpuTest">
+            ⚡ CPU PERFORMANCE TEST
+        </button>
 
+        <button class="btn stress" id="startStress">
+            🔥 START STRESS TEST
+        </button>
+
+        <button class="btn stop" id="stopStress">
+            ■ STOP STRESS
+        </button>
+
+        <button class="btn secondary" id="lowMode">
+            🌙 LOW POWER MODE
+        </button>
+
+    </div>
+
+
+    <!-- WEBGL STRESS -->
+    <canvas id="stressCanvas"></canvas>
+
+</section>
+
+
+<!-- FEATURES -->
+<section class="section">
+
+    <div class="section-heading reveal">
+        <span>04</span>
+        <h2>EXTRA <strong>FEATURES</strong></h2>
+    </div>
+
+    <div class="feature-grid">
+
+        <div class="feature reveal">
+            <span>⚡</span>
+            <h3>FPS MONITOR</h3>
+            <p>
+                Real-time animation performance monitoring.
+            </p>
+        </div>
+
+        <div class="feature reveal">
+            <span>🧠</span>
+            <h3>CPU BENCHMARK</h3>
+            <p>
+                Browser-based CPU workload test.
+            </p>
+        </div>
+
+        <div class="feature reveal">
+            <span>🎮</span>
+            <h3>3D ENGINE</h3>
+            <p>
+                Interactive CSS 3D visual system.
+            </p>
+        </div>
+
+        <div class="feature reveal">
+            <span>🔥</span>
+            <h3>GPU STRESS</h3>
+            <p>
+                Optional WebGL graphics stress mode.
+            </p>
+        </div>
+
+        <div class="feature reveal">
+            <span>📱</span>
+            <h3>TOUCH RESPONSE</h3>
+            <p>
+                Mobile touch ripple and interaction effects.
+            </p>
+        </div>
+
+        <div class="feature reveal">
+            <span>🌈</span>
+            <h3>COLOR ENGINE</h3>
+            <p>
+                Animated gradient and aurora environment.
+            </p>
         </div>
 
     </div>
@@ -678,657 +370,122 @@ footer{
 
 
 <!-- CONTACT -->
+<section id="contact" class="section contact-section">
 
-<section class="contact" id="contact">
+    <div class="section-heading reveal">
+        <span>05</span>
+        <h2>CONNECT <strong>WITH ME</strong></h2>
+    </div>
 
-    <h2 class="title">CONNECT WITH ME</h2>
+    <div class="contact-card reveal">
 
-    <div class="contact-box">
-
-        <p>
-            📍 Address:
-            <strong>Tangail, Bangladesh</strong>
-        </p>
-
-        <p>
-            🏠 Home:
-            <strong>Ghatail, Tangail</strong>
-        </p>
-
-        <p>
-            📸 Instagram:
-            <a href="https://www.instagram.com/ab.the_promo/"
-               target="_blank">
-                @ab.the_promo
-            </a>
-        </p>
-
-        <p>
-            📘 Facebook:
-            <a href="https://www.facebook.com/"
-               target="_blank">
-                Facebook
-            </a>
-        </p>
-
-        <p>
-            💬 WhatsApp:
-            <a href="https://wa.me/8801944882736"
-               target="_blank">
-                01944882736
-            </a>
-        </p>
-
-        <div class="buttons">
-
-            <a class="social"
-               href="https://www.instagram.com/ab.the_promo/"
-               target="_blank">
-                INSTAGRAM
-            </a>
-
-            <a class="social"
-               href="https://www.facebook.com/"
-               target="_blank">
-                FACEBOOK
-            </a>
-
-            <a class="social"
-               href="https://wa.me/8801944882736"
-               target="_blank">
-                WHATSAPP
-            </a>
-
+        <div class="contact-item">
+            <span>📸</span>
+            <div>
+                <small>INSTAGRAM</small>
+                <a
+                href="https://www.instagram.com/ab.the_promo/"
+                target="_blank">
+                    @ab.the_promo
+                </a>
+            </div>
         </div>
+
+
+        <div class="contact-item">
+            <span>📘</span>
+            <div>
+                <small>FACEBOOK</small>
+                <a
+                href="https://www.facebook.com/share/p/1BDb1WvnhE/"
+                target="_blank">
+                    Facebook Profile
+                </a>
+            </div>
+        </div>
+
+
+        <div class="contact-item">
+            <span>💬</span>
+            <div>
+                <small>WHATSAPP</small>
+                <a
+                href="https://wa.me/8801944882736"
+                target="_blank">
+                    01944882736
+                </a>
+            </div>
+        </div>
+
+
+        <div class="contact-item">
+            <span>📍</span>
+            <div>
+                <small>ADDRESS</small>
+                <p>Tangail, Bangladesh</p>
+            </div>
+        </div>
+
+
+        <div class="contact-item">
+            <span>🏠</span>
+            <div>
+                <small>HOME</small>
+                <p>Ghatail, Tangail</p>
+            </div>
+        </div>
+
+    </div>
+
+
+    <div class="social-buttons reveal">
+
+        <a
+        href="https://www.instagram.com/ab.the_promo/"
+        target="_blank">
+            INSTAGRAM
+        </a>
+
+        <a
+        href="https://www.facebook.com/share/p/1BDb1WvnhE/"
+        target="_blank">
+            FACEBOOK
+        </a>
+
+        <a
+        href="https://wa.me/8801944882736"
+        target="_blank">
+            WHATSAPP
+        </a>
 
     </div>
 
 </section>
 
 
+<!-- FOOTER -->
 <footer>
-    © 2026 ABDUL AHAD — SSC BATCH 2K27
+
+    <div class="footer-logo">
+        AB THE PROMO
+    </div>
+
+    <p>
+        ABDUL AHAD • SSC BATCH 2K27
+    </p>
+
+    <p class="copyright">
+        © 2026 Abdul Ahad. All rights reserved.
+    </p>
+
 </footer>
 
 
-<script>
+<!-- BACK TO TOP -->
+<button id="topBtn">↑</button>
 
-/* =========================
-   FPS MONITOR
-========================= */
 
-let lastTime = performance.now();
-let frames = 0;
-let fps = 0;
-
-function fpsLoop(time){
-
-    frames++;
-
-    if(time - lastTime >= 1000){
-
-        fps = frames;
-        frames = 0;
-        lastTime = time;
-
-        document.getElementById("fps").textContent = fps;
-
-        addGraphPoint(fps);
-    }
-
-    requestAnimationFrame(fpsLoop);
-}
-
-requestAnimationFrame(fpsLoop);
-
-
-/* =========================
-   MEMORY
-========================= */
-
-if(performance.memory){
-
-    function memoryUpdate(){
-
-        const used =
-            performance.memory.usedJSHeapSize / 1024 / 1024;
-
-        document.getElementById("memory").textContent =
-            used.toFixed(0) + " MB";
-    }
-
-    setInterval(memoryUpdate,1000);
-
-}else{
-
-    document.getElementById("memory").textContent =
-        "N/A";
-}
-
-
-/* =========================
-   CPU BENCHMARK
-========================= */
-
-function runCPU(){
-
-    const output =
-        document.getElementById("cpu");
-
-    output.textContent = "TESTING";
-
-    setTimeout(()=>{
-
-        const start = performance.now();
-
-        let result = 0;
-
-        for(let i=0;i<30000000;i++){
-
-            result +=
-                Math.sqrt(i) *
-                Math.sin(i) *
-                Math.cos(i);
-        }
-
-        const time =
-            performance.now() - start;
-
-        const score =
-            Math.round(30000000 / time);
-
-        output.textContent =
-            score + " SCORE";
-
-    },50);
-}
-
-
-/* =========================
-   GRAPH
-========================= */
-
-const graph =
-    document.getElementById("graph");
-
-const ctx =
-    graph.getContext("2d");
-
-let graphData = [];
-
-function addGraphPoint(value){
-
-    graphData.push(value);
-
-    if(graphData.length > 80){
-        graphData.shift();
-    }
-
-    drawGraph();
-}
-
-function drawGraph(){
-
-    ctx.clearRect(
-        0,
-        0,
-        graph.width,
-        graph.height
-    );
-
-    ctx.beginPath();
-
-    ctx.strokeStyle =
-        "#00eaff";
-
-    ctx.lineWidth = 4;
-
-    graphData.forEach((value,index)=>{
-
-        const x =
-            index *
-            (graph.width / 80);
-
-        const y =
-            graph.height -
-            Math.min(value,120) *
-            2;
-
-        if(index === 0){
-            ctx.moveTo(x,y);
-        }else{
-            ctx.lineTo(x,y);
-        }
-
-    });
-
-    ctx.stroke();
-
-    ctx.font =
-        "18px Arial";
-
-    ctx.fillStyle =
-        "#ffffff";
-
-    ctx.fillText(
-        "REAL-TIME FPS GRAPH",
-        20,
-        30
-    );
-}
-
-
-/* =========================
-   WEBGL VOLUME-SHADER STYLE
-   STRESS TEST
-========================= */
-
-const stressCanvas =
-    document.getElementById("stressCanvas");
-
-const gl =
-    stressCanvas.getContext("webgl");
-
-let stressRunning = false;
-
-let program;
-let buffer;
-let animationID;
-
-function resizeStress(){
-
-    stressCanvas.width =
-        window.innerWidth;
-
-    stressCanvas.height =
-        window.innerHeight;
-
-    if(gl){
-        gl.viewport(
-            0,
-            0,
-            stressCanvas.width,
-            stressCanvas.height
-        );
-    }
-}
-
-window.addEventListener(
-    "resize",
-    resizeStress
-);
-
-resizeStress();
-
-
-if(gl){
-
-const vertexShaderSource = `
-
-attribute vec2 position;
-
-void main(){
-
-    gl_Position =
-        vec4(position,0.0,1.0);
-
-}
-`;
-
-const fragmentShaderSource = `
-
-precision highp float;
-
-uniform float time;
-uniform vec2 resolution;
-
-float volume(vec3 p){
-
-    float d = 0.0;
-
-    for(int i=0;i<45;i++){
-
-        p = abs(p) / dot(p,p)
-            - 0.72;
-
-        d += exp(
-            -8.0 *
-            abs(length(p)-0.45)
-        );
-
-    }
-
-    return d;
-}
-
-void main(){
-
-    vec2 uv =
-        (gl_FragCoord.xy -
-        resolution.xy*.5) /
-        resolution.y;
-
-    vec3 ray =
-        vec3(uv,-2.0);
-
-    float total = 0.0;
-
-    for(int i=0;i<100;i++){
-
-        ray.z += .035;
-
-        total +=
-            volume(
-                ray +
-                vec3(
-                    sin(time*.4),
-                    cos(time*.3),
-                    time*.1
-                )
-            ) * .003;
-    }
-
-    vec3 color =
-        vec3(
-            total*2.0,
-            total*.5,
-            total*3.0
-        );
-
-    gl_FragColor =
-        vec4(color,1.0);
-}
-`;
-
-function shader(type,source){
-
-    const s =
-        gl.createShader(type);
-
-    gl.shaderSource(
-        s,
-        source
-    );
-
-    gl.compileShader(s);
-
-    return s;
-}
-
-const vs =
-    shader(
-        gl.VERTEX_SHADER,
-        vertexShaderSource
-    );
-
-const fs =
-    shader(
-        gl.FRAGMENT_SHADER,
-        fragmentShaderSource
-    );
-
-program =
-    gl.createProgram();
-
-gl.attachShader(
-    program,
-    vs
-);
-
-gl.attachShader(
-    program,
-    fs
-);
-
-gl.linkProgram(program);
-
-buffer =
-    gl.createBuffer();
-
-gl.bindBuffer(
-    gl.ARRAY_BUFFER,
-    buffer
-);
-
-gl.bufferData(
-    gl.ARRAY_BUFFER,
-    new Float32Array([
-        -1,-1,
-         1,-1,
-        -1, 1,
-         1, 1
-    ]),
-    gl.STATIC_DRAW
-);
-
-}
-
-
-/* =========================
-   START STRESS
-========================= */
-
-function startStress(){
-
-    if(!gl){
-
-        alert(
-            "WebGL is not supported on this device."
-        );
-
-        return;
-    }
-
-    stressRunning = true;
-
-    document.body.classList.add(
-        "stress-active"
-    );
-
-    stressLoop();
-}
-
-
-/* =========================
-   STOP STRESS
-========================= */
-
-function stopStress(){
-
-    stressRunning = false;
-
-    document.body.classList.remove(
-        "stress-active"
-    );
-
-    cancelAnimationFrame(
-        animationID
-    );
-
-    if(gl){
-
-        gl.clearColor(
-            0,
-            0,
-            0,
-            0
-        );
-
-        gl.clear(
-            gl.COLOR_BUFFER_BIT
-        );
-    }
-}
-
-
-/* =========================
-   STRESS LOOP
-========================= */
-
-function stressLoop(time){
-
-    if(!stressRunning){
-        return;
-    }
-
-    gl.useProgram(program);
-
-    gl.bindBuffer(
-        gl.ARRAY_BUFFER,
-        buffer
-    );
-
-    const position =
-        gl.getAttribLocation(
-            program,
-            "position"
-        );
-
-    gl.enableVertexAttribArray(
-        position
-    );
-
-    gl.vertexAttribPointer(
-        position,
-        2,
-        gl.FLOAT,
-        false,
-        0,
-        0
-    );
-
-    const timeLocation =
-        gl.getUniformLocation(
-            program,
-            "time"
-        );
-
-    const resolutionLocation =
-        gl.getUniformLocation(
-            program,
-            "resolution"
-        );
-
-    gl.uniform1f(
-        timeLocation,
-        time * .001
-    );
-
-    gl.uniform2f(
-        resolutionLocation,
-        stressCanvas.width,
-        stressCanvas.height
-    );
-
-    gl.drawArrays(
-        gl.TRIANGLE_STRIP,
-        0,
-        4
-    );
-
-    animationID =
-        requestAnimationFrame(
-            stressLoop
-        );
-}
-
-
-/* =========================
-   TOUCH RESPONSE
-========================= */
-
-function touchEffect(x,y){
-
-    const dot =
-        document.createElement("div");
-
-    dot.className =
-        "touch-effect";
-
-    dot.style.left =
-        x + "px";
-
-    dot.style.top =
-        y + "px";
-
-    document.body.appendChild(dot);
-
-    setTimeout(
-        ()=>dot.remove(),
-        700
-    );
-}
-
-document.addEventListener(
-    "touchstart",
-    function(e){
-
-        const touch =
-            e.touches[0];
-
-        touchEffect(
-            touch.clientX,
-            touch.clientY
-        );
-
-    },
-    {passive:true}
-);
-
-document.addEventListener(
-    "click",
-    function(e){
-
-        touchEffect(
-            e.clientX,
-            e.clientY
-        );
-
-    }
-);
-
-
-/* =========================
-   SMOOTH TOUCH SCROLL
-========================= */
-
-let touchStartY = 0;
-
-document.addEventListener(
-    "touchstart",
-    e=>{
-        touchStartY =
-            e.touches[0].clientY;
-    },
-    {passive:true}
-);
-
-document.addEventListener(
-    "touchmove",
-    e=>{
-
-        const currentY =
-            e.touches[0].clientY;
-
-        const difference =
-            touchStartY-currentY;
-
-        if(Math.abs(difference)>3){
-
-            window.scrollBy({
-                top:difference*.12,
-                behavior:"auto"
-            });
-        }
-
-        touchStartY =
-            currentY;
-
-    },
-    {passive:true}
-);
-
-</script>
+<script src="script.js"></script>
 
 </body>
 </html>
